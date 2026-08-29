@@ -1,0 +1,47 @@
+name = "dreamreel-api"
+main = "src/index.ts"
+compatibility_date = "2024-12-02"
+compatibility_flags = ["nodejs_compat"]
+
+# Production environment (PRD §8.6)
+[env.production]
+name = "dreamreel-api"
+
+# Bindings (PRD §8.6)
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "dreamreel-db"
+database_id = "REPLACE_WITH_D1_ID"
+
+[[env.production.r2_buckets]]
+binding = "MEDIA"
+bucket_name = "dreamreel-media"
+
+[[env.production.kv_namespaces]]
+binding = "KV"
+id = "REPLACE_WITH_KV_ID"
+
+# AI provider (production uses real GMI Cloud; for local dev see dev.vars)
+[env.production.vars]
+ENVIRONMENT = "production"
+AI_PROVIDER = "gmi"
+GMI_BASE_URL = "https://api.gmicloud.ai"
+ALLOWED_ORIGIN = "https://dreamreel.app"
+
+# Secrets — set via `wrangler secret put <NAME>` (NEVER put in this file):
+#   wrangler secret put GMI_API_KEY
+#   wrangler secret put NEXTAUTH_SECRET
+#   wrangler secret put GITHUB_ID
+#   wrangler secret put GITHUB_SECRET
+#   wrangler secret put GOOGLE_ID
+#   wrangler secret put GOOGLE_SECRET
+#   wrangler secret put DISCORD_WEBHOOK_URL
+
+# Local development (the default `wrangler dev` is fine for most things;
+# for the Hono + Node server see `pnpm --filter api dev`).
+[env.dev]
+name = "dreamreel-api-dev"
+[env.dev.vars]
+ENVIRONMENT = "development"
+AI_PROVIDER = "mock"
+ALLOWED_ORIGIN = "http://localhost:3000"

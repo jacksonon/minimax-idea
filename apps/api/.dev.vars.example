@@ -1,0 +1,24 @@
+# DreamReel API — Local Dev Secrets (template)
+# Copy to .dev.vars and fill in real values.
+# NEVER commit .dev.vars. See AGENTS.md §9.
+#
+# In production, set these via:
+#   wrangler secret put <NAME>
+# See: https://developers.cloudflare.com/workers/configuration/secrets/
+
+# GMI Cloud API key (https://console.gmicloud.ai)
+# This single key grants access to all 4 MiniMax models.
+GMI_API_KEY=
+
+# GMI Cloud base URL (do not change unless instructed)
+GMI_BASE_URL=https://api.gmicloud.ai
+
+# Environment: development | production
+ENVIRONMENT=development
+
+# Allowed CORS origin (the deployed web app URL)
+ALLOWED_ORIGIN=http://localhost:3000
+
+# Optional: a webhook URL for important events (generation failures, etc.)
+# If empty, no webhook is sent.
+DISCORD_WEBHOOK_URL=
