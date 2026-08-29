@@ -50,11 +50,12 @@ jobs:
         run: pnpm --filter @dreamreel/web build
 
       - name: Deploy to Cloudflare Pages
-        # Invoke wrangler directly via the workspace's installed copy.
-        # The GitHub-hosted runner sits on Cloudflare's backbone so the
-        # direct-upload of apps/web/.next is fast, unlike from a residential
-        # network where the upload can stall at 14/117 files.
+        # Invoke wrangler from inside apps/web so the local node_modules/.bin
+        # is on PATH. The GitHub-hosted runner sits on Cloudflare's
+        # backbone so the direct-upload of apps/web/.next is fast, unlike
+        # from a residential network where it can stall at 14/117 files.
+        working-directory: apps/web
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: f8b9928e21de9330b1a461081bd4edf5
-        run: pnpm exec wrangler pages deploy apps/web/.next --project-name dreamreel-web --commit-dirty=true --branch main
+        run: pnpm exec wrangler pages deploy .next --project-name dreamreel-web --commit-dirty=true --branch main
