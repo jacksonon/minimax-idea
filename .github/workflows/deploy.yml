@@ -36,7 +36,12 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        # Pages deploy only needs apps/web's runtime deps + wrangler. We
+        # skip native postinstall scripts (better-sqlite3 etc.) entirely
+        # to avoid pnpm 11's ERR_PNPM_IGNORED_BUILDS surfacing in CI, and
+        # we use the apps/web filter to avoid pulling the api workspace
+        # we don't need here.
+        run: pnpm install --frozen-lockfile --filter @dreamreel/web... --ignore-scripts
 
       - name: Build web
         env:
