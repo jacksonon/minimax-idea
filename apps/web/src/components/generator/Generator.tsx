@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from '@/i18n/shim';
 import { Film } from 'lucide-react';
-import { STAGE_LABEL, type DreamStage } from '@dreamreel/shared';
+import { type DreamStage } from '@dreamreel/shared';
 
 const STAGE_ORDER: DreamStage[] = [
   'screenplay',
@@ -22,6 +23,8 @@ type Props = {
 };
 
 export function Generator({ stage, progress, elapsed }: Props) {
+  const tStages = useTranslations('generator.stages');
+  const t = useTranslations('generator');
   const mins = Math.floor(elapsed / 60);
   const secs = elapsed % 60;
   const currentIdx = stage ? STAGE_ORDER.indexOf(stage) : 0;
@@ -35,10 +38,10 @@ export function Generator({ stage, progress, elapsed }: Props) {
 
       <div className="text-center space-y-1">
         <p className="font-serif text-2xl text-ink">
-          {stage ? STAGE_LABEL[stage] : 'Starting up…'}
+          {stage ? tStages(stage as any) : 'Starting up…'}
         </p>
         <p className="font-mono text-xs text-muted/70 tabular-nums">
-          {String(mins).padStart(2, '0')}:{String(secs).padStart(2, '0')} elapsed
+          {String(mins).padStart(2, '0')}:{String(secs).padStart(2, '0')}
         </p>
       </div>
 
@@ -71,7 +74,7 @@ export function Generator({ stage, progress, elapsed }: Props) {
                   done ? 'text-ink/70' : active ? 'text-ink' : 'text-muted/40',
                 ].join(' ')}
               >
-                {STAGE_LABEL[s].replace('…', '')}
+                {tStages(s as any).replace('…', '')}
               </span>
             </div>
           );

@@ -1,19 +1,17 @@
 import type { Metadata } from 'next';
 import { ModeBadge } from '@/components/ModeBadge';
+import { LocaleSetter } from '@/components/LocaleSetter';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { I18nProvider } from '@/i18n/I18nProvider';
+import { defaultLocale } from '@/i18n/config';
+import enMessages from '../../messages/en.json';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'DreamReel — Tell me your dream. I\u2019ll shoot it for you.',
+  title: 'DreamReel — Tell me your dream. I’ll shoot it for you.',
   description: 'A 30-second AI film of your dream, made from a 60-second voice description.',
 };
 
-/**
- * Inline script that runs before paint to set the dark class based on:
- *   1. localStorage theme preference (if user clicked the toggle)
- *   2. system preference (prefers-color-scheme: dark)
- * This avoids the "flash of wrong theme" you get with client-only solutions.
- */
 const themeScript = [
   '(function(){try{',
   'var s=localStorage.getItem("dreamreel-theme");',
@@ -28,8 +26,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Server prerender uses the default locale (English). The client-side
+  // I18nProvider reads the cookie in useEffect and switches to the user's
+  // chosen locale (one reload if needed).
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={defaultLocale} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -40,9 +41,12 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-bg text-ink grain">
-        <ModeBadge />
-        <ThemeToggle />
-        {children}
+        <I18nProvider initialLocale={defaultLocale} initialMessages={enMessages}>
+          <ModeBadge />
+          <ThemeToggle />
+          <LocaleSetter />
+          {children}
+        </I18nProvider>
       </body>
     </html>
   );

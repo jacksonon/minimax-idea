@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useTranslations } from '@/i18n/shim';
 import { Recorder } from '@/components/recorder/Recorder';
 import { Generator } from '@/components/generator/Generator';
 import { DreamPlayer } from '@/components/player/DreamPlayer';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { LocaleSwitcher } from '@/components/LocaleSwitcher';
 import { useStore } from '@/lib/store';
 import { api, type StatusResponse } from '@/lib/api';
 import { POLL_INTERVAL_MS } from '@dreamreel/shared';
@@ -132,20 +134,23 @@ export default function HomePage() {
 
 function Header() {
   const { user, setUser } = useStore();
+  const t = useTranslations('nav');
+  const tCommon = useTranslations('common');
   return (
     <header className="flex items-center justify-between px-8 py-6 border-b border-ink/5">
       <a href="/" className="font-serif text-2xl tracking-wide">
-        Dream<span className="text-amber">Reel</span>
+        {tCommon('appName').split('Reel')[0]}<span className="text-amber">Reel</span>
       </a>
-      <nav className="flex items-center gap-4 text-sm text-ink/80">
+      <nav className="flex items-center gap-3 text-sm text-ink/80">
         <ThemeToggle />
-        <a href="/dreams" className="hover:text-amber">My dreams</a>
+        <LocaleSwitcher />
+        <a href="/dreams" className="hover:text-amber">{t('myDreams')}</a>
         {user ? (
           <button
             onClick={async () => { await api.logout(); setUser(null); }}
             className="text-muted hover:text-ink"
           >
-            Sign out ({user.displayName})
+            {t('signOut', { name: user.displayName })}
           </button>
         ) : (
           <button
@@ -155,7 +160,7 @@ function Header() {
             }}
             className="btn-ghost text-xs"
           >
-            Sign in
+            {t('signIn')}
           </button>
         )}
       </nav>
@@ -164,20 +169,22 @@ function Header() {
 }
 
 function Footer() {
+  const t = useTranslations('home');
   return (
     <footer className="px-8 py-6 text-xs text-muted/50 border-t border-ink/5 flex items-center justify-between">
-      <span>Sora lets you see the world. DreamReel lets you see your unconscious.</span>
-      <span>Built for MiniMax Week 2026</span>
+      <span>{t('footerTagline')}</span>
+      <span>{t('footerCredit')}</span>
     </footer>
   );
 }
 
 function ErrorPanel({ message, onRetry }: { message: string; onRetry: () => void }) {
+  const t = useTranslations('errors');
   return (
     <div className="text-center space-y-6 max-w-md">
-      <p className="font-serif text-3xl text-ink">The dream refused to be filmed.</p>
+      <p className="font-serif text-3xl text-ink">{t('loadFailed')}</p>
       <p className="text-sm text-muted">{message}</p>
-      <button onClick={onRetry} className="btn-primary">Try another</button>
+      <button onClick={onRetry} className="btn-primary">{t('tryAgain')}</button>
     </div>
   );
 }

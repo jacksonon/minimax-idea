@@ -1,0 +1,105 @@
+{
+  "common": {
+    "appName": "DreamReel",
+    "appTagline": "告诉我你的梦。我来拍。"
+  },
+  "nav": {
+    "myDreams": "我的梦境",
+    "signIn": "登录",
+    "signOut": "退出（{name}）"
+  },
+  "home": {
+    "heroTitle": "描述你的梦。",
+    "heroSubtitle": "按住按钮，最长说 60 秒。",
+    "heroPitch": "我们为你拍成片。30 秒，4 个模型，一部电影。",
+    "typeLabel": "或者打字",
+    "typePlaceholder": "我在一个上下颠倒的图书馆里，楼梯是用 water 做的……",
+    "send": "发送这个梦",
+    "sendHint": "再多说一点。梦至少要有一瞬间。",
+    "footerTagline": "Sora 让你看见世界。DreamReel 让你看见自己的潜意识。",
+    "footerCredit": "为 MiniMax Week 2026 打造"
+  },
+  "recorder": {
+    "idle": {
+      "title": "描述你的梦。",
+      "hint": "按住按钮，最长说 60 秒。",
+      "pitch": "我们为你拍成片。30 秒，4 个模型，一部电影。"
+    },
+    "recording": {
+      "release": "讲完了就松开。"
+    },
+    "transcribing": {
+      "title": "正在回听……",
+      "hint": "把梦变成文字。"
+    }
+  },
+  "generator": {
+    "stages": {
+      "screenplay": "正在写剧本……",
+      "scene-1": "正在拍摄第 1 场（共 4 场）……",
+      "scene-2": "正在拍摄第 2 场……",
+      "scene-3": "正在拍摄第 3 场……",
+      "scene-4": "正在拍摄第 4 场……",
+      "music": "正在谱曲……",
+      "voiceover": "正在录制旁白……",
+      "compositing": "正在合成最终版……"
+    }
+  },
+  "player": {
+    "saveToMine": "保存到我的梦境",
+    "saved": "已保存",
+    "makeAnother": "再做一次",
+    "share": "分享",
+    "copyLink": "复制分享链接",
+    "copied": "已复制",
+    "shareCreated": "分享链接已创建",
+    "transcriptLabel": "原始描述"
+  },
+  "dreams": {
+    "title": "我的梦境",
+    "loading": "加载中……",
+    "empty": {
+      "title": "还没有梦。",
+      "hint": "今晚记住一个。",
+      "cta": "记录一个梦"
+    },
+    "noVideo": "无视频",
+    "today": "今天",
+    "yesterday": "昨天",
+    "daysAgo": "{n} 天前",
+    "weeksAgo": "{n} 周前"
+  },
+  "dream": {
+    "backToList": "← 返回我的梦境",
+    "back": "← 返回",
+    "copyLink": "复制分享链接",
+    "copied": "已复制",
+    "delete": "删除",
+    "deleteConfirm": "删除这个梦？",
+    "noVideo": "无视频"
+  },
+  "share": {
+    "title": "这个梦已经消散。",
+    "hint": "链接可能已过期或被删除。",
+    "cta": "做你自己的梦 →",
+    "loading": "加载中……",
+    "sharedBy": "由 @{name} 分享",
+    "expiresIn": "{n} 小时后过期"
+  },
+  "errors": {
+    "loadFailed": "这个梦已经消散。",
+    "networkError": "无法连接梦工厂。再试一次？",
+    "tryAgain": "重试"
+  },
+  "theme": {
+    "switchToLight": "切换到日间模式",
+    "switchToDark": "切换到夜间模式"
+  },
+  "mode": {
+    "slideshow": "幻灯片模式",
+    "slideshowTitle": "H3 视频模型未启用。梦境以 30 秒幻灯片 + 旁白 + 音乐的形式呈现。"
+  },
+  "auth": {
+    "loginFailed": "登录失败，请重试。"
+  }
+}

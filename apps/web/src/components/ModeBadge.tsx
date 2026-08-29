@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useTranslations } from '@/i18n/shim';
 import { api } from '@/lib/api';
 import { useStore } from '@/lib/store';
 
@@ -17,6 +18,7 @@ import { useStore } from '@/lib/store';
 export function ModeBadge() {
   const h3Enabled = useStore((s) => s.h3Enabled);
   const setH3Enabled = useStore((s) => s.setH3Enabled);
+  const t = useTranslations('mode');
 
   // Poll health on mount to learn the current mode.
   useEffect(() => {
@@ -31,11 +33,11 @@ export function ModeBadge() {
 
   return (
     <div
-      className="fixed top-4 right-4 z-50 flex items-center gap-2 rounded-full border border-amber/30 bg-bg/80 backdrop-blur px-3 py-1.5 text-[10px] uppercase tracking-widest text-amber"
-      title="H3 video model is not enabled. Dreams are rendered as 30-second slideshows with voice and music."
+      className="fixed top-4 left-4 z-50 flex items-center gap-2 rounded-full border border-amber/30 bg-bg/80 backdrop-blur px-3 py-1.5 text-[10px] uppercase tracking-widest text-amber"
+      title={t('slideshowTitle')}
     >
       <span className="inline-block h-1.5 w-1.5 rounded-full bg-amber" />
-      Slideshow mode
+      {t('slideshow')}
     </div>
   );
 }

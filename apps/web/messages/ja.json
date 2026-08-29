@@ -1,0 +1,105 @@
+{
+  "common": {
+    "appName": "DreamReel",
+    "appTagline": "夢を教えて。それを映画にします。"
+  },
+  "nav": {
+    "myDreams": "マイドリーム",
+    "signIn": "ログイン",
+    "signOut": "ログアウト（{name}）"
+  },
+  "home": {
+    "heroTitle": "夢を語ってください。",
+    "heroSubtitle": "ボタンを押して、最大 60 秒話してください。",
+    "heroPitch": "30 秒、4 つのモデル、1 本の映画に。",
+    "typeLabel": "または入力",
+    "typePlaceholder": "逆さまの図書館を飛んでいた、階段は water でできていた……",
+    "send": "この夢を送る",
+    "sendHint": "もう少し詳しく。夢には瞬間が必要です。",
+    "footerTagline": "Sora は世界を見せます。DreamReel はあなたの無意識を見せます。",
+    "footerCredit": "MiniMax Week 2026 に向けて制作"
+  },
+  "recorder": {
+    "idle": {
+      "title": "夢を語ってください。",
+      "hint": "ボタンを押して、最大 60 秒話してください。",
+      "pitch": "30 秒、4 つのモデル、1 本の映画に。"
+    },
+    "recording": {
+      "release": "話し終わったら離してください。"
+    },
+    "transcribing": {
+      "title": "聴き取っています……",
+      "hint": "夢を言葉にしています。"
+    }
+  },
+  "generator": {
+    "stages": {
+      "screenplay": "脚本を書いています……",
+      "scene-1": "シーン 1 / 4 を撮影中……",
+      "scene-2": "シーン 2 を撮影中……",
+      "scene-3": "シーン 3 を撮影中……",
+      "scene-4": "シーン 4 を撮影中……",
+      "music": "音楽を作曲中……",
+      "voiceover": "ナレーション録音中……",
+      "compositing": "最終版を編集中……"
+    }
+  },
+  "player": {
+    "saveToMine": "マイドリームに保存",
+    "saved": "保存しました",
+    "makeAnother": "もう一度",
+    "share": "シェア",
+    "copyLink": "リンクをコピー",
+    "copied": "コピーしました",
+    "shareCreated": "共有リンクを作成しました",
+    "transcriptLabel": "元の語り"
+  },
+  "dreams": {
+    "title": "マイドリーム",
+    "loading": "読み込み中……",
+    "empty": {
+      "title": "まだ夢がありません。",
+      "hint": "今夜、ひとつ覚えて。",
+      "cta": "夢を記録する"
+    },
+    "noVideo": "動画なし",
+    "today": "今日",
+    "yesterday": "昨日",
+    "daysAgo": "{n}日前",
+    "weeksAgo": "{n}週間前"
+  },
+  "dream": {
+    "backToList": "← マイドリームに戻る",
+    "back": "← 戻る",
+    "copyLink": "リンクをコピー",
+    "copied": "コピーしました",
+    "delete": "削除",
+    "deleteConfirm": "この夢を削除しますか？",
+    "noVideo": "動画なし"
+  },
+  "share": {
+    "title": "この夢は消えました。",
+    "hint": "リンクの有効期限が切れたか、削除された可能性があります。",
+    "cta": "自分の夢を作る →",
+    "loading": "読み込み中……",
+    "sharedBy": "@{name} さんの共有",
+    "expiresIn": "{n}時間後に期限切れ"
+  },
+  "errors": {
+    "loadFailed": "この夢は消えました。",
+    "networkError": "夢工場に接続できません。もう一度試してください。",
+    "tryAgain": "もう一度"
+  },
+  "theme": {
+    "switchToLight": "ライトモードに切替",
+    "switchToDark": "ダークモードに切替"
+  },
+  "mode": {
+    "slideshow": "スライドショーモード",
+    "slideshowTitle": "H3 動画モデルが有効ではありません。30 秒のスライドショー + ナレーション + 音楽で生成します。"
+  },
+  "auth": {
+    "loginFailed": "ログインに失敗しました。もう一度お試しください。"
+  }
+}

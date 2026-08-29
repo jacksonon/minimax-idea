@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useTranslations } from '@/i18n/shim';
 import { Mic } from 'lucide-react';
 import { MAX_RECORDING_SECONDS, MIN_RECORDING_SECONDS } from '@dreamreel/shared';
 
@@ -9,6 +10,8 @@ type Props = {
 };
 
 export function Recorder({ onSubmit }: Props) {
+  const t = useTranslations('recorder');
+  const tHome = useTranslations('home');
   const [phase, setPhase] = useState<'idle' | 'recording' | 'transcribing'>('idle');
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -84,7 +87,7 @@ export function Recorder({ onSubmit }: Props) {
       text = typed;
     }
     if (!text || text.length < MIN_RECORDING_SECONDS) {
-      setError('Tell me more. Dreams need at least a moment.');
+      setError(tHome('sendHint'));
       setPhase('idle');
       return;
     }
@@ -137,10 +140,10 @@ export function Recorder({ onSubmit }: Props) {
       <div className="text-center space-y-2">
         {phase === 'idle' && (
           <>
-            <p className="font-serif text-3xl text-ink">Describe your dream.</p>
-            <p className="text-sm text-muted">Hold the button, speak for up to 60 seconds.</p>
+            <p className="font-serif text-3xl text-ink">{t('idle.title')}</p>
+            <p className="text-sm text-muted">{t('idle.hint')}</p>
             <p className="text-xs text-muted/60 pt-4 max-w-sm">
-              We&apos;ll shoot it for you. 30 seconds. 4 models. One movie.
+              {t('idle.pitch')}
             </p>
           </>
         )}
@@ -149,13 +152,13 @@ export function Recorder({ onSubmit }: Props) {
             <p className="font-mono text-5xl text-crimson tabular-nums">
               {String(minutes).padStart(2, '0')}:{String(remSec).padStart(2, '0')}
             </p>
-            <p className="text-sm text-muted">Release when you&apos;ve told it all.</p>
+            <p className="text-sm text-muted">{t('recording.release')}</p>
           </>
         )}
         {phase === 'transcribing' && (
           <>
-            <p className="font-serif text-2xl text-ink">Listening back…</p>
-            <p className="text-sm text-muted">Pulling the dream into words.</p>
+            <p className="font-serif text-2xl text-ink">{t('transcribing.title')}</p>
+            <p className="text-sm text-muted">{t('transcribing.hint')}</p>
           </>
         )}
       </div>
@@ -163,12 +166,12 @@ export function Recorder({ onSubmit }: Props) {
       {error && <p className="text-sm text-rust">{error}</p>}
 
       <div className="w-full max-w-md pt-4">
-        <div className="text-xs uppercase tracking-widest text-muted/60 mb-2">Or type it</div>
+        <div className="text-xs uppercase tracking-widest text-muted/60 mb-2">{tHome('typeLabel')}</div>
         <textarea
           value={transcript}
           onChange={(e) => setTranscript(e.target.value)}
           rows={3}
-          placeholder="I was in an upside-down library, the staircase was made of water…"
+          placeholder={tHome('typePlaceholder')}
           className="w-full bg-transparent border border-ink/15 rounded-lg p-3 text-sm text-ink placeholder:text-muted/40 focus:border-amber/60 focus:outline-none"
         />
         <button
@@ -176,7 +179,7 @@ export function Recorder({ onSubmit }: Props) {
           disabled={transcript.trim().length < MIN_RECORDING_SECONDS}
           className="btn-ghost mt-3 w-full disabled:opacity-30 disabled:cursor-not-allowed"
         >
-          Send this dream
+          {tHome('send')}
         </button>
       </div>
     </div>

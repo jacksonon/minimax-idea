@@ -1,0 +1,105 @@
+{
+  "common": {
+    "appName": "DreamReel",
+    "appTagline": "Erzähl uns deinen Traum. Wir verfilmen ihn."
+  },
+  "nav": {
+    "myDreams": "Meine Träume",
+    "signIn": "Anmelden",
+    "signOut": "Abmelden ({name})"
+  },
+  "home": {
+    "heroTitle": "Beschreibe deinen Traum.",
+    "heroSubtitle": "Halte den Knopf, sprich bis zu 60 Sekunden.",
+    "heroPitch": "Wir verfilmen ihn. 30 Sekunden. 4 Modelle. Ein Film.",
+    "typeLabel": "Oder tippen",
+    "typePlaceholder": "Ich war in einer umgekehrten Bibliothek, die Treppe war aus water…",
+    "send": "Diesen Traum senden",
+    "sendHint": "Erzähl mehr. Träume brauchen mindestens einen Augenblick.",
+    "footerTagline": "Sora zeigt dir die Welt. DreamReel zeigt dir dein Unbewusstes.",
+    "footerCredit": "Gebaut für die MiniMax Week 2026"
+  },
+  "recorder": {
+    "idle": {
+      "title": "Beschreibe deinen Traum.",
+      "hint": "Halte den Knopf, sprich bis zu 60 Sekunden.",
+      "pitch": "Wir verfilmen ihn. 30 Sekunden. 4 Modelle. Ein Film."
+    },
+    "recording": {
+      "release": "Loslassen, wenn du fertig erzählt hast."
+    },
+    "transcribing": {
+      "title": "Höre noch einmal zu…",
+      "hint": "Traum in Worte fassen."
+    }
+  },
+  "generator": {
+    "stages": {
+      "screenplay": "Drehbuch wird geschrieben…",
+      "scene-1": "Szene 1 von 4 wird gedreht…",
+      "scene-2": "Szene 2 von 4 wird gedreht…",
+      "scene-3": "Szene 3 von 4 wird gedreht…",
+      "scene-4": "Szene 4 von 4 wird gedreht…",
+      "music": "Musik wird komponiert…",
+      "voiceover": "Sprache wird aufgenommen…",
+      "compositing": "Schnittfassung wird erstellt…"
+    }
+  },
+  "player": {
+    "saveToMine": "In meinen Träumen speichern",
+    "saved": "Gespeichert",
+    "makeAnother": "Noch einer",
+    "share": "Teilen",
+    "copyLink": "Link kopieren",
+    "copied": "Kopiert",
+    "shareCreated": "Link erstellt",
+    "transcriptLabel": "Originalbeschreibung"
+  },
+  "dreams": {
+    "title": "Meine Träume",
+    "loading": "Lädt…",
+    "empty": {
+      "title": "Noch keine Träume.",
+      "hint": "Denk heute Nacht an einen.",
+      "cta": "Traum aufnehmen"
+    },
+    "noVideo": "Kein Video",
+    "today": "heute",
+    "yesterday": "gestern",
+    "daysAgo": "vor {n}T",
+    "weeksAgo": "vor {n}W"
+  },
+  "dream": {
+    "backToList": "← Zurück zu meinen Träumen",
+    "back": "← Zurück",
+    "copyLink": "Link kopieren",
+    "copied": "Kopiert",
+    "delete": "Löschen",
+    "deleteConfirm": "Diesen Traum löschen?",
+    "noVideo": "Kein Video"
+  },
+  "share": {
+    "title": "Dieser Traum ist verblasst.",
+    "hint": "Der Link ist möglicherweise abgelaufen oder entfernt.",
+    "cta": "Erstelle deinen eigenen Traum →",
+    "loading": "Lädt…",
+    "sharedBy": "Geteilt von @{name}",
+    "expiresIn": "läuft in {n}h ab"
+  },
+  "errors": {
+    "loadFailed": "Dieser Traum ist verblasst.",
+    "networkError": "Traumfabrik nicht erreichbar. Erneut versuchen?",
+    "tryAgain": "Erneut versuchen"
+  },
+  "theme": {
+    "switchToLight": "Zum hellen Modus wechseln",
+    "switchToDark": "Zum dunklen Modus wechseln"
+  },
+  "mode": {
+    "slideshow": "Diashow-Modus",
+    "slideshowTitle": "Das H3-Videomodell ist nicht aktiviert. Träume werden als 30-Sekunden-Diashow mit Stimme und Musik gerendert."
+  },
+  "auth": {
+    "loginFailed": "Anmeldung fehlgeschlagen. Bitte erneut versuchen."
+  }
+}

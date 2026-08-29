@@ -557,6 +557,18 @@ A feature is "done" only when **all** of these are true:
 
 These are patterns agents reach for reflexively. **Don't do them here.**
 
+### Don't claim UI fixes without visually verifying
+
+An agent edits a JSX className, runs `tsc --noEmit`, and pushes. The HTML changes. The agent reports "fixed". But:
+
+- `fixed top-4 left-4` on a child component overlaps the parent header
+- `h-9 w-9` makes the nav bar 50% taller than before
+- The HTML looks correct (`<header>...<button>...</header>`) and `curl` returns 200, but the user sees broken layout
+
+**Before declaring any UI change complete**, visually verify the page in a real browser. This project has the `ego-browser` skill available — use it. Take a screenshot, compare it to the previous state if possible, and confirm the fix actually looks right.
+
+If you can't use a browser, at minimum curl the rendered HTML and check that no element has a class that would overlap existing content (e.g. `fixed *-4` on a component that's also rendered inside a header).
+
 | Anti-pattern | Why it's wrong here | What to do instead |
 |---|---|---|
 | Adding `console.log` for "debugging" | Pollutes Workers logs, costs money | Use `pino` with levels |

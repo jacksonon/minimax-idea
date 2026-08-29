@@ -1,0 +1,105 @@
+{
+  "common": {
+    "appName": "DreamReel",
+    "appTagline": "Racontez votre rêve. Nous le tournerons."
+  },
+  "nav": {
+    "myDreams": "Mes rêves",
+    "signIn": "Se connecter",
+    "signOut": "Se déconnecter ({name})"
+  },
+  "home": {
+    "heroTitle": "Décrivez votre rêve.",
+    "heroSubtitle": "Maintenez le bouton, parlez jusqu'à 60 secondes.",
+    "heroPitch": "Nous le tournerons. 30 secondes. 4 modèles. Un film.",
+    "typeLabel": "Ou écrivez",
+    "typePlaceholder": "J'étais dans une bibliothèque à l'envers, l'escalier était en water…",
+    "send": "Envoyer ce rêve",
+    "sendHint": "Dites-m'en plus. Les rêves ont besoin d'au moins un instant.",
+    "footerTagline": "Sora vous montre le monde. DreamReel vous montre votre inconscient.",
+    "footerCredit": "Conçu pour MiniMax Week 2026"
+  },
+  "recorder": {
+    "idle": {
+      "title": "Décrivez votre rêve.",
+      "hint": "Maintenez le bouton, parlez jusqu'à 60 secondes.",
+      "pitch": "Nous le tournerons. 30 secondes. 4 modèles. Un film."
+    },
+    "recording": {
+      "release": "Relâchez quand vous avez tout dit."
+    },
+    "transcribing": {
+      "title": "Réécoute…",
+      "hint": "Transformer le rêve en mots."
+    }
+  },
+  "generator": {
+    "stages": {
+      "screenplay": "Écriture du scénario…",
+      "scene-1": "Tournage de la scène 1 sur 4…",
+      "scene-2": "Tournage de la scène 2 sur 4…",
+      "scene-3": "Tournage de la scène 3 sur 4…",
+      "scene-4": "Tournage de la scène 4 sur 4…",
+      "music": "Composition de la musique…",
+      "voiceover": "Enregistrement de la voix off…",
+      "compositing": "Assemblage du montage final…"
+    }
+  },
+  "player": {
+    "saveToMine": "Sauvegarder dans mes rêves",
+    "saved": "Sauvegardé",
+    "makeAnother": "Refaire un rêve",
+    "share": "Partager",
+    "copyLink": "Copier le lien",
+    "copied": "Copié",
+    "shareCreated": "Lien créé",
+    "transcriptLabel": "Description originale"
+  },
+  "dreams": {
+    "title": "Mes rêves",
+    "loading": "Chargement…",
+    "empty": {
+      "title": "Aucun rêve pour l'instant.",
+      "hint": "Ce soir, souvenez-vous d'un.",
+      "cta": "Enregistrer un rêve"
+    },
+    "noVideo": "Pas de vidéo",
+    "today": "aujourd'hui",
+    "yesterday": "hier",
+    "daysAgo": "il y a {n}j",
+    "weeksAgo": "il y a {n}sem"
+  },
+  "dream": {
+    "backToList": "← Retour à mes rêves",
+    "back": "← Retour",
+    "copyLink": "Copier le lien",
+    "copied": "Copié",
+    "delete": "Supprimer",
+    "deleteConfirm": "Supprimer ce rêve ?",
+    "noVideo": "Pas de vidéo"
+  },
+  "share": {
+    "title": "Ce rêve s'est évanoui.",
+    "hint": "Le lien a peut-être expiré ou été supprimé.",
+    "cta": "Créez votre propre rêve →",
+    "loading": "Chargement…",
+    "sharedBy": "Partagé par @{name}",
+    "expiresIn": "expire dans {n}h"
+  },
+  "errors": {
+    "loadFailed": "Ce rêve s'est évanoui.",
+    "networkError": "Impossible de joindre l'usine à rêves. Réessayer ?",
+    "tryAgain": "Réessayer"
+  },
+  "theme": {
+    "switchToLight": "Passer en mode clair",
+    "switchToDark": "Passer en mode sombre"
+  },
+  "mode": {
+    "slideshow": "Mode diaporama",
+    "slideshowTitle": "Le modèle vidéo H3 n'est pas activé. Les rêves sont rendus sous forme de diaporama de 30 secondes avec voix et musique."
+  },
+  "auth": {
+    "loginFailed": "Échec de la connexion. Réessayez."
+  }
+}

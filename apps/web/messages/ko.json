@@ -1,0 +1,105 @@
+{
+  "common": {
+    "appName": "DreamReel",
+    "appTagline": "당신의 꿈을 알려주세요. 저희가 찍어드립니다."
+  },
+  "nav": {
+    "myDreams": "내 꿈들",
+    "signIn": "로그인",
+    "signOut": "로그아웃 ({name})"
+  },
+  "home": {
+    "heroTitle": "당신의 꿈을 묘사하세요.",
+    "heroSubtitle": "버튼을 누른 채 최대 60초간 말하세요.",
+    "heroPitch": "30초, 4개 모델, 한 편의 영화로 만들어 드립니다.",
+    "typeLabel": "또는 입력",
+    "typePlaceholder": "거꾸로 된 도서관을 날고 있었고, 계단은 water 로 만들어져 있었다…",
+    "send": "이 꿈 보내기",
+    "sendHint": "조금만 더 알려주세요. 꿈에는 순간이 필요합니다.",
+    "footerTagline": "Sora는 세상을 보여줍니다. DreamReel은 당신의 무의식을 보여줍니다.",
+    "footerCredit": "MiniMax Week 2026을 위해 만들어짐"
+  },
+  "recorder": {
+    "idle": {
+      "title": "당신의 꿈을 묘사하세요.",
+      "hint": "버튼을 누른 채 최대 60초간 말하세요.",
+      "pitch": "30초, 4개 모델, 한 편의 영화로 만들어 드립니다."
+    },
+    "recording": {
+      "release": "다 말하면 손을 떼세요."
+    },
+    "transcribing": {
+      "title": "다시 듣는 중…",
+      "hint": "꿈을 글로 옮기는 중."
+    }
+  },
+  "generator": {
+    "stages": {
+      "screenplay": "대본을 쓰는 중…",
+      "scene-1": "장면 1/4 촬영 중…",
+      "scene-2": "장면 2 촬영 중…",
+      "scene-3": "장면 3 촬영 중…",
+      "scene-4": "장면 4 촬영 중…",
+      "music": "음악 작곡 중…",
+      "voiceover": "나레이션 녹음 중…",
+      "compositing": "최종본 편집 중…"
+    }
+  },
+  "player": {
+    "saveToMine": "내 꿈에 저장",
+    "saved": "저장됨",
+    "makeAnother": "다시 만들기",
+    "share": "공유",
+    "copyLink": "공유 링크 복사",
+    "copied": "복사됨",
+    "shareCreated": "공유 링크 생성됨",
+    "transcriptLabel": "원본 설명"
+  },
+  "dreams": {
+    "title": "내 꿈들",
+    "loading": "불러오는 중…",
+    "empty": {
+      "title": "아직 꿈이 없습니다.",
+      "hint": "오늘 밤, 하나 기억하세요.",
+      "cta": "꿈 기록하기"
+    },
+    "noVideo": "영상 없음",
+    "today": "오늘",
+    "yesterday": "어제",
+    "daysAgo": "{n}일 전",
+    "weeksAgo": "{n}주 전"
+  },
+  "dream": {
+    "backToList": "← 내 꿈으로",
+    "back": "← 뒤로",
+    "copyLink": "공유 링크 복사",
+    "copied": "복사됨",
+    "delete": "삭제",
+    "deleteConfirm": "이 꿈을 삭제할까요?",
+    "noVideo": "영상 없음"
+  },
+  "share": {
+    "title": "이 꿈은 사라졌습니다.",
+    "hint": "링크가 만료되었거나 삭제되었을 수 있습니다.",
+    "cta": "나만의 꿈 만들기 →",
+    "loading": "불러오는 중…",
+    "sharedBy": "@{name} 님이 공유",
+    "expiresIn": "{n}시간 후 만료"
+  },
+  "errors": {
+    "loadFailed": "이 꿈은 사라졌습니다.",
+    "networkError": "꿈 공방에 연결할 수 없습니다. 다시 시도해 주세요.",
+    "tryAgain": "다시 시도"
+  },
+  "theme": {
+    "switchToLight": "라이트 모드로 전환",
+    "switchToDark": "다크 모드로 전환"
+  },
+  "mode": {
+    "slideshow": "슬라이드쇼 모드",
+    "slideshowTitle": "H3 영상 모델이 비활성화되었습니다. 꿈이 30초 슬라이드쇼 + 내레이션 + 음악으로 생성됩니다."
+  },
+  "auth": {
+    "loginFailed": "로그인 실패. 다시 시도해 주세요."
+  }
+}

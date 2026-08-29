@@ -1,0 +1,105 @@
+{
+  "common": {
+    "appName": "DreamReel",
+    "appTagline": "告訴我你的夢。我來拍。"
+  },
+  "nav": {
+    "myDreams": "我的夢境",
+    "signIn": "登入",
+    "signOut": "登出（{name}）"
+  },
+  "home": {
+    "heroTitle": "描述你的夢。",
+    "heroSubtitle": "按住按鈕，最長說 60 秒。",
+    "heroPitch": "我們為你拍成影片。30 秒，4 個模型，一部電影。",
+    "typeLabel": "或著打字",
+    "typePlaceholder": "我在一個上下顛倒的圖書館裡，樓梯是用 water 做的……",
+    "send": "送出這個夢",
+    "sendHint": "再多說一點。夢至少要有一瞬間。",
+    "footerTagline": "Sora 讓你看見世界。DreamReel 讓你看見自己的潛意識。",
+    "footerCredit": "為 MiniMax Week 2026 打造"
+  },
+  "recorder": {
+    "idle": {
+      "title": "描述你的夢。",
+      "hint": "按住按鈕，最長說 60 秒。",
+      "pitch": "我們為你拍成影片。30 秒，4 個模型，一部電影。"
+    },
+    "recording": {
+      "release": "講完就放開。"
+    },
+    "transcribing": {
+      "title": "正在回聽……",
+      "hint": "把夢變成文字。"
+    }
+  },
+  "generator": {
+    "stages": {
+      "screenplay": "正在寫劇本……",
+      "scene-1": "正在拍攝第 1 場（共 4 場）……",
+      "scene-2": "正在拍攝第 2 場……",
+      "scene-3": "正在拍攝第 3 場……",
+      "scene-4": "正在拍攝第 4 場……",
+      "music": "正在配樂……",
+      "voiceover": "正在錄製旁白……",
+      "compositing": "正在合成最終版……"
+    }
+  },
+  "player": {
+    "saveToMine": "儲存到我的夢境",
+    "saved": "已儲存",
+    "makeAnother": "再做一次",
+    "share": "分享",
+    "copyLink": "複製分享連結",
+    "copied": "已複製",
+    "shareCreated": "分享連結已建立",
+    "transcriptLabel": "原始描述"
+  },
+  "dreams": {
+    "title": "我的夢境",
+    "loading": "載入中……",
+    "empty": {
+      "title": "還沒有夢。",
+      "hint": "今晚記住一個。",
+      "cta": "記錄一個夢"
+    },
+    "noVideo": "無影片",
+    "today": "今天",
+    "yesterday": "昨天",
+    "daysAgo": "{n} 天前",
+    "weeksAgo": "{n} 週前"
+  },
+  "dream": {
+    "backToList": "← 返回我的夢境",
+    "back": "← 返回",
+    "copyLink": "複製分享連結",
+    "copied": "已複製",
+    "delete": "刪除",
+    "deleteConfirm": "刪除這個夢？",
+    "noVideo": "無影片"
+  },
+  "share": {
+    "title": "這個夢已經消散。",
+    "hint": "連結可能已過期或被刪除。",
+    "cta": "做你自己的夢 →",
+    "loading": "載入中……",
+    "sharedBy": "由 @{name} 分享",
+    "expiresIn": "{n} 小時後過期"
+  },
+  "errors": {
+    "loadFailed": "這個夢已經消散。",
+    "networkError": "無法連線夢工廠。再試一次？",
+    "tryAgain": "重試"
+  },
+  "theme": {
+    "switchToLight": "切換到日間模式",
+    "switchToDark": "切換到夜間模式"
+  },
+  "mode": {
+    "slideshow": "幻燈片模式",
+    "slideshowTitle": "H3 影片模型未啟用。夢境以 30 秒幻燈片 + 旁白 + 音樂呈現。"
+  },
+  "auth": {
+    "loginFailed": "登入失敗，請重試。"
+  }
+}

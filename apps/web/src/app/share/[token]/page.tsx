@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useTranslations } from '@/i18n/shim';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { LocaleSwitcher } from '@/components/LocaleSwitcher';
 
 type ShareData = {
   dream: {
@@ -16,6 +19,7 @@ type ShareData = {
 };
 
 export default function SharePage() {
+  const t = useTranslations('share');
   const params = useParams<{ token: string }>();
   const [data, setData] = useState<ShareData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -32,21 +36,25 @@ export default function SharePage() {
     return (
       <main className="min-h-screen flex items-center justify-center px-6">
         <div className="text-center space-y-4">
-          <p className="font-serif text-3xl">This dream has faded.</p>
-          <p className="text-sm text-muted">The link may have expired or been removed.</p>
-          <Link href="/" className="btn-primary inline-flex">Make your own dream →</Link>
+          <p className="font-serif text-3xl">{t('title')}</p>
+          <p className="text-sm text-muted">{t('hint')}</p>
+          <Link href="/" className="btn-primary inline-flex">{t('cta')}</Link>
         </div>
       </main>
     );
   }
   if (!data) {
-    return <main className="p-12 text-muted text-center">Loading…</main>;
+    return <main className="p-12 text-muted text-center">{t('loading')}</main>;
   }
 
   return (
     <main className="min-h-screen px-6 py-12 max-w-3xl mx-auto">
-      <div className="text-center mb-8">
+      <div className="flex items-center justify-between mb-8">
         <Link href="/" className="font-serif text-2xl">DreamReel</Link>
+        <div className="flex items-center gap-2">
+          <LocaleSwitcher />
+          <ThemeToggle />
+        </div>
       </div>
 
       <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-ink/10 mb-6">
@@ -66,7 +74,7 @@ export default function SharePage() {
       </blockquote>
 
       <div className="text-center pt-8">
-        <Link href="/" className="btn-primary inline-flex">Make your own dream →</Link>
+        <Link href="/" className="btn-primary inline-flex">{t('cta')}</Link>
       </div>
     </main>
   );

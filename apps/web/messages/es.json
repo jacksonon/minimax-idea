@@ -1,0 +1,105 @@
+{
+  "common": {
+    "appName": "DreamReel",
+    "appTagline": "Cuéntame tu sueño. Lo filmaremos."
+  },
+  "nav": {
+    "myDreams": "Mis sueños",
+    "signIn": "Iniciar sesión",
+    "signOut": "Cerrar sesión ({name})"
+  },
+  "home": {
+    "heroTitle": "Describe tu sueño.",
+    "heroSubtitle": "Mantén pulsado el botón, habla hasta 60 segundos.",
+    "heroPitch": "Lo filmaremos. 30 segundos. 4 modelos. Una película.",
+    "typeLabel": "O escríbelo",
+    "typePlaceholder": "Estaba en una biblioteca al revés, la escalera era de water…",
+    "send": "Enviar este sueño",
+    "sendHint": "Cuéntame más. Los sueños necesitan al menos un instante.",
+    "footerTagline": "Sora te muestra el mundo. DreamReel te muestra tu inconsciente.",
+    "footerCredit": "Hecho para MiniMax Week 2026"
+  },
+  "recorder": {
+    "idle": {
+      "title": "Describe tu sueño.",
+      "hint": "Mantén pulsado el botón, habla hasta 60 segundos.",
+      "pitch": "Lo filmaremos. 30 segundos. 4 modelos. Una película."
+    },
+    "recording": {
+      "release": "Suelta cuando lo hayas contado todo."
+    },
+    "transcribing": {
+      "title": "Escuchando de nuevo…",
+      "hint": "Pasando el sueño a palabras."
+    }
+  },
+  "generator": {
+    "stages": {
+      "screenplay": "Escribiendo el guion…",
+      "scene-1": "Rodando escena 1 de 4…",
+      "scene-2": "Rodando escena 2 de 4…",
+      "scene-3": "Rodando escena 3 de 4…",
+      "scene-4": "Rodando escena 4 de 4…",
+      "music": "Componiendo la música…",
+      "voiceover": "Grabando la narración…",
+      "compositing": "Montando la versión final…"
+    }
+  },
+  "player": {
+    "saveToMine": "Guardar en mis sueños",
+    "saved": "Guardado",
+    "makeAnother": "Hacer otro",
+    "share": "Compartir",
+    "copyLink": "Copiar enlace",
+    "copied": "Copiado",
+    "shareCreated": "Enlace creado",
+    "transcriptLabel": "Descripción original"
+  },
+  "dreams": {
+    "title": "Mis sueños",
+    "loading": "Cargando…",
+    "empty": {
+      "title": "Aún no hay sueños.",
+      "hint": "Esta noche, recuerda uno.",
+      "cta": "Grabar un sueño"
+    },
+    "noVideo": "Sin vídeo",
+    "today": "hoy",
+    "yesterday": "ayer",
+    "daysAgo": "hace {n}d",
+    "weeksAgo": "hace {n}sem"
+  },
+  "dream": {
+    "backToList": "← Volver a mis sueños",
+    "back": "← Volver",
+    "copyLink": "Copiar enlace",
+    "copied": "Copiado",
+    "delete": "Eliminar",
+    "deleteConfirm": "¿Eliminar este sueño?",
+    "noVideo": "Sin vídeo"
+  },
+  "share": {
+    "title": "Este sueño se ha desvanecido.",
+    "hint": "El enlace puede haber caducado o sido eliminado.",
+    "cta": "Crea tu propio sueño →",
+    "loading": "Cargando…",
+    "sharedBy": "Compartido por @{name}",
+    "expiresIn": "caduca en {n}h"
+  },
+  "errors": {
+    "loadFailed": "Este sueño se ha desvanecido.",
+    "networkError": "No se pudo contactar la fábrica de sueños. ¿Reintentar?",
+    "tryAgain": "Reintentar"
+  },
+  "theme": {
+    "switchToLight": "Cambiar a modo claro",
+    "switchToDark": "Cambiar a modo oscuro"
+  },
+  "mode": {
+    "slideshow": "Modo diapositiva",
+    "slideshowTitle": "El modelo de vídeo H3 no está activado. Los sueños se generan como diapositivas de 30 segundos con voz y música."
+  },
+  "auth": {
+    "loginFailed": "Inicio de sesión fallido. Inténtalo de nuevo."
+  }
+}

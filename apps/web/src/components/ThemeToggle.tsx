@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from '@/i18n/shim';
 import { Sun, Moon } from 'lucide-react';
 
 /**
@@ -10,6 +11,7 @@ import { Sun, Moon } from 'lucide-react';
  * on the next page load.
  */
 export function ThemeToggle() {
+  const t = useTranslations('theme');
   // Default to dark for SSR; real value populates after mount.
   const [isDark, setIsDark] = useState(true);
 
@@ -33,8 +35,8 @@ export function ThemeToggle() {
     <button
       onClick={toggle}
       className="inline-flex items-center justify-center h-8 w-8 rounded-full border border-ink/20 text-ink/80 hover:text-amber hover:border-amber/40 transition"
-      aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-      title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      aria-label={isDark ? t('switchToLight') : t('switchToDark')}
+      title={isDark ? t('switchToLight') : t('switchToDark')}
     >
       {isDark ? <Sun className="h-4 w-4" strokeWidth={1.5} /> : <Moon className="h-4 w-4" strokeWidth={1.5} />}
     </button>

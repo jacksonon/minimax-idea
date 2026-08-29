@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useTranslations } from '@/i18n/shim';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { LocaleSwitcher } from '@/components/LocaleSwitcher';
 import { api } from '@/lib/api';
 
 type Dream = {
@@ -16,6 +19,8 @@ type Dream = {
 };
 
 export default function DreamDetail() {
+  const t = useTranslations('dream');
+  const tPlayer = useTranslations('player');
   const params = useParams<{ id: string }>();
   const [dream, setDream] = useState<Dream | null>(null);
   const [copied, setCopied] = useState(false);
@@ -40,14 +45,20 @@ export default function DreamDetail() {
 
   return (
     <main className="min-h-screen px-6 py-12 max-w-4xl mx-auto">
-      <Link href="/dreams" className="text-sm text-muted hover:text-amber">← Back to my dreams</Link>
+      <div className="flex items-center justify-between mb-8">
+        <Link href="/dreams" className="text-sm text-muted hover:text-amber">← {t('backToList')}</Link>
+        <div className="flex items-center gap-2">
+          <LocaleSwitcher />
+          <ThemeToggle />
+        </div>
+      </div>
 
       <div className="mt-8 space-y-8">
         <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-ink/10">
           {dream.videoUrl ? (
             <video src={dream.videoUrl} controls className="h-full w-full" />
           ) : (
-            <div className="flex h-full items-center justify-center text-muted">No video</div>
+            <div className="flex h-full items-center justify-center text-muted">{t('noVideo')}</div>
           )}
         </div>
 
@@ -62,24 +73,24 @@ export default function DreamDetail() {
         </blockquote>
 
         <details className="text-sm text-muted">
-          <summary className="cursor-pointer hover:text-ink">Transcript</summary>
+          <summary className="cursor-pointer hover:text-ink">{tPlayer('transcriptLabel')}</summary>
           <p className="pt-3 font-serif whitespace-pre-wrap">{dream.transcript}</p>
         </details>
 
         <div className="flex gap-3">
           <button onClick={handleShare} className="btn-ghost">
-            {copied ? 'Copied ✓' : 'Copy share link'}
+            {copied ? `${t('copied')} ✓` : t('copyLink')}
           </button>
           <button
             onClick={async () => {
-              if (confirm('Delete this dream?')) {
+              if (confirm(t('deleteConfirm'))) {
                 await api.remove(dream.id);
                 window.location.href = '/dreams';
               }
             }}
             className="btn-danger"
           >
-            Delete
+            {t('delete')}
           </button>
         </div>
       </div>

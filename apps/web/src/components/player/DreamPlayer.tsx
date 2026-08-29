@@ -1,11 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from '@/i18n/shim';
 import { useStore } from '@/lib/store';
 import { api } from '@/lib/api';
 import { EMOTION_TAGS } from '@dreamreel/shared';
 
 export function DreamPlayer() {
+  const t = useTranslations('player');
   const { current, setStage, reset } = useStore();
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -81,18 +83,18 @@ export function DreamPlayer() {
 
       <div className="flex flex-wrap gap-3 pt-4">
         <button onClick={handleSave} className="btn-primary">
-          {saved ? 'Saved ✓' : 'Save to my dreams'}
+          {saved ? `${t('saved')} ✓` : t('saveToMine')}
         </button>
         <button onClick={() => { reset(); setStage('idle'); }} className="btn-ghost">
-          Make another
+          {t('makeAnother')}
         </button>
         {shareUrl ? (
           <button onClick={handleCopy} className="btn-ghost">
-            {copied ? 'Copied ✓' : 'Copy share link'}
+            {copied ? `${t('copied')} ✓` : t('copyLink')}
           </button>
         ) : (
           <button onClick={handleShare} disabled={sharing} className="btn-ghost">
-            {sharing ? 'Creating…' : 'Share'}
+            {sharing ? 'Creating…' : t('share')}
           </button>
         )}
       </div>
@@ -102,7 +104,7 @@ export function DreamPlayer() {
       )}
 
       <details className="pt-4 text-xs text-muted/60">
-        <summary className="cursor-pointer hover:text-ink">Original transcript</summary>
+        <summary className="cursor-pointer hover:text-ink">{t('transcriptLabel')}</summary>
         <p className="pt-2 font-serif text-sm text-muted whitespace-pre-wrap">{current.transcript}</p>
       </details>
     </div>

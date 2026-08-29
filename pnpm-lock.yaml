@@ -105,7 +105,7 @@ importers:
         version: 8.5.26
       tailwindcss:
         specifier: ^3.4.17
-        version: 3.4.19(tsx@4.23.12)
+        version: 3.4.19
       typescript:
         specifier: ^5.6.3
         version: 5.9.3
@@ -114,7 +114,7 @@ importers:
         version: 2.1.9(@types/node@22.20.1)
       wrangler:
         specifier: ^4.127.0
-        version: 4.127.0(@cloudflare/workers-types@5.20260828.1)
+        version: 4.127.0
 
   packages/shared: {}
 
@@ -2971,13 +2971,12 @@ snapshots:
       camelcase-css: 2.0.1
       postcss: 8.5.26
 
-  postcss-load-config@6.0.1(jiti@1.21.7)(postcss@8.5.26)(tsx@4.23.12):
+  postcss-load-config@6.0.1(jiti@1.21.7)(postcss@8.5.26):
     dependencies:
       lilconfig: 3.1.3
     optionalDependencies:
       jiti: 1.21.7
       postcss: 8.5.26
-      tsx: 4.23.12
 
   postcss-nested@6.2.0(postcss@8.5.26):
     dependencies:
@@ -3188,7 +3187,7 @@ snapshots:
       react: 18.3.1
       use-sync-external-store: 1.6.0(react@18.3.1)
 
-  tailwindcss@3.4.19(tsx@4.23.12):
+  tailwindcss@3.4.19:
     dependencies:
       '@alloc/quick-lru': 5.2.0
       arg: 5.0.2
@@ -3207,7 +3206,7 @@ snapshots:
       postcss: 8.5.26
       postcss-import: 15.1.0(postcss@8.5.26)
       postcss-js: 4.1.0(postcss@8.5.26)
-      postcss-load-config: 6.0.1(jiti@1.21.7)(postcss@8.5.26)(tsx@4.23.12)
+      postcss-load-config: 6.0.1(jiti@1.21.7)(postcss@8.5.26)
       postcss-nested: 6.2.0(postcss@8.5.26)
       postcss-selector-parser: 6.1.4
       resolve: 1.22.12
@@ -3368,6 +3367,22 @@ snapshots:
       '@cloudflare/workerd-linux-64': 1.20260826.1
       '@cloudflare/workerd-linux-arm64': 1.20260826.1
       '@cloudflare/workerd-windows-64': 1.20260826.1
+
+  wrangler@4.127.0:
+    dependencies:
+      '@cloudflare/kv-asset-handler': 0.5.0
+      '@cloudflare/unenv-preset': 2.16.1(unenv@2.0.0-rc.24)(workerd@1.20260826.1)
+      blake3-wasm: 2.1.5
+      esbuild: 0.28.1
+      miniflare: 5.20260826.0-alpha
+      path-to-regexp: 6.3.0
+      unenv: 2.0.0-rc.24
+      workerd: 1.20260826.1
+    optionalDependencies:
+      fsevents: 2.3.3
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
 
   wrangler@4.127.0(@cloudflare/workers-types@5.20260828.1):
     dependencies:

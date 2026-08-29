@@ -1,0 +1,105 @@
+{
+  "common": {
+    "appName": "DreamReel",
+    "appTagline": "Tell me your dream. We'll shoot it for you."
+  },
+  "nav": {
+    "myDreams": "My dreams",
+    "signIn": "Sign in",
+    "signOut": "Sign out ({name})"
+  },
+  "home": {
+    "heroTitle": "Describe your dream.",
+    "heroSubtitle": "Hold the button, speak for up to 60 seconds.",
+    "heroPitch": "We'll shoot it for you. 30 seconds. 4 models. One movie.",
+    "typeLabel": "Or type it",
+    "typePlaceholder": "I was in an upside-down library, the staircase was made of water…",
+    "send": "Send this dream",
+    "sendHint": "Tell me more. Dreams need at least a moment.",
+    "footerTagline": "Sora lets you see the world. DreamReel lets you see your unconscious.",
+    "footerCredit": "Built for MiniMax Week 2026"
+  },
+  "recorder": {
+    "idle": {
+      "title": "Describe your dream.",
+      "hint": "Hold the button, speak for up to 60 seconds.",
+      "pitch": "We'll shoot it for you. 30 seconds. 4 models. One movie."
+    },
+    "recording": {
+      "release": "Release when you've told it all."
+    },
+    "transcribing": {
+      "title": "Listening back…",
+      "hint": "Pulling the dream into words."
+    }
+  },
+  "generator": {
+    "stages": {
+      "screenplay": "Writing the screenplay…",
+      "scene-1": "Shooting scene 1 of 4…",
+      "scene-2": "Shooting scene 2 of 4…",
+      "scene-3": "Shooting scene 3 of 4…",
+      "scene-4": "Shooting scene 4 of 4…",
+      "music": "Scoring the music…",
+      "voiceover": "Recording the voiceover…",
+      "compositing": "Assembling the final cut…"
+    }
+  },
+  "player": {
+    "saveToMine": "Save to my dreams",
+    "saved": "Saved",
+    "makeAnother": "Make another",
+    "share": "Share",
+    "copyLink": "Copy share link",
+    "copied": "Copied",
+    "shareCreated": "Share link created",
+    "transcriptLabel": "Original transcript"
+  },
+  "dreams": {
+    "title": "My dreams",
+    "loading": "Loading…",
+    "empty": {
+      "title": "No dreams yet.",
+      "hint": "Tonight, remember one.",
+      "cta": "Record a dream"
+    },
+    "noVideo": "No video",
+    "today": "today",
+    "yesterday": "yesterday",
+    "daysAgo": "{n}d ago",
+    "weeksAgo": "{n}w ago"
+  },
+  "dream": {
+    "backToList": "← Back to my dreams",
+    "back": "← Back",
+    "copyLink": "Copy share link",
+    "copied": "Copied",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this dream?",
+    "noVideo": "No video"
+  },
+  "share": {
+    "title": "This dream has faded.",
+    "hint": "The link may have expired or been removed.",
+    "cta": "Make your own dream →",
+    "loading": "Loading…",
+    "sharedBy": "Shared by @{name}",
+    "expiresIn": "expires in {n}h"
+  },
+  "errors": {
+    "loadFailed": "This dream has faded.",
+    "networkError": "Couldn't reach the dream factory. Try again?",
+    "tryAgain": "Try another"
+  },
+  "theme": {
+    "switchToLight": "Switch to light mode",
+    "switchToDark": "Switch to dark mode"
+  },
+  "mode": {
+    "slideshow": "Slideshow mode",
+    "slideshowTitle": "H3 video model is not enabled. Dreams are rendered as 30-second slideshows with voice and music."
+  },
+  "auth": {
+    "loginFailed": "Sign in failed. Please try again."
+  }
+}
