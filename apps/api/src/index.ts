@@ -14,6 +14,7 @@ import { cors } from 'hono/cors';
 import { authRoutes } from './routes/auth.js';
 import { dreamsRoutes } from './routes/dreams.js';
 import { mediaRoutes } from './routes/media.js';
+import { settingsRoutes } from './routes/settings.js';
 import { ai } from './services/ai/index.js';
 
 export type Bindings = {
@@ -65,6 +66,7 @@ function buildApp(): Hono<AppEnv> {
   app.route('/', authRoutes);
   app.route('/', dreamsRoutes);
   app.route('/', mediaRoutes);
+  app.route('/', settingsRoutes);
 
   app.notFound((c) => c.json({ error: 'Not found' }, 404));
   app.onError((err, c) => {

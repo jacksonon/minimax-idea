@@ -17,8 +17,12 @@ echo "→ Building $APP_DIR…"
 echo "→ Assembling static deploy dir…"
 rm -rf "$APP_DIR/.pages-deploy"
 mkdir -p "$APP_DIR/.pages-deploy"
-cp "$APP_DIR/.next/server/app/index.html"  "$APP_DIR/.pages-deploy/index.html"
-cp "$APP_DIR/.next/server/app/dreams.html" "$APP_DIR/.pages-deploy/dreams.html"
+# Copy every prerendered static page (anything that ends in .html in
+# the app/ output, except the dynamic route subdirs like [id] and [token]).
+for f in "$APP_DIR"/.next/server/app/*.html; do
+  name=$(basename "$f")
+  cp "$f" "$APP_DIR/.pages-deploy/$name"
+done
 mkdir -p "$APP_DIR/.pages-deploy/_next"
 cp -r "$APP_DIR/.next/static" "$APP_DIR/.pages-deploy/_next/static"
 

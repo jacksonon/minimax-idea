@@ -59,7 +59,20 @@ export type HealthResponse = {
   canGenerate?: boolean;
   /** True when the server requires a logged-in user (default: true). */
   needsAuth?: boolean;
+  /** True when the logged-in user has stored a GMI API key in their account. */
+  hasKey?: boolean;
   note?: string;
+};
+
+export type SettingsResponse = {
+  hasKey: boolean;
+  baseUrl: string;     // never returns the key
+  updatedAt: number | null;
+};
+
+export type UpdateSettingsRequest = {
+  gmiApiKey: string;
+  gmiBaseUrl?: string;
 };
 
 export const api = {
@@ -91,4 +104,13 @@ export const api = {
     }),
 
   logout: () => request<{ ok: boolean }>('/api/auth/logout', { method: 'POST' }),
+
+  // Per-user settings (e.g. their GMI API key)
+  getSettings: () => request<SettingsResponse>('/api/settings'),
+  updateSettings: (body: UpdateSettingsRequest) =>
+    request<SettingsResponse>('/api/settings', {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    }),
+  deleteSettings: () => request<{ ok: boolean }>('/api/settings', { method: 'DELETE' }),
 };

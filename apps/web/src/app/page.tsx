@@ -182,7 +182,7 @@ export default function HomePage() {
 }
 
 function Header() {
-  const { user, setUser } = useStore();
+  const { user, setUser, capability } = useStore();
   const t = useTranslations('nav');
   const tCommon = useTranslations('common');
   return (
@@ -193,6 +193,9 @@ function Header() {
       <nav className="flex items-center gap-3 text-sm text-ink/80">
         <ThemeToggle />
         <LocaleSwitcher />
+        {user && capability.canGenerate && (
+          <a href="/settings" className="hover:text-amber">{t('settings')}</a>
+        )}
         <a href="/dreams" className="hover:text-amber">{t('myDreams')}</a>
         {user ? (
           <button

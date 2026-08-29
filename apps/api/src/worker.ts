@@ -17,6 +17,7 @@
 
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
+import { settingsRoutes } from './routes/settings.js';
 
 type Bindings = {
   DB?: D1Database;
@@ -121,6 +122,14 @@ app.post('/api/auth/logout', (c) => c.json({ ok: true }));
 
 // Share — in the demo we return a stub.
 app.get('/api/share/:token', (c) => c.json({ error: 'Sharing is disabled in static demo deployment.' }, 503));
+
+// /api/settings is also disabled in the demo deployment: without
+// ffmpeg on the host, the pipeline can't run regardless of any
+// configured key. The Settings UI is hidden client-side too (see
+// Capability detection in the web app).
+app.get('/api/settings', (c) => c.json({ error: 'Static demo deployment. Settings are managed at deploy-time, not per-user.', hasKey: false }, 503));
+app.put('/api/settings', (c) => c.json({ error: 'Static demo deployment.' }, 503));
+app.delete('/api/settings', (c) => c.json({ error: 'Static demo deployment.' }, 503));
 
 app.notFound((c) => c.json({ error: 'Not found' }, 404));
 

@@ -569,6 +569,18 @@ An agent edits a JSX className, runs `tsc --noEmit`, and pushes. The HTML change
 
 If you can't use a browser, at minimum curl the rendered HTML and check that no element has a class that would overlap existing content (e.g. `fixed *-4` on a component that's also rendered inside a header).
 
+### GMI API key: per-user, never embedded
+
+The GMI API key that authorizes calls to the MiniMax models **must never be embedded in the application code, wrangler.toml, or any committed file**. The architecture for keys is:
+
+- **Local dev (Node)**: stored in `apps/api/.dev.vars` (gitignored) and read by `env.ts`. The owner of the dev machine supplies their own key.
+- **Self-hosted server** (the path that runs the real pipeline with ffmpeg): each user has their own key, supplied via the Settings UI and stored in D1 / KV keyed by `user_id`. The backend reads the key at request time when calling GMI. A user without a configured key cannot generate.
+- **Demo / static deployment** (Cloudflare Pages + Worker in static-demo mode): the server has no ffmpeg so it cannot run the pipeline regardless. The Settings UI is hidden in this mode because it would be misleading.
+
+The application **must never** ship with a GMI key in the repository, in `wrangler.toml`, in environment variables committed to a public location, or in any user-facing build artifact.
+
+When you see code that reads `process.env.GMI_API_KEY` for "production", that path is only valid for the deployer's own server, not for a multi-tenant deployment. Multi-tenant deployment must look up the key from per-user storage.
+
 | Anti-pattern | Why it's wrong here | What to do instead |
 |---|---|---|
 | Adding `console.log` for "debugging" | Pollutes Workers logs, costs money | Use `pino` with levels |

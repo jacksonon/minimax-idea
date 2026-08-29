@@ -6,7 +6,8 @@
   "nav": {
     "myDreams": "My dreams",
     "signIn": "Sign in",
-    "signOut": "Sign out ({name})"
+    "signOut": "Sign out ({name})",
+    "settings": "Settings"
   },
   "home": {
     "heroTitle": "Describe your dream.",
@@ -113,5 +114,26 @@
     "enableTitle": "Want to generate new dreams?",
     "enableBody": "Run the API locally with FFmpeg available, or deploy a Cloudflare Container that hosts the composite step. Set the GMI_API_KEY secret and the pipeline lights up.",
     "enableCta": "View on GitHub"
+  },
+  "settings": {
+    "title": "Settings",
+    "back": "Back",
+    "notSignedIn": "Please sign in to view settings.",
+    "demoBadge": "Demo deployment",
+    "demoTitle": "Settings are not available in this deployment.",
+    "demoBody": "This is a static demo. The MiniMax API key is configured at deploy time, not per-user. To enable per-user settings, deploy a self-hosted API with ffmpeg support.",
+    "gmiKey": "GMI API key",
+    "configured": "Configured",
+    "notConfigured": "Not set",
+    "updatedAt": "Last updated: {when}",
+    "newKey": "New API key",
+    "newKeyHint": "Your key is stored encrypted in D1, scoped to your account. It is never logged or sent to the client after saving.",
+    "baseUrl": "API base URL",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved.",
+    "remove": "Remove key",
+    "confirmRemove": "Remove your GMI API key? You'll need to set it again to generate new dreams.",
+    "privacyNote": "Your key is sent over HTTPS to the server, stored in your account row, and used only to call the GMI Cloud API on your behalf. It is never included in any response to the browser."
   }
 }

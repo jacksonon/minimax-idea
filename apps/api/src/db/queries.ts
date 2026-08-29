@@ -229,6 +229,53 @@ export async function getShareToken(token: string): Promise<{ dreamId: string; e
   return { dreamId: (row as any).dream_id, expiresAt: (row as any).expires_at };
 }
 
+// ----- per-user settings (GMI key, etc.) -----
+
+export type UserSettings = {
+  gmiApiKey: string;
+  gmiBaseUrl: string | null;
+  updatedAt: number;
+};
+
+export async function getUserSettings(userId: string): Promise<UserSettings | null> {
+  const db = getDb();
+  const row = await db.first(
+    `SELECT gmi_api_key, gmi_base_url, updated_at FROM user_settings WHERE user_id = ?`,
+    [userId],
+  );
+  if (!row) return null;
+  return {
+    gmiApiKey: (row as any).gmi_api_key,
+    gmiBaseUrl: (row as any).gmi_base_url,
+    updatedAt: (row as any).updated_at,
+  };
+}
+
+export async function upsertUserSettings(
+  userId: string,
+  payload: { gmiApiKey: string; gmiBaseUrl?: string | null },
+): Promise<UserSettings> {
+  const db = getDb();
+  const ts = now();
+  const baseUrl = payload.gmiBaseUrl ?? 'https://api.gmicloud.ai';
+  await db.run(
+    `INSERT INTO user_settings (user_id, gmi_api_key, gmi_base_url, updated_at)
+     VALUES (?, ?, ?, ?)
+     ON CONFLICT(user_id) DO UPDATE SET
+       gmi_api_key = excluded.gmi_api_key,
+       gmi_base_url = excluded.gmi_base_url,
+       updated_at = excluded.updated_at`,
+    [userId, payload.gmiApiKey, baseUrl, ts],
+  );
+  return { gmiApiKey: payload.gmiApiKey, gmiBaseUrl: baseUrl, updatedAt: ts };
+}
+
+export async function deleteUserSettings(userId: string): Promise<boolean> {
+  const db = getDb();
+  const res = await db.run(`DELETE FROM user_settings WHERE user_id = ?`, [userId]);
+  return (res.changes ?? 0) > 0;
+}
+
 // ----- row mapping -----
 
 function rowToDream(row: any): Dream {

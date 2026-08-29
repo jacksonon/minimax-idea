@@ -202,4 +202,16 @@ CREATE TABLE IF NOT EXISTS share_tokens (
   expires_at INTEGER NOT NULL,
   FOREIGN KEY (dream_id) REFERENCES dreams(id)
 );
+
+-- Per-user settings. Used to store the GMI API key that the logged-in
+-- user provides for their own dream-generation requests. The key
+-- belongs to the user; the server reads it at request time and never
+-- logs it. The application MUST NEVER ship with a key in the repo.
+CREATE TABLE IF NOT EXISTS user_settings (
+  user_id     TEXT PRIMARY KEY,
+  gmi_api_key  TEXT NOT NULL,
+  gmi_base_url TEXT,
+  updated_at   INTEGER NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
 `;
