@@ -87,9 +87,10 @@
     "expiresIn": "{n} 小時後過期"
   },
   "errors": {
-    "loadFailed": "這個夢已經消散。",
-    "networkError": "無法連線夢工廠。再試一次？",
-    "tryAgain": "重試"
+    "loadFailed": "This dream has faded.",
+    "networkError": "Couldn't reach the dream factory. Try again?",
+    "tryAgain": "Try another",
+    "serverDemoMode": "This deployment can't generate new dreams. Run the API locally or deploy a Cloudflare Container with the composite step."
   },
   "theme": {
     "switchToLight": "切換到日間模式",
@@ -100,6 +101,17 @@
     "slideshowTitle": "H3 影片模型未啟用。夢境以 30 秒幻燈片 + 旁白 + 音樂呈現。"
   },
   "auth": {
-    "loginFailed": "登入失敗，請重試。"
+    "loginFailed": "登入失敗，請重試。",
+    "needSignIn": "Sign in to save your dream. Click OK to continue."
+  },
+  "demo": {
+    "banner": "Demo deployment",
+    "headline": "Watch what DreamReel can make.",
+    "explanation": "This deployment serves pre-rendered demo videos because the live generation pipeline needs to run on a host with FFmpeg. The MiniMax models (M3, H3, Music 3.0, Speech 2.8) are the same; only the composition step differs.",
+    "transcriptLabel": "Original transcript",
+    "moreDreams": "Try another",
+    "enableTitle": "Want to generate new dreams?",
+    "enableBody": "Run the API locally with FFmpeg available, or deploy a Cloudflare Container that hosts the composite step. Set the GMI_API_KEY secret and the pipeline lights up.",
+    "enableCta": "View on GitHub"
   }
 }

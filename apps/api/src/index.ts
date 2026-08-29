@@ -56,6 +56,9 @@ function buildApp(): Hono<AppEnv> {
       env: c.env?.ENVIRONMENT ?? 'development',
       ai: ai.name,
       h3: ai.h3Enabled,
+      canGenerate: true,    // local dev: full pipeline runs
+      needsAuth: false,     // dev mode: anonymous submissions allowed
+      note: 'Local dev server. Full pipeline (M3 + H3/Music/Speech + composite) is active.',
     });
   });
 

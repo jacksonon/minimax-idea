@@ -87,9 +87,10 @@
     "expiresIn": "expire dans {n}h"
   },
   "errors": {
-    "loadFailed": "Ce rêve s'est évanoui.",
-    "networkError": "Impossible de joindre l'usine à rêves. Réessayer ?",
-    "tryAgain": "Réessayer"
+    "loadFailed": "This dream has faded.",
+    "networkError": "Couldn't reach the dream factory. Try again?",
+    "tryAgain": "Try another",
+    "serverDemoMode": "This deployment can't generate new dreams. Run the API locally or deploy a Cloudflare Container with the composite step."
   },
   "theme": {
     "switchToLight": "Passer en mode clair",
@@ -100,6 +101,17 @@
     "slideshowTitle": "Le modèle vidéo H3 n'est pas activé. Les rêves sont rendus sous forme de diaporama de 30 secondes avec voix et musique."
   },
   "auth": {
-    "loginFailed": "Échec de la connexion. Réessayez."
+    "loginFailed": "Échec de la connexion. Réessayez.",
+    "needSignIn": "Sign in to save your dream. Click OK to continue."
+  },
+  "demo": {
+    "banner": "Demo deployment",
+    "headline": "Watch what DreamReel can make.",
+    "explanation": "This deployment serves pre-rendered demo videos because the live generation pipeline needs to run on a host with FFmpeg. The MiniMax models (M3, H3, Music 3.0, Speech 2.8) are the same; only the composition step differs.",
+    "transcriptLabel": "Original transcript",
+    "moreDreams": "Try another",
+    "enableTitle": "Want to generate new dreams?",
+    "enableBody": "Run the API locally with FFmpeg available, or deploy a Cloudflare Container that hosts the composite step. Set the GMI_API_KEY secret and the pipeline lights up.",
+    "enableCta": "View on GitHub"
   }
 }

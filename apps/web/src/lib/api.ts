@@ -54,6 +54,12 @@ export type HealthResponse = {
   env: string;
   ai: 'mock' | 'gmi';
   h3: boolean;
+  /** True when the server is configured to accept new dream generation
+   *  requests. False in static demo / slideshow-only deployments. */
+  canGenerate?: boolean;
+  /** True when the server requires a logged-in user (default: true). */
+  needsAuth?: boolean;
+  note?: string;
 };
 
 export const api = {

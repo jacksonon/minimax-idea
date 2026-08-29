@@ -5,22 +5,51 @@ import { useTranslations } from '@/i18n/shim';
 import { Recorder } from '@/components/recorder/Recorder';
 import { Generator } from '@/components/generator/Generator';
 import { DreamPlayer } from '@/components/player/DreamPlayer';
+import { DemoShowcase } from '@/components/DemoShowcase';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { LocaleSwitcher } from '@/components/LocaleSwitcher';
-import { useStore } from '@/lib/store';
+import { useStore, type Capability } from '@/lib/store';
 import { api, type StatusResponse } from '@/lib/api';
 import { POLL_INTERVAL_MS } from '@dreamreel/shared';
 
 export default function HomePage() {
-  const { stage, current, setStage, setCurrent, user, setUser, reset } = useStore();
+  const t = useTranslations();
+  const {
+    stage, current, setStage, setCurrent,
+    user, setUser, reset,
+    capability, setCapability,
+  } = useStore();
   const [elapsed, setElapsed] = useState(0);
   const startTimeRef = useRef<number>(0);
   const pollRef = useRef<number | null>(null);
 
-  // Boot: who am I?
+  // Boot: who am I + what can the server do?
   useEffect(() => {
-    api.me().then((r) => setUser(r.user)).catch(() => {});
-  }, [setUser]);
+    let mounted = true;
+    Promise.all([
+      api.me().catch(() => ({ user: null })),
+      api.health().catch(() => null),
+    ]).then(([me, health]) => {
+      if (!mounted) return;
+      setUser(me.user);
+      if (health) {
+        const cap: Capability = {
+          canGenerate: health.canGenerate ?? false,
+          needsAuth: health.needsAuth ?? true,
+          // A static demo deployment is identifiable by `ai: 'gmi'` and
+          // canGenerate=false. (We could also surface a separate flag.)
+          needsKey: !health.canGenerate,
+          mode: !health.canGenerate
+            ? 'demo'
+            : health.h3
+              ? 'video'
+              : 'slideshow',
+        };
+        setCapability(cap);
+      }
+    });
+    return () => { mounted = false; };
+  }, [setUser, setCapability]);
 
   // Elapsed counter during generation
   useEffect(() => {
@@ -84,6 +113,23 @@ export default function HomePage() {
   }, [stage, current?.id]);
 
   async function handleSubmit(transcript: string) {
+    // Gate: if the server can't generate, or we need auth but aren't logged
+    // in, short-circuit. (The Recorder/UI is hidden when !canGenerate, but
+    // someone could call this function directly. Defense in depth.)
+    if (!capability.canGenerate) {
+      alert(t('errors.serverDemoMode') || 'Demo deployment: generation is disabled.');
+      return;
+    }
+    if (capability.needsAuth && !user) {
+      // Open a sign-in modal (handled inline for now)
+      const ok = window.confirm(t('auth.needSignIn'));
+      if (ok) {
+        const r = await api.devLogin('dreamer');
+        setUser(r.user);
+      } else {
+        return;
+      }
+    }
     try {
       const r = await api.generate(transcript);
       setCurrent({
@@ -108,7 +154,10 @@ export default function HomePage() {
     <main className="min-h-screen flex flex-col">
       <Header />
       <section className="flex-1 flex items-center justify-center px-6 py-16">
-        {stage === 'idle' && (
+        {stage === 'idle' && !capability.canGenerate && (
+          <DemoShowcase />
+        )}
+        {stage === 'idle' && capability.canGenerate && (
           <div className="w-full max-w-2xl">
             <Recorder onSubmit={handleSubmit} />
           </div>

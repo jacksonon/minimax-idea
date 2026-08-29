@@ -44,7 +44,12 @@ app.get('/health', (c) => c.json({
   env: c.env?.ENVIRONMENT ?? 'production',
   ai: 'gmi',
   h3: c.env?.H3_ENABLED === 'true',
-  note: 'Static demo deployment. Run locally for full E2E.',
+  // Static demo deployment: generation is disabled. To enable, deploy
+  // an API that runs the pipeline (e.g. on a VM with ffmpeg, or as a
+  // Cloudflare Container that hosts the composite step).
+  canGenerate: false,
+  needsAuth: true,
+  note: 'Static demo deployment. POST /api/dreams/generate returns 503. Run the API locally for full E2E.',
 }));
 
 // Static dream list — pre-baked for the demo deployment.
