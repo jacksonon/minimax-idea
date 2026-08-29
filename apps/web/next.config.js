@@ -5,7 +5,10 @@ const nextConfig = {
     // Allow importing workspace package
   },
   env: {
-    NEXT_PUBLIC_API_URL: process.env.API_INTERNAL_URL || 'http://localhost:8787',
+    NEXT_PUBLIC_API_URL:
+      process.env.NEXT_PUBLIC_API_URL ||
+      process.env.API_INTERNAL_URL ||
+      'https://dreamreel-api.right-ai.workers.dev',
   },
 };
 
