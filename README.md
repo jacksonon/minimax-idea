@@ -9,7 +9,7 @@
 
 A Web app that turns a 60-second voice description of a dream into a 30-second AI film — 4 generated scenes, a custom score, a Nolan-esque voiceover. Built in 14 days for the **MiniMax Week 2026** contest (Multimodality track).
 
-[Live demo](#) · [Demo video](docs/demo-script.md) · [Architecture](docs/ARCHITECTURE.md) · [User guide](docs/USER_GUIDE.md)
+[Live demo](#) · [Demo video](docs/demo-script.md) · [Architecture](docs/ARCHITECTURE.md) · [User guide](docs/USER_GUIDE.md) · [Local dev](docs/LOCAL_DEV.md)
 
 ---
 
@@ -164,6 +164,7 @@ dreamreel/
 │   ├── TROUBLESHOOTING.md    Every problem we hit + how we fixed it
 │   ├── CHANGELOG.md          14-day build journal
 │   ├── USER_GUIDE.md         End-user manual (5-min read)
+│   ├── LOCAL_DEV.md          Local dev setup & debugging
 │   └── prompts/              M3 prompt templates (versioned)
 ├── scripts/
 │   └── acceptance.sh         14-check end-to-end smoke test
