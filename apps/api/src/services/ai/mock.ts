@@ -96,7 +96,7 @@ const VOICEOVER_FRAGMENTS: Record<EmotionTag, string[]> = {
     'There is a kind of joy that only exists when you are not sure it is real.',
   ],
   absurd: [
-    'The cat said my father\u2019s voice. I do not know which of them to be afraid of.',
+    'The cat said my father’s voice. I do not know which of them to be afraid of.',
     'In the dream I had a body but no shadow. In the waking I had a shadow but no body.',
     'I was being interviewed in a language I did not speak. Everyone was crying. I think I had said the right thing.',
   ],

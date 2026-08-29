@@ -16,7 +16,7 @@ Total: 3:00.
 
 **Visual**: black screen → white text fades in: "Every morning you forget 4-5 dreams." → next line: "What if one of them became a film?"
 
-**Voiceover (cold, low)**: "Every morning you forget four to five dreams. They vanish like they were never there. We think that\u2019s a waste."
+**Voiceover (cold, low)**: "Every morning you forget four to five dreams. They vanish like they were never there. We think that’s a waste."
 
 **Cut to**: DreamReel logo (slow fade-in over dark grain). Tagline underneath: "Tell me your dream. We'll shoot it for you."
 
@@ -40,7 +40,7 @@ Total: 3:00.
 
 **Action**: hold the mic button. Speak a real dream into it.
 
-> "I was in this library, but the whole thing was upside down. I was flying between the shelves. The staircase was made of water. There was a woman in white who knew my name but wouldn\u2019t say it."
+> "I was in this library, but the whole thing was upside down. I was flying between the shelves. The staircase was made of water. There was a woman in white who knew my name but wouldn’t say it."
 
 **On-screen**: live waveform visualizes, countdown shows 0:60 → 0:00, then a soft click.
 

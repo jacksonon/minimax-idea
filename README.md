@@ -1,6 +1,6 @@
 # DreamReel
 
-> **Tell me your dream. We\u2019ll shoot it for you.**
+> **Tell me your dream. We’ll shoot it for you.**
 
 [![CI](https://github.com/jacksonon/minimax-idea/actions/workflows/ci.yml/badge.svg)](https://github.com/jacksonon/minimax-idea/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -15,7 +15,7 @@ A Web app that turns a 60-second voice description of a dream into a 30-second A
 
 ## What it does
 
-You wake up. You remember a dream. You open DreamReel. You hold a button, describe the dream for 60 seconds, release. 90 seconds later you\u2019re watching a 30-second film of it.
+You wake up. You remember a dream. You open DreamReel. You hold a button, describe the dream for 60 seconds, release. 90 seconds later you’re watching a 30-second film of it.
 
 > *“I was in this library, but the whole thing was upside down. I was flying between the shelves. The staircase was made of water. There was a woman in white who knew my name but wouldn’t say it.”*
 
@@ -25,15 +25,15 @@ becomes
 
 — a 30-second film, in 90 seconds.
 
-## Why it\u2019s a contest entry
+## Why it’s a contest entry
 
 The MiniMax Week judges see ~150 submissions. Most are "another AI video tool" or "another AI chat". DreamReel is neither.
 
-It\u2019s the **only project** that uses four MiniMax models in concert to do something humans have been doing for thousands of years — *remembering dreams* — and the only one that makes that process feel **inevitable** rather than gimmicky.
+It’s the **only project** that uses four MiniMax models in concert to do something humans have been doing for thousands of years — *remembering dreams* — and the only one that makes that process feel **inevitable** rather than gimmicky.
 
 ### Originality (the highest-weighted score)
 
-No one has built this. The four-way intersection of **dream recording** × **AI video** × **AI music** × **AI narration** is empty on the market. We didn\u2019t invent a new model; we invented a new *ritual*.
+No one has built this. The four-way intersection of **dream recording** Ã **AI video** Ã **AI music** Ã **AI narration** is empty on the market. We didn’t invent a new model; we invented a new *ritual*.
 
 ### Model usage (the other highest-weighted score)
 
@@ -60,9 +60,9 @@ No account needed for the first dream. Sign in only when you want to keep it. Th
 
 A single page. One button. Hold to record. Release. Wait. Watch.
 
-The progress bar is honest: it tells you which of the four models is currently working, in plain language. The film appears when it\u2019s done. No "your video is being processed" mystery.
+The progress bar is honest: it tells you which of the four models is currently working, in plain language. The film appears when it’s done. No "your video is being processed" mystery.
 
-If you sign in, you get a **"My Dreams"** page — a grid of every film you\u2019ve made. Each can be rewatched, shared via a 24h link, or deleted.
+If you sign in, you get a **"My Dreams"** page — a grid of every film you’ve made. Each can be rewatched, shared via a 24h link, or deleted.
 
 ---
 

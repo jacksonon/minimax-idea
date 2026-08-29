@@ -2,7 +2,7 @@
 // Used by both apps/web and apps/api. Source of truth for cross-package contracts.
 
 export const APP_NAME = 'DreamReel';
-export const APP_TAGLINE = 'Tell me your dream. We\u2019ll shoot it for you.';
+export const APP_TAGLINE = 'Tell me your dream. We’ll shoot it for you.';
 
 export const MAX_RECORDING_SECONDS = 60;
 export const MIN_RECORDING_SECONDS = 5;
