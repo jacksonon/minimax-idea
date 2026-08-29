@@ -43,11 +43,16 @@ jobs:
         run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Build web
+        # Wipe the previous .next to avoid mixed-hash chunks. With
+        # pnpm's hoisted cache a stale .next can survive a clean
+        # checkout and ship inconsistent page / layout chunks.
         env:
           # Pin the API URL so the bundle always points at the deployed
           # worker, regardless of any local env vars in the runner image.
           NEXT_PUBLIC_API_URL: https://dreamreel-api.right-ai.workers.dev
-        run: pnpm --filter @dreamreel/web build
+        run: |
+          rm -rf apps/web/.next
+          pnpm --filter @dreamreel/web build
 
       - name: Deploy to Cloudflare Pages
         # Invoke wrangler from inside apps/web so the local node_modules/.bin
