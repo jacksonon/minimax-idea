@@ -1,0 +1,68 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PNPM_VERSION: 11.0.8
+  NODE_VERSION: '20'
+
+jobs:
+  pages:
+    name: Build & deploy web to Cloudflare Pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build web
+        env:
+          # Pin the API URL so the bundle always points at the deployed
+          # worker, regardless of any local env vars in the runner image.
+          NEXT_PUBLIC_API_URL: https://dreamreel-api.right-ai.workers.dev
+        run: pnpm --filter @dreamreel/web build
+
+      - name: Publish to Cloudflare Pages
+        # wrangler-action wraps the wrangler CLI. The GitHub-hosted runner
+        # sits on Cloudflare's backbone so the Pages upload is fast, unlike
+        # when running wrangler from a residential network where the upload
+        # can stall.
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: f8b9928e21de9330b1a461081bd4edf5
+          # Pin a known-good wrangler version. 4.127.x is what was used for
+          # the last successful production deployment; 4.127.1 has a known
+          # upload-hang on some networks.
+          wranglerVersion: '4.127.0'
+          # The action's default `command` is `pages deploy <directory>`.
+          # We point it at the prebuilt Next.js .next/ output and skip the
+          # action's own build step.
+          command: >-
+            pages deploy apps/web/.next
+            --project-name dreamreel-web
+            --commit-dirty=true
+            --branch main
