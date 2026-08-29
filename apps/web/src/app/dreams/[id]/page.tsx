@@ -46,7 +46,7 @@ export default function DreamDetail() {
   return (
     <main className="min-h-screen px-6 py-12 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-8">
-        <Link href="/dreams" className="text-sm text-muted hover:text-amber">← {t('backToList')}</Link>
+        <Link href="/dreams" className="text-sm text-muted hover:text-amber">{t('backToList')}</Link>
         <div className="flex items-center gap-2">
           <LocaleSwitcher />
           <ThemeToggle />
