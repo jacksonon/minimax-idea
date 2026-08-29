@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { ModeBadge } from '@/components/ModeBadge';
 import { LocaleSetter } from '@/components/LocaleSetter';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { I18nProvider } from '@/i18n/I18nProvider';
 import { defaultLocale } from '@/i18n/config';
 import enMessages from '../../messages/en.json';
@@ -43,7 +42,6 @@ export default function RootLayout({
       <body className="min-h-screen bg-bg text-ink grain">
         <I18nProvider initialLocale={defaultLocale} initialMessages={enMessages}>
           <ModeBadge />
-          <ThemeToggle />
           <LocaleSetter />
           {children}
         </I18nProvider>
