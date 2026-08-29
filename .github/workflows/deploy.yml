@@ -36,12 +36,11 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        # Pages deploy only needs apps/web's runtime deps + wrangler. We
-        # skip native postinstall scripts (better-sqlite3 etc.) entirely
-        # to avoid pnpm 11's ERR_PNPM_IGNORED_BUILDS surfacing in CI, and
-        # we use the apps/web filter to avoid pulling the api workspace
-        # we don't need here.
-        run: pnpm install --frozen-lockfile --filter @dreamreel/web... --ignore-scripts
+        # Pages deploy only needs apps/web's deps + wrangler. Skip native
+        # postinstall scripts to avoid pnpm 11's ERR_PNPM_IGNORED_BUILDS
+        # hard error in CI (we don't need better-sqlite3, esbuild, or
+        # workerd binaries for a static asset deploy).
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Build web
         env:
@@ -50,24 +49,12 @@ jobs:
           NEXT_PUBLIC_API_URL: https://dreamreel-api.right-ai.workers.dev
         run: pnpm --filter @dreamreel/web build
 
-      - name: Publish to Cloudflare Pages
-        # wrangler-action wraps the wrangler CLI. The GitHub-hosted runner
-        # sits on Cloudflare's backbone so the Pages upload is fast, unlike
-        # when running wrangler from a residential network where the upload
-        # can stall.
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: f8b9928e21de9330b1a461081bd4edf5
-          # Pin a known-good wrangler version. 4.127.x is what was used for
-          # the last successful production deployment; 4.127.1 has a known
-          # upload-hang on some networks.
-          wranglerVersion: '4.127.0'
-          # The action's default `command` is `pages deploy <directory>`.
-          # We point it at the prebuilt Next.js .next/ output and skip the
-          # action's own build step.
-          command: >-
-            pages deploy apps/web/.next
-            --project-name dreamreel-web
-            --commit-dirty=true
-            --branch main
+      - name: Deploy to Cloudflare Pages
+        # Invoke wrangler directly via the workspace's installed copy.
+        # The GitHub-hosted runner sits on Cloudflare's backbone so the
+        # direct-upload of apps/web/.next is fast, unlike from a residential
+        # network where the upload can stall at 14/117 files.
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: f8b9928e21de9330b1a461081bd4edf5
+        run: pnpm exec wrangler pages deploy apps/web/.next --project-name dreamreel-web --commit-dirty=true --branch main
