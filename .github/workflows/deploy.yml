@@ -51,16 +51,30 @@ jobs:
           # worker, regardless of any local env vars in the runner image.
           NEXT_PUBLIC_API_URL: https://dreamreel-api.right-ai.workers.dev
         run: |
-          rm -rf apps/web/.next
+          rm -rf apps/web/.next apps/web/.pages-deploy
           pnpm --filter @dreamreel/web build
+
+      - name: Assemble static deploy dir
+        # The Pages direct-upload expects a flat static directory: prerendered
+        # .html at the root and assets at /_next/static/*. Next.js puts
+        # prerendered HTML in .next/server/app/ and assets in .next/static/,
+        # so we mirror the layout into a .pages-deploy/ directory.
+        # See scripts/deploy-web.sh for the full rationale.
+        run: |
+          mkdir -p apps/web/.pages-deploy/_next
+          for f in apps/web/.next/server/app/*.html; do
+            [ -e "$f" ] || continue
+            cp "$f" "apps/web/.pages-deploy/$(basename "$f")"
+          done
+          cp -r apps/web/.next/static apps/web/.pages-deploy/_next/static
 
       - name: Deploy to Cloudflare Pages
         # Invoke wrangler from inside apps/web so the local node_modules/.bin
         # is on PATH. The GitHub-hosted runner sits on Cloudflare's
-        # backbone so the direct-upload of apps/web/.next is fast, unlike
-        # from a residential network where it can stall at 14/117 files.
+        # backbone so the direct-upload is fast, unlike from a residential
+        # network where it can stall at 14/117 files.
         working-directory: apps/web
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: f8b9928e21de9330b1a461081bd4edf5
-        run: pnpm exec wrangler pages deploy .next --project-name dreamreel-web --commit-dirty=true --branch main
+        run: pnpm exec wrangler pages deploy .pages-deploy --project-name dreamreel-web --commit-dirty=true --branch main
