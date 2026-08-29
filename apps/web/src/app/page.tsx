@@ -196,7 +196,9 @@ function Header() {
         {user && capability.canGenerate && (
           <a href="/settings" className="hover:text-amber">{t('settings')}</a>
         )}
-        <a href="/dreams" className="hover:text-amber">{t('myDreams')}</a>
+        {user && (
+          <a href="/dreams" className="hover:text-amber">{t('myDreams')}</a>
+        )}
         {user ? (
           <button
             onClick={async () => { await api.logout(); setUser(null); }}
