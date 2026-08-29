@@ -3,6 +3,9 @@
 > **Tell me your dream. We\u2019ll shoot it for you.**
 
 [![CI](https://github.com/jacksonon/minimax-idea/actions/workflows/ci.yml/badge.svg)](https://github.com/jacksonon/minimax-idea/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Node 20+](https://img.shields.io/badge/node-20%2B-brightgreen.svg)](https://nodejs.org)
+[![pnpm 11+](https://img.shields.io/badge/pnpm-11%2B-blue.svg)](https://pnpm.io)
 
 A Web app that turns a 60-second voice description of a dream into a 30-second AI film — 4 generated scenes, a custom score, a Nolan-esque voiceover. Built in 14 days for the **MiniMax Week 2026** contest (Multimodality track).
 

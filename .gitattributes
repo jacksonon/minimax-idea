@@ -1,0 +1,27 @@
+# Auto-detect text files, ensure consistent line endings.
+* text=auto eol=lf
+
+# Force LF on shell scripts (CRLF breaks them on Linux/macOS).
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Markdown should keep its line endings.
+*.md text eol=lf
+
+# Binary by default.
+*.mp4 binary
+*.mp3 binary
+*.wav binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.pdf binary
+*.zip binary
+*.tar.gz binary
+
+# Linguist overrides — exclude generated / vendored from GitHub stats.
+package-lock.json linguist-generated
+pnpm-lock.yaml linguist-generated
+*.min.js binary
+*.min.css binary
