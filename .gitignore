@@ -21,8 +21,12 @@ out/
 apps/api/storage/
 apps/api/dev.db
 apps/api/dev.db-journal
+apps/api/dev.db-shm
+apps/api/dev.db-wal
 apps/api/*.db
 apps/api/*.db-journal
+apps/api/*.db-shm
+apps/api/*.db-wal
 
 # demo
 demo-videos/
