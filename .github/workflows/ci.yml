@@ -1,0 +1,145 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Use the locked pnpm version from package.json#packageManager.
+  PNPM_VERSION: 11.0.8
+  NODE_VERSION: '20'
+
+jobs:
+  install:
+    name: Install
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Approve native builds
+        # better-sqlite3 + esbuild need to run their install scripts.
+        # pnpm 11+ requires explicit approval; we bake it into pnpm-workspace.yaml
+        # so this is a sanity check rather than a real step.
+        run: |
+          grep -q "better-sqlite3" pnpm-workspace.yaml && echo "native build approval OK"
+
+      - name: Cache local DB / storage
+        uses: actions/cache@v4
+        with:
+          path: |
+            apps/api/storage
+            apps/api/dev.db*
+          key: ci-storage-${{ github.sha }}
+          restore-keys: |
+            ci-storage-
+
+  typecheck:
+    name: Typecheck
+    needs: install
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+
+  test:
+    name: Test
+    needs: install
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+
+  build:
+    name: Build
+    needs: install
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
+  e2e:
+    name: Acceptance (E2E)
+    needs: [typecheck, test, build]
+    # E2E only runs on main, not on every PR (saves CI minutes).
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Install Playwright Chromium (for any browser-driven checks)
+        run: pnpm --filter @dreamreel/web exec npx --yes playwright install --with-deps chromium || true
+
+      - name: Run acceptance script
+        env:
+          CI: 'true'
+        run: bash scripts/acceptance.sh
+        timeout-minutes: 8
+
+      - name: Upload generated video artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acceptance-dream
+          path: /tmp/final_dream.mp4
+          if-no-files-found: ignore
+          retention-days: 7

@@ -1,0 +1,26 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      runtime:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      dev:
+        patterns:
+          - "@types/*"
+          - "vitest"
+          - "typescript"
+        update-types:
+          - "minor"
+          - "patch"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
