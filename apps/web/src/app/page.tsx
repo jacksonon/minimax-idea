@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Recorder } from '@/components/recorder/Recorder';
 import { Generator } from '@/components/generator/Generator';
 import { DreamPlayer } from '@/components/player/DreamPlayer';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useStore } from '@/lib/store';
 import { api, type StatusResponse } from '@/lib/api';
 import { POLL_INTERVAL_MS } from '@dreamreel/shared';
@@ -136,7 +137,8 @@ function Header() {
       <a href="/" className="font-serif text-2xl tracking-wide">
         Dream<span className="text-amber">Reel</span>
       </a>
-      <nav className="flex items-center gap-6 text-sm text-ink/80">
+      <nav className="flex items-center gap-4 text-sm text-ink/80">
+        <ThemeToggle />
         <a href="/dreams" className="hover:text-amber">My dreams</a>
         {user ? (
           <button

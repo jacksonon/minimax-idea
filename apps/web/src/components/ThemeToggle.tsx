@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react';
 import { Sun, Moon } from 'lucide-react';
 
 /**
- * Small icon button in the top-left corner. Lets the user override the
- * system preference. The choice is persisted in localStorage; the inline
- * script in layout.tsx reads it on the next page load.
+ * Small icon button. Designed to live inside a header/nav (no fixed
+ * positioning) so it never overlaps page content. The choice is
+ * persisted in localStorage; the inline script in layout.tsx reads it
+ * on the next page load.
  */
 export function ThemeToggle() {
   // Default to dark for SSR; real value populates after mount.
@@ -31,7 +32,7 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggle}
-      className="fixed top-4 left-4 z-50 flex items-center justify-center h-9 w-9 rounded-full border border-ink/20 bg-bg/80 backdrop-blur text-ink/80 hover:text-amber hover:border-amber/40 transition"
+      className="inline-flex items-center justify-center h-8 w-8 rounded-full border border-ink/20 text-ink/80 hover:text-amber hover:border-amber/40 transition"
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
     >
