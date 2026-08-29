@@ -6,6 +6,7 @@ import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { env } from './env.js';
+import { ai } from './services/ai/index.js';
 import { dreamsRoutes } from './routes/dreams.js';
 import { mediaRoutes } from './routes/media.js';
 import { authRoutes } from './routes/auth.js';
@@ -20,7 +21,8 @@ app.use('*', cors({
 app.get('/health', (c) => c.json({
   ok: true,
   env: env.ENVIRONMENT,
-  ai: env.AI_PROVIDER,
+  ai: ai.name,
+  h3: ai.h3Enabled,
 }));
 
 app.route('/', authRoutes);

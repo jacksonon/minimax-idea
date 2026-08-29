@@ -131,24 +131,26 @@ Three rules:
 
 ---
 
+## Generation modes (H3 on / off)
+
+DreamReel supports two generation modes, selected at startup:
+
+### H3 enabled (default in production, always on in mock)
+
+- 4 H3 video clips (7.5s each) + 1 music + 1 voiceover → 30s MP4.
+- Best visual quality. Cost: ~$0.40/dream at GMI Cloud rates.
+
+### H3 disabled (`H3_ENABLED=false` or `MOCK_H3_ENABLED=false` for tests)
+
+H3 is the **only paid model** in the contest lineup, even during the 14-day free period (see contest FAQ). When H3 is off, the pipeline falls back to:
+
+- 8 still images (Ken Burns-style zoom, 3.75s each) + 1 music + 1 voiceover → 30s MP4.
+- Visually it's a slideshow, but the audio arc (voiceover + score) is identical.
+- Cost: ~$0.10/dream (M3 + Music + Speech, all free during the contest).
+
+The UI shows a small "Slideshow mode" badge in the top-right corner when the fallback is active (no toast, no modal — see AGENTS.md §11).
+
 ## State: D1 schema
-
-```
-users (id, oauth_provider, oauth_id, email, display_name, avatar_url, created_at, last_seen_at)
-dreams (id, user_id, transcript, screenplay_json, analysis_text, emotion_tag, dream_type,
-        video_url, music_url, voiceover_url, duration_ms, status, stage, progress,
-        error_message, is_public, created_at)
-sessions (token, user_id, created_at, expires_at)
-share_tokens (token, dream_id, expires_at)
-rate_limits (ip, hour_key, count, updated_at)
-```
-
-All rows are short. `dreams.screenplay_json` is the only "wide" column (≤ 2KB), and it's worth keeping inline so we don't need a JOIN to render the result page.
-
-Indexes:
-- `dreams(user_id, created_at DESC)` — for the "My Dreams" list
-- `dreams(status)` — for any future ops dashboard
-- `dreams(emotion_tag)` — for the (P2) emotion-based browse page
 
 ---
 

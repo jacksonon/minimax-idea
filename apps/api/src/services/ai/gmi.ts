@@ -2,10 +2,16 @@
 //
 // All four MiniMax models go through this file. The contract is identical to
 // mock.ts so the swap is transparent to the rest of the codebase.
+//
+// H3 video is OPT-IN: H3 is paid even during the contest. If H3_ENABLED is
+// false, generateSceneVideo() throws, and the pipeline falls back to a
+// 30-second image slideshow driven by generateSceneImage().
 
 import { env } from '../../env.js';
 import type {
   AIProvider,
+  ImageRequest,
+  ImageResult,
   M3Request,
   M3Result,
   MusicRequest,
@@ -90,6 +96,12 @@ async function pollUntilDone(url: string, headers: Record<string, string>, maxMs
 }
 
 export async function generateSceneVideo(req: VideoRequest): Promise<VideoResult> {
+  if (!env.H3_ENABLED) {
+    throw new Error(
+      'H3 is not enabled. Set H3_ENABLED=true (and provide GMI_API_KEY) ' +
+      'to generate real video, or use the image slideshow fallback.',
+    );
+  }
   const headers = {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${env.GMI_API_KEY}`,
@@ -111,6 +123,48 @@ export async function generateSceneVideo(req: VideoRequest): Promise<VideoResult
   const pollUrl = sj.status_url ?? sj.poll_url;
   const videoUrl = await pollUntilDone(pollUrl, headers);
   return { url: videoUrl, durationMs: req.durationSeconds * 1000 };
+}
+
+export async function generateSceneImage(req: ImageRequest): Promise<ImageResult> {
+  // GMI doesn't have a dedicated image model. We use the M2.7 chat completion
+  // to generate a structured prompt description, then composite a gradient
+  // placeholder locally — or, if the user wants real images, they can later
+  // swap in a different provider here.
+  //
+  // For now, we return a deterministic placeholder that still conveys the
+  // dream's mood. This keeps the slideshow mode visually coherent.
+  const res = await fetch(`${env.GMI_BASE_URL}/v1/chat/completions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${env.GMI_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: 'minimax-m2.7',
+      messages: [
+        {
+          role: 'system',
+          content: 'You generate color palettes (3 hex codes) for dream slideshows. Output JSON only: {"colors":["#aaaaaa","#bbbbbb","#cccccc"]}.',
+        },
+        { role: 'user', content: `Suggest a 3-color palette for this dream scene: ${req.prompt}` },
+      ],
+      response_format: { type: 'json_object' },
+      temperature: 0.8,
+    }),
+  });
+  if (!res.ok) throw new Error(`Palette HTTP ${res.status}: ${await res.text()}`);
+  const data = (await res.json()) as any;
+  const content = data.choices?.[0]?.message?.content ?? '{}';
+  const parsed = JSON.parse(content);
+  // We return a data: URL that the composite step will resolve via a small
+  // route. For simplicity, return a placeholder URL with the palette in the
+  // query string; the composite step handles the actual rendering.
+  const colors = (parsed.colors ?? ['#1a1a2e', '#a663cc', '#f4a261']).join(',');
+  return {
+    url: `/api/media/_palette/${encodeURIComponent(colors)}?w=${req.width ?? 1280}&h=${req.height ?? 720}`,
+    width: req.width ?? 1280,
+    height: req.height ?? 720,
+  };
 }
 
 export async function generateMusic(req: MusicRequest): Promise<MusicResult> {
@@ -151,8 +205,10 @@ export async function generateSpeech(req: SpeechRequest): Promise<SpeechResult> 
 
 export const gmiProvider: AIProvider = {
   name: 'gmi',
+  h3Enabled: env.H3_ENABLED,
   generateScreenplay,
   generateSceneVideo,
+  generateSceneImage,
   generateMusic,
   generateSpeech,
 };

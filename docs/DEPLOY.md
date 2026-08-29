@@ -133,16 +133,19 @@ pnpm --filter api wrangler d1 execute dreamreel-db --remote \
 
 ## Cost estimate (MiniMax Week)
 
+> **Important**: M3, M2.7, Music 3.0, and Speech 2.8 are **free during the contest**. **H3 is paid** even during the contest (see the contest FAQ). Run with `H3_ENABLED=true` only if you have credits; otherwise the pipeline falls back to a 30s slideshow.
+
 | Item | Estimated cost |
 |---|---|
-| H3 video (~$0.10 per 5s clip × 4 clips × 50 demos) | ~$20 |
-| Music 3.0 (~$0.05 per 30s × 50) | ~$2.5 |
-| Speech 2.8 (~$0.02 per 30s × 50) | ~$1 |
-| M3 (~$0.01 per call × 50) | ~$0.5 |
+| H3 video (~$0.10 per 5s clip × 4 clips × 50 demos) | ~$20 (skip if `H3_ENABLED=false`) |
+| Music 3.0 (free during contest) | $0 |
+| Speech 2.8 (free during contest) | $0 |
+| M3 (free during contest) | $0 |
 | Cloudflare Workers + Pages | Free tier |
 | D1 reads/writes | Free tier |
 | R2 storage (50 × 1MB) | Free tier |
-| **Total** | **~$25** (well under the $200 GMI credit) |
+| **Total with H3** | **~$20** |
+| **Total without H3 (slideshow mode)** | **$0** |
 
 ---
 

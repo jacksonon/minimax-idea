@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { ModeBadge } from '@/components/ModeBadge';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -22,6 +23,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-bg text-ink grain">
+        <ModeBadge />
         {children}
       </body>
     </html>

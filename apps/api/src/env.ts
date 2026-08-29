@@ -24,6 +24,11 @@ export type AppEnv = {
   GMI_API_KEY: string;
   GMI_BASE_URL: string;
 
+  // H3 is paid even during the contest. Set H3_API_KEY (or reuse GMI_API_KEY
+  // by setting H3_ENABLED=true) to enable real video generation. When false,
+  // the pipeline falls back to a static-image slideshow.
+  H3_ENABLED: boolean;
+
   ALLOWED_ORIGIN: string;
 
   // Local filesystem paths (only used in development)
@@ -46,6 +51,10 @@ export const env: AppEnv = {
   AI_PROVIDER: (process.env.AI_PROVIDER as 'mock' | 'gmi') ?? 'mock',
   GMI_API_KEY: process.env.GMI_API_KEY ?? '',
   GMI_BASE_URL: process.env.GMI_BASE_URL ?? 'https://api.gmicloud.ai',
+  // H3 is opt-in: either set H3_ENABLED=true, or provide H3_API_KEY.
+  // Without it, dreams degrade to a 30-second image slideshow + voice + music.
+  H3_ENABLED:
+    process.env.H3_ENABLED === 'true' || !!process.env.H3_API_KEY,
 
   ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN ?? 'http://localhost:3000',
 

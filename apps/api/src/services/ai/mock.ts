@@ -28,6 +28,8 @@ import { env } from '../../env.js';
 import { putObject } from '../storage.js';
 import type {
   AIProvider,
+  ImageRequest,
+  ImageResult,
   M3Request,
   M3Result,
   MusicRequest,
@@ -351,6 +353,55 @@ function paletteColor(prompt: string, idx: number, r: () => number): string {
   return palette[Math.floor(r() * palette.length)]!;
 }
 
+// ----- Image (slideshow fallback when H3 is not enabled) -----
+
+export async function generateSceneImage(req: ImageRequest): Promise<ImageResult> {
+  const id = nanoid(10);
+  const filename = `clips/${id}.jpg`;
+  const tmpDir = path.join(env.STORAGE_DIR, 'tmp');
+  fs.mkdirSync(tmpDir, { recursive: true });
+  const out = path.join(tmpDir, `${id}.jpg`);
+
+  // Derive a palette from the prompt for visual variety.
+  const seed = hash(req.prompt);
+  const r = rng(seed);
+  const c1 = paletteColor(req.prompt, 0, r);
+  const c2 = paletteColor(req.prompt, 1, r);
+  const c3 = paletteColor(req.prompt, 2, r);
+
+  const W = req.width ?? 1280;
+  const H = req.height ?? 720;
+
+  // 3-color gradient + vignette, single frame as JPEG.
+  // We render an 8-second video and grab the first frame.
+  // Simpler: render a single PNG and convert.
+  const filter = [
+    `color=c=${c1}:s=${W}x${H}:d=0.04:r=24[bg]`,
+    `color=c=${c2}:s=${W}x${H}:d=0.04:r=24,format=yuva420p,colorchannelmixer=aa=0.5[c2]`,
+    `color=c=${c3}:s=${W}x${H}:d=0.04:r=24,format=yuva420p,colorchannelmixer=aa=0.4[c3]`,
+    `[bg][c2]overlay=shortest=1[bg2]`,
+    `[bg2][c3]overlay=shortest=1[ov1]`,
+    `[ov1]vignette=PI/4,eq=contrast=1.05:brightness=-0.02,format=yuvj420p[out]`,
+  ].join(';');
+
+  await runFfmpeg([
+    '-y',
+    '-f', 'lavfi',
+    '-i', `color=c=${c1}:s=${W}x${H}:r=24`,
+    '-t', '0.04',
+    '-filter_complex', filter,
+    '-map', '[out]',
+    '-frames:v', '1',
+    '-q:v', '2',
+    out,
+  ]);
+
+  const buf = fs.readFileSync(out);
+  const { url } = await putObject(filename, buf, 'image/jpeg');
+  try { fs.unlinkSync(out); } catch {}
+  return { url, width: W, height: H };
+}
+
 // ----- Music 3.0: ffmpeg-rendered ambient score -----
 
 const EMOTION_FREQS: Record<EmotionTag, { base: number; harmonics: number[]; bpm: number }> = {
@@ -440,6 +491,7 @@ export async function generateSpeech(req: SpeechRequest): Promise<SpeechResult> 
   const probe = await ffprobeDuration(out);
   const ratio = targetDur / Math.max(probe, 1);
   const stretched = path.join(env.STORAGE_DIR, `voiceover/${id}_30s.wav`);
+  fs.mkdirSync(path.dirname(stretched), { recursive: true });
   if (ratio > 1) {
     // Slow down: chain of atempo 0.5 to stay within safe range.
     const chain = chainAtempo(1 / ratio);
@@ -536,9 +588,13 @@ function runFfmpeg(args: string[]): Promise<void> {
 }
 
 export const mockProvider: AIProvider = {
+  // Mock always "has" H3 in normal use, but can be forced off via env
+  // (used by `scripts/test-modes.sh` to verify the slideshow fallback path).
   name: 'mock',
+  h3Enabled: process.env.MOCK_H3_ENABLED !== 'false',
   generateScreenplay,
   generateSceneVideo,
+  generateSceneImage,
   generateMusic,
   generateSpeech,
 };

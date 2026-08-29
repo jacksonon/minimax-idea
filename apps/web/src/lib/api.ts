@@ -49,6 +49,13 @@ export type DreamListItem = {
 
 export type MeResponse = { user: { id: string; displayName: string; avatarUrl: string | null } | null };
 
+export type HealthResponse = {
+  ok: boolean;
+  env: string;
+  ai: 'mock' | 'gmi';
+  h3: boolean;
+};
+
 export const api = {
   generate: (transcript: string) =>
     request<GenerateResponse>('/api/dreams/generate', {
@@ -68,6 +75,8 @@ export const api = {
   remove: (id: string) => request<{ ok: boolean }>(`/api/dreams/${id}`, { method: 'DELETE' }),
 
   me: () => request<MeResponse>('/api/auth/me'),
+
+  health: () => request<HealthResponse>('/health'),
 
   devLogin: (handle: string) =>
     request<{ user: { id: string; displayName: string; avatarUrl: string | null } }>('/api/auth/dev-login', {
