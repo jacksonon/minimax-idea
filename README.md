@@ -6,7 +6,7 @@
 
 A Web app that turns a 60-second voice description of a dream into a 30-second AI film — 4 generated scenes, a custom score, a Nolan-esque voiceover. Built in 14 days for the **MiniMax Week 2026** contest (Multimodality track).
 
-[Live demo](#) · [Demo video](docs/demo-script.md) · [Architecture](docs/PRD.md)
+[Live demo](#) · [Demo video](docs/demo-script.md) · [Architecture](docs/ARCHITECTURE.md)
 
 ---
 
@@ -151,11 +151,19 @@ dreamreel/
 │   └── shared/               Shared TypeScript types
 ├── docs/
 │   ├── PRD.md                Product spec
+│   ├── ARCHITECTURE.md       Big picture + data flow
+│   ├── API.md                HTTP endpoint reference
 │   ├── AGENTS.md             Engineering rules for AI agents
 │   ├── wireframes.md         ASCII wireframes
 │   ├── DEPLOY.md             15-min deploy guide
 │   ├── demo-script.md        3-min demo video script
+│   ├── SUBMISSION.md         Contest submission checklist
+│   ├── TROUBLESHOOTING.md    Every problem we hit + how we fixed it
+│   ├── CHANGELOG.md          14-day build journal
 │   └── prompts/              M3 prompt templates (versioned)
+├── scripts/
+│   └── acceptance.sh         14-check end-to-end smoke test
+├── .github/workflows/        CI
 ├── AGENTS.md                 Mirror of docs/AGENTS.md for AI tools
 └── README.md
 ```
