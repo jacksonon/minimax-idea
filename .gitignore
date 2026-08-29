@@ -1,0 +1,47 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# builds
+.next/
+dist/
+build/
+out/
+
+# cloudflare / wrangler
+.wrangler/
+.dev.vars
+
+# env
+.env
+.env.local
+.env.*.local
+
+# runtime storage (local dev)
+apps/api/storage/
+apps/api/dev.db
+apps/api/dev.db-journal
+apps/api/*.db
+apps/api/*.db-journal
+
+# demo
+demo-videos/
+*.mp4
+!apps/web/public/*.mp4
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# os
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# misc
+coverage/
+*.tsbuildinfo
+apps/web/tsconfig.tsbuildinfo
