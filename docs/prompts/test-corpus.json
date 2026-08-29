@@ -1,0 +1,154 @@
+{
+  "$schema": "https://dreamreel.app/schemas/test-corpus.v1.json",
+  "version": "1.0",
+  "description": "20 real (lightly anonymized) dream descriptions for evaluating M3 screenplay prompt changes. See AGENTS.md §8.2.",
+  "cases": [
+    {
+      "id": "d01",
+      "transcript": "I was in this library but the whole thing was upside down. I was flying between the shelves. The staircase was made of water. There was a woman in white who knew my name but wouldn't say it.",
+      "source": "r/Dreams (anonymized)",
+      "expected_emotion": "surreal",
+      "expected_dream_type": "flying"
+    },
+    {
+      "id": "d02",
+      "transcript": "I dreamed I was back in high school but I was 40. Everyone was younger than me. The teacher was my dog. I couldn't find the exam room. The bell kept ringing.",
+      "source": "Lucid app public log",
+      "expected_emotion": "absurd",
+      "expected_dream_type": "school-teacher"
+    },
+    {
+      "id": "d03",
+      "transcript": "Something was chasing me through a long corridor. I don't know what. I could feel it behind me but I never saw it. I was running but my legs were moving in slow motion. The corridor was infinite.",
+      "source": "r/Dreams (anonymized)",
+      "expected_emotion": "terror",
+      "expected_dream_type": "being-chased"
+    },
+    {
+      "id": "d04",
+      "transcript": "My grandmother who passed away three years ago was in the kitchen making tea. She was young again, maybe thirty. She didn't say anything. She just smiled and handed me the cup. It was warm.",
+      "source": "user-contributed (with consent)",
+      "expected_emotion": "melancholic",
+      "expected_dream_type": "death"
+    },
+    {
+      "id": "d05",
+      "transcript": "I was falling from a very tall building but I wasn't scared. I could see every window on the way down. People were looking out but they were all me. Different versions of me.",
+      "source": "r/Dreams (anonymized)",
+      "expected_emotion": "cosmic",
+      "expected_dream_type": "falling"
+    },
+    {
+      "id": "d06",
+      "transcript": "Cats everywhere. Hundreds of cats. They were all looking at me and none of them would blink. One of them started speaking in my father's voice. It said 'you forgot the milk.'",
+      "source": "r/Dreams (anonymized)",
+      "expected_emotion": "absurd",
+      "expected_dream_type": "animals"
+    },
+    {
+      "id": "d07",
+      "transcript": "Underwater. I'm breathing but it's strange. The whole ocean is one big library. Fish are reading books. A whale swims past and asks me for a bookmark.",
+      "source": "r/Dreams (anonymized)",
+      "expected_emotion": "surreal",
+      "expected_dream_type": "water"
+    },
+    {
+      "id": "d08",
+      "transcript": "I showed up for my own wedding but I was naked. Everyone was sitting in the pews. My mother was there. She didn't notice. The bride was someone I didn't recognize.",
+      "source": "Day One journal (anonymized)",
+      "expected_emotion": "bliss",
+      "expected_dream_type": "arriving-too-late"
+    },
+    {
+      "id": "d09",
+      "transcript": "All my teeth were falling out. One by one. Into my hand. They were like small white stones. I was putting them in my pocket. The dentist was watching from across the room and she was nodding.",
+      "source": "r/Dreams (anonymized)",
+      "expected_emotion": "melancholic",
+      "expected_dream_type": "teeth-falling-out"
+    },
+    {
+      "id": "d10",
+      "transcript": "I'm in a city I've never been to. The streets are made of bread. The buildings are made of cheese. I can smell my mother's cooking. I follow the smell but it never gets closer.",
+      "source": "r/Dreams (anonymized)",
+      "expected_emotion": "bliss",
+      "expected_dream_type": "unfamiliar-people"
+    },
+    {
+      "id": "d11",
+      "transcript": "I was at a party. Everyone I loved was there but they didn't recognize me. I tried to talk to my best friend. He walked through me like I was smoke.",
+      "source": "r/Dreams (anonymized)",
+      "expected_emotion": "melancholic",
+      "expected_dream_type": "unfamiliar-people"
+    },
+    {
+      "id": "d12",
+      "transcript": "I'm in the middle of a forest. Every tree is on fire but I'm not cold. The flames are blue. There's a deer watching me. It opens its mouth and out comes a star.",
+      "source": "r/Dreams (anonymized)",
+      "expected_emotion": "cosmic",
+      "expected_dream_type": "animals"
+    },
+    {
+      "id": "d13",
+      "transcript": "I was in my childhood bedroom. Everything was the same as when I was eight. The window was open. I could hear my father calling from the yard but when I looked out the yard was just white light.",
+      "source": "r/Dreams (anonymized)",
+      "expected_emotion": "melancholic",
+      "expected_dream_type": "recurring-place"
+    },
+    {
+      "id": "d14",
+      "transcript": "I was a soldier in some war I didn't recognize. The enemy looked exactly like me. They were wearing the same uniform. We were all trying not to shoot.",
+      "source": "r/Dreams (anonymized)",
+      "expected_emotion": "cosmic",
+      "expected_dream_type": "unfamiliar-people"
+    },
+    {
+      "id": "d15",
+      "transcript": "I couldn't move. I was lying in bed. I could see the room clearly. Someone was standing in the corner. They weren't doing anything. They were just there. I wanted to scream but I couldn't.",
+      "source": "r/Dreams (anonymized)",
+      "expected_emotion": "terror",
+      "expected_dream_type": "paralyzed"
+    },
+    {
+      "id": "d16",
+      "transcript": "Everything was fluorescent. The colors were so bright they hurt. Pink grass. Yellow sky. Blue trees. I was walking but I had no shadow. I didn't feel right without the shadow.",
+      "source": "r/Dreams (anonymized)",
+      "expected_emotion": "surreal",
+      "expected_dream_type": "vivid-color"
+    },
+    {
+      "id": "d17",
+      "transcript": "I was on a train. The train was going forever. Every station was a different decade. I could see the 1950s, then the 1990s, then 2050. Everyone was waving at me.",
+      "source": "r/Dreams (anonymized)",
+      "expected_emotion": "bliss",
+      "expected_dream_type": "recurring-place"
+    },
+    {
+      "id": "d18",
+      "transcript": "I was being interviewed on stage. There was a huge audience. They asked me a question in a language I don't speak. I started answering anyway and everyone started crying.",
+      "source": "r/Dreams (anonymized)",
+      "expected_emotion": "bliss",
+      "expected_dream_type": "arriving-too-late"
+    },
+    {
+      "id": "d19",
+      "transcript": "My childhood home but it had a hundred extra rooms. Every room was a different season. One was summer. One was winter. I was looking for something but I forgot what it was.",
+      "source": "r/Dreams (anonymized)",
+      "expected_emotion": "melancholic",
+      "expected_dream_type": "recurring-place"
+    },
+    {
+      "id": "d20",
+      "transcript": "I was on a date with someone I had a crush on in college. We were at a diner. Everything was perfect. Then I realized I had forgotten to wear pants. They didn't care. They just laughed.",
+      "source": "r/Dreams (anonymized)",
+      "expected_emotion": "love",
+      "expected_dream_type": "unfamiliar-people"
+    }
+  ],
+  "evaluation_metrics": {
+    "json_parse_success_rate": "fraction of cases where output parses as valid JSON",
+    "enum_compliance": "fraction where emotion_tag and dream_type are valid enum values",
+    "scene_visual_distinctness": "fraction where 4 scenes have distinct mood values",
+    "voiceover_no_meta_words": "fraction where voiceover.text contains no instance of 'dream' / 'sleep' / 'you dreamed'",
+    "visual_prompt_length_compliance": "fraction where each visual_prompt is ≤ 60 words"
+  }
+}
