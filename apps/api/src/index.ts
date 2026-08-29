@@ -1,50 +1,112 @@
 // DreamReel API — entry point.
-// In dev: tsx src/index.ts (Node HTTP server on :8787).
-// In production: wrangler deploy (Cloudflare Worker; bindings come from wrangler.toml).
+//
+// In dev (Node + tsx): starts an HTTP server on :8787 backed by local
+//   SQLite + filesystem + in-memory KV.
+//
+// In production (Cloudflare Workers, via `wrangler deploy`): exports a
+//   default Worker handler backed by D1 + R2 + KV bindings from wrangler.toml.
+//
+// The dispatch happens by detecting `export default { fetch }` at the bottom.
+// We always build the same Hono app and serve it via either runtime.
 
-import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { env } from './env.js';
-import { ai } from './services/ai/index.js';
+import { authRoutes } from './routes/auth.js';
 import { dreamsRoutes } from './routes/dreams.js';
 import { mediaRoutes } from './routes/media.js';
-import { authRoutes } from './routes/auth.js';
+import { ai } from './services/ai/index.js';
 
-const app = new Hono();
+export type Bindings = {
+  DB?: D1Database;
+  MEDIA?: R2Bucket;
+  KV?: KVNamespace;
+  // Secrets (set via `wrangler secret put`)
+  GMI_API_KEY?: string;
+  // Vars (set in wrangler.toml)
+  ENVIRONMENT?: string;
+  AI_PROVIDER?: 'mock' | 'gmi';
+  GMI_BASE_URL?: string;
+  H3_ENABLED?: string;
+  ALLOWED_ORIGIN?: string;
+  NEXTAUTH_SECRET?: string;
+  DISCORD_WEBHOOK_URL?: string;
+};
 
-app.use('*', cors({
-  origin: env.ALLOWED_ORIGIN,
-  credentials: true,
-}));
+export type AppEnv = {
+  Bindings: Bindings;
+};
 
-app.get('/health', (c) => c.json({
-  ok: true,
-  env: env.ENVIRONMENT,
-  ai: ai.name,
-  h3: ai.h3Enabled,
-}));
+// Build a Hono app. The same Hono instance is used for both runtimes.
+function buildApp(): Hono<AppEnv> {
+  const app = new Hono<AppEnv>();
 
-app.route('/', authRoutes);
-app.route('/', dreamsRoutes);
-app.route('/', mediaRoutes);
+  app.use('*', async (c, next) => {
+    const origin = c.env?.ALLOWED_ORIGIN ?? 'http://localhost:3000';
+    return cors({
+      origin,
+      credentials: true,
+    })(c, next);
+  });
 
-app.notFound((c) => c.json({ error: 'Not found' }, 404));
-app.onError((err, c) => {
-  console.error('[api error]', err);
-  return c.json({ error: err.message || 'Internal error' }, 500);
-});
+  app.get('/health', (c) => {
+    // In Worker mode c.env is the Bindings; in Node mode it's undefined.
+    // The ai module is set up at import time and reflects env vars.
+    return c.json({
+      ok: true,
+      env: c.env?.ENVIRONMENT ?? 'development',
+      ai: ai.name,
+      h3: ai.h3Enabled,
+    });
+  });
 
-const port = Number(process.env.PORT) || 8787;
+  app.route('/', authRoutes);
+  app.route('/', dreamsRoutes);
+  app.route('/', mediaRoutes);
 
-if (env.ENVIRONMENT === 'production') {
-  // Worker export (Cloudflare)
-  // Note: when run via `wrangler dev`, the Worker runtime is used and this
-  // block is bypassed. When built as a Node process for local dev, we use
-  // @hono/node-server below.
+  app.notFound((c) => c.json({ error: 'Not found' }, 404));
+  app.onError((err, c) => {
+    console.error('[api error]', err);
+    return c.json({ error: err.message || 'Internal error' }, 500);
+  });
+
+  return app;
 }
 
-serve({ fetch: app.fetch, port }, (info) => {
-  console.log(`\n  DreamReel API listening on http://localhost:${info.port}`);
-  console.log(`  ENV: ${env.ENVIRONMENT}  AI: ${env.AI_PROVIDER}  CORS: ${env.ALLOWED_ORIGIN}\n`);
-});
+const app = buildApp();
+
+// ---- Cloudflare Worker export ----
+// When this file is bundled by wrangler, it becomes a Worker. We default-
+// export the fetch handler. In Node dev mode (tsx), this export is ignored
+// and the Node server below takes over.
+export default {
+  async fetch(request: Request, env: Bindings, ctx: ExecutionContext): Promise<Response> {
+    return app.fetch(request, { env });
+  },
+} satisfies ExportedHandler<Bindings>;
+
+// ---- Node dev server ----
+// Only runs when this file is executed directly via `node --import tsx`.
+// Guarded by checking that `import.meta.url === process.argv[1]`.
+const isMain = (() => {
+  try {
+    return import.meta.url === `file://${process.argv[1]}`;
+  } catch {
+    return false;
+  }
+})();
+
+if (isMain) {
+  // Lazy-import the Node-only deps so the Worker bundle stays small.
+  // This branch never executes in the Worker runtime.
+  (async () => {
+    const { serve } = await import('@hono/node-server');
+    const port = Number(process.env.PORT) || 8787;
+    serve({ fetch: app.fetch, port }, (info: { port: number }) => {
+      console.log(`\n  DreamReel API listening on http://localhost:${info.port}`);
+      console.log(`  ENV: development  AI: mock  CORS: http://localhost:3000\n`);
+    });
+  })().catch((err) => {
+    console.error('[startup]', err);
+    process.exit(1);
+  });
+}

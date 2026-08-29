@@ -7,29 +7,29 @@ import { createSession, deleteSession, getUserBySession, upsertUser } from '../d
 export const SESSION_COOKIE = 'dreamreel_session';
 export const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
-export function readSessionUser(cookieHeader: string | null | undefined) {
+export async function readSessionUser(cookieHeader: string | null | undefined) {
   if (!cookieHeader) return null;
   const token = parseCookie(cookieHeader, SESSION_COOKIE);
   if (!token) return null;
   return getUserBySession(token);
 }
 
-export function loginAsMock(provider: 'github' | 'google', sub: string) {
+export async function loginAsMock(provider: 'github' | 'google', sub: string) {
   // For local dev: auto-create a "demo" user. In real OAuth we'd parse the
   // provider's user info here. See PRD §7.1.
-  const user = upsertUser({
+  const user = await upsertUser({
     provider,
     oauthId: sub,
     email: `${sub}@${provider}.dev`,
     displayName: sub,
     avatarUrl: null,
   });
-  const token = createSession(user.id, SESSION_TTL_MS);
+  const token = await createSession(user.id, SESSION_TTL_MS);
   return { user, token };
 }
 
 export function logout(token: string) {
-  deleteSession(token);
+  return deleteSession(token);
 }
 
 function parseCookie(header: string, name: string): string | null {

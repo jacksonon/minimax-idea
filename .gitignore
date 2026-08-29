@@ -49,3 +49,5 @@ yarn-error.log*
 coverage/
 *.tsbuildinfo
 apps/web/tsconfig.tsbuildinfo
+*.next
+apps/web/.pages-deploy

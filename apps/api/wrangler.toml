@@ -1,47 +1,52 @@
 name = "dreamreel-api"
-main = "src/index.ts"
+main = "src/worker.ts"
 compatibility_date = "2024-12-02"
 compatibility_flags = ["nodejs_compat"]
 
-# Production environment (PRD §8.6)
-[env.production]
-name = "dreamreel-api"
+# Build the Worker bundle from the local source. We exclude Node-only deps
+# (better-sqlite3, tsx, @hono/node-server) at the bundle level — they are
+# only used in the local dev path inside `src/index.ts` (guarded by
+# import.meta.url === process.argv[1] at the bottom of the file).
 
-# Bindings (PRD §8.6)
-[[env.production.d1_databases]]
+# D1 database (dreams + users + sessions + rate_limits + share_tokens)
+[[d1_databases]]
 binding = "DB"
 database_name = "dreamreel-db"
-database_id = "REPLACE_WITH_D1_ID"
+database_id = "6186c4a3-52c8-4ab0-bdea-b606b313eff3"
 
-[[env.production.r2_buckets]]
+# R2 bucket for video and audio artifacts
+[[r2_buckets]]
 binding = "MEDIA"
 bucket_name = "dreamreel-media"
 
-[[env.production.kv_namespaces]]
+# KV namespace for share tokens and rate limits
+[[kv_namespaces]]
 binding = "KV"
-id = "REPLACE_WITH_KV_ID"
+id = "c625d5edc18d4cea80bb31f82b527079"
 
-# AI provider (production uses real GMI Cloud; for local dev see dev.vars)
-[env.production.vars]
+# Plain environment variables (non-secret)
+[vars]
 ENVIRONMENT = "production"
 AI_PROVIDER = "gmi"
 GMI_BASE_URL = "https://api.gmicloud.ai"
-ALLOWED_ORIGIN = "https://dreamreel.app"
+# H3_ENABLED is opt-in. When false, dreams render as 8-image slideshows.
+# Set to "true" to enable H3 video generation (paid even during the contest).
+H3_ENABLED = "false"
+# CORS allowlist for the deployed web app. Replace with your Pages URL.
+ALLOWED_ORIGIN = "https://dreamreel.pages.dev"
 
-# Secrets — set via `wrangler secret put <NAME>` (NEVER put in this file):
+# Secrets — set these via `wrangler secret put <NAME>`. NEVER commit them.
 #   wrangler secret put GMI_API_KEY
 #   wrangler secret put NEXTAUTH_SECRET
 #   wrangler secret put GITHUB_ID
 #   wrangler secret put GITHUB_SECRET
 #   wrangler secret put GOOGLE_ID
 #   wrangler secret put GOOGLE_SECRET
-#   wrangler secret put DISCORD_WEBHOOK_URL
 
-# Local development (the default `wrangler dev` is fine for most things;
-# for the Hono + Node server see `pnpm --filter api dev`).
+# Local dev environment (use `wrangler dev` to run with these vars).
 [env.dev]
-name = "dreamreel-api-dev"
 [env.dev.vars]
 ENVIRONMENT = "development"
 AI_PROVIDER = "mock"
+H3_ENABLED = "true"
 ALLOWED_ORIGIN = "http://localhost:3000"

@@ -11,12 +11,12 @@ const ENABLED = process.env.RUN_INTEGRATION === '1';
 describe.skipIf(!ENABLED)('dream pipeline (integration)', () => {
   it('runs from a transcript to a final 30s video', async () => {
     resetDb();
-    const dream = createDream({
+    const dream = await createDream({
       userId: null,
       transcript: 'I was flying through a library made of water',
     });
     await runPipeline(dream);
-    const after = getDreamById(dream.id);
+    const after = await getDreamById(dream.id);
     expect(after).toBeTruthy();
     expect(after!.status).toBe('done');
     expect(after!.videoUrl).toBeTruthy();

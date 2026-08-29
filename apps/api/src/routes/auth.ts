@@ -4,11 +4,10 @@
 
 import { Hono } from 'hono';
 import { z } from 'zod';
-import { loginAsMock, logout, SESSION_COOKIE, SESSION_TTL_MS } from '../services/auth.js';
-import { readSessionUser } from '../services/auth.js';
-import { getUserById } from '../db/queries.js';
+import { loginAsMock, logout, readSessionUser, SESSION_COOKIE, SESSION_TTL_MS } from '../services/auth.js';
+import type { Bindings } from '../index.js';
 
-export const authRoutes = new Hono();
+export const authRoutes = new Hono<{ Bindings: Bindings }>();
 
 const devLoginSchema = z.object({
   provider: z.enum(['github', 'google']).optional().default('github'),
@@ -20,7 +19,7 @@ authRoutes.post('/api/auth/dev-login', async (c) => {
   const parsed = devLoginSchema.safeParse(body);
   if (!parsed.success) return c.json({ error: 'Invalid input' }, 400);
 
-  const { user, token } = loginAsMock(parsed.data.provider, parsed.data.handle);
+  const { user, token } = await loginAsMock(parsed.data.provider, parsed.data.handle);
   setSessionCookie(c, token);
   return c.json({ user });
 });
@@ -30,7 +29,7 @@ authRoutes.post('/api/auth/logout', async (c) => {
   if (cookieHeader) {
     for (const part of cookieHeader.split(';')) {
       const [k, v] = part.trim().split('=');
-      if (k === SESSION_COOKIE) logout(decodeURIComponent(v ?? ''));
+      if (k === SESSION_COOKIE) await logout(decodeURIComponent(v ?? ''));
     }
   }
   deleteCookie(c);
@@ -38,7 +37,7 @@ authRoutes.post('/api/auth/logout', async (c) => {
 });
 
 authRoutes.get('/api/auth/me', async (c) => {
-  const user = readSessionUser(c.req.header('cookie'));
+  const user = await readSessionUser(c.req.header('cookie'));
   if (!user) return c.json({ user: null });
   return c.json({ user });
 });
