@@ -1,6 +1,6 @@
 # Submission Checklist — MiniMax Week 2026
 
-> Last update: 2026-08-28. Deadline: **2026-09-06**.
+> Last update: 2026-08-29. Deadline: **2026-09-06**.
 
 ## Status
 
@@ -8,8 +8,11 @@
 - [x] All 4 MiniMax models integrated (M3, H3, Music 3.0, Speech 2.8)
 - [x] Adapter pattern: GMI Cloud for production, mock for local dev
 - [x] E2E works locally: transcript → 30s MP4 in ~90s
-- [x] Public repo at <https://github.com/<owner>/dreamreel>
-- [ ] Deployed to Cloudflare (see [docs/DEPLOY.md](DEPLOY.md))
+- [x] Public repo at <https://github.com/jacksonon/dreamreel>
+- [x] Deployed to Cloudflare — Web at <https://dreamreel-web.pages.dev>, API at <https://dreamreel-api.right-ai.workers.dev>
+- [x] Two 30s demo videos uploaded to R2 (surreal + melancholic) and served from the web app
+- [x] 8-language i18n (en, zh-CN, zh-TW, ja, ko, es, fr, de) with browser auto-detect
+- [x] Light + dark theme with system-preference support
 - [ ] Demo video recorded (script in [docs/demo-script.md](demo-script.md))
 - [ ] Submission form filled
 - [ ] X post published
@@ -54,11 +57,28 @@ A fifth service (FFmpeg) composes the four into a single 30-second MP4.
 
 The product has zero account friction for the first dream and a lightweight 
 GitHub/Google OAuth for archival. It runs on Cloudflare Pages + Workers 
-+ D1 + R2 + KV. Total cost per generation: under $0.20.
++ D1 + R2 + KV. Total cost per generation: under $0.20 in slideshow 
+fallback mode, or under $0.50 with full H3 video.
 
 Why it's a winning entry: no one has built this. The intersection of 
 dream recording × AI video × AI music × AI narration is empty on the 
 market. We didn't invent a new model; we invented a new ritual.
+
+Live deployment:
+- Web app: https://dreamreel-web.pages.dev
+- API: https://dreamreel-api.right-ai.workers.dev
+- Source: https://github.com/jacksonon/minimax-idea
+
+Bonus features beyond the contest baseline:
+- 8-language UI (en, zh-CN, zh-TW, ja, ko, es, fr, de) with auto-detect
+- Light + dark theme that follows system preference
+- Per-user GMI API key storage (D1) so a self-hosted deployment can
+  serve multiple tenants, each with their own key
+- Graceful degradation: if the H3 paid model is unavailable, falls
+  back to an 8-image slideshow with the same audio track
+- Capability gate: in a static-demo deployment, the recorder is
+  hidden and a DemoShowcase with 2 pre-rendered videos is shown
+  instead, so users never see a button that wouldn't work.
 ```
 
 ### X post template

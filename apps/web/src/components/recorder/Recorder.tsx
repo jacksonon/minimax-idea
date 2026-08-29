@@ -53,8 +53,16 @@ export function Recorder({ onSubmit }: Props) {
         setElapsed(e);
         if (e >= MAX_RECORDING_SECONDS) stopRecording();
       }, 100);
-      // Haptic on mobile
-      if (navigator.vibrate) navigator.vibrate(30);
+      // Physical feedback per AGENTS.md §11.
+      if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        // Mobile: tactile pulse.
+        navigator.vibrate(30);
+      } else {
+        // Desktop: synthesized audio click so the button feels physical
+        // even without a touch device. Web Audio API keeps the click
+        // short and inaudible to most users above 30% volume.
+        playClick();
+      }
     } catch (err: any) {
       setError('Microphone access denied. You can also type your dream below.');
     }
@@ -98,6 +106,41 @@ export function Recorder({ onSubmit }: Props) {
     // We use the MediaRecorder-recorded audio but Web Speech API works on a
     // live stream, not a recorded blob, so in this build we let the user type.
     return '';
+  }
+
+  /**
+   * Synthesized "film click" — a short attack-decay envelope on a
+   * 1 kHz sine. Makes the recording button feel like an actual
+   * mechanical shutter on desktop where haptics aren't available.
+   * Reused across presses (singleton AudioContext).
+   */
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  function playClick() {
+    if (typeof window === 'undefined') return;
+    try {
+      if (!audioCtxRef.current) {
+        const Ctor: typeof AudioContext | undefined =
+          (window as any).AudioContext || (window as any).webkitAudioContext;
+        if (!Ctor) return;
+        audioCtxRef.current = new Ctor();
+      }
+      const ctx = audioCtxRef.current;
+      if (ctx.state === 'suspended') ctx.resume();
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1100, now);
+      osc.frequency.exponentialRampToValueAtTime(80, now + 0.08);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.12, now + 0.005);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.13);
+    } catch {
+      // Audio not allowed or unsupported; silently ignore.
+    }
   }
 
   const seconds = Math.floor(elapsed);

@@ -4,7 +4,7 @@
 > **Competition**: MiniMax Week 2026 (GMI Cloud × MiniMax) · Multimodality 赛道
 > **Audience**: AI coding agents (OpenCode primary, Claude Code / Cursor / Codex compatible)
 > **Version**: v1.0 · 2026-08-28
-> **Status**: Active · for the duration of the 14-day build
+> **Status**: Active · ongoing (the original 14-day build window is no longer a hard constraint; we ship iteratively as the project evolves)
 
 This file is the **authoritative technical contract** for any AI agent (or human) writing code in this repository. It defines what you may and may not do, so that no agent makes an architectural decision that contradicts the project plan.
 
@@ -19,7 +19,7 @@ DreamReel is a Web app that turns a 60-second voice description of a dream into 
 - **Stack lock**: Next.js 14 + Cloudflare Pages (frontend), Cloudflare Workers + Hono (backend), D1 (db), R2 (storage), KV (cache/session/rate-limit), ffmpeg Container (video composition).
 - **AI lock**: All generation **must** go through GMI Cloud's MiniMax models. No other AI vendor for core generation.
 - **No-account mode** is the default UX; lightweight OAuth (GitHub/Google) is a soft add-on for "My Dreams" archival.
-- **Time budget**: 14 days. Optimize for **shipping a polished, demoable, complete** product — not for cleverness.
+- **Time budget**: none enforced. Optimize for **shipping a polished, demoable, complete** product — not for cleverness.
 
 Read [`docs/PRD.md`](./docs/PRD.md) before doing anything. It is the single source of truth for product intent. If a task contradicts the PRD, raise the conflict to the human before proceeding.
 
@@ -106,11 +106,12 @@ Pages live in `apps/web/app/`. Allowed pages (per PRD §3.2 / §7.1):
 
 | Route | Component | Notes |
 |---|---|---|
-| `/` | `app/page.tsx` | Landing + main flow |
+| `/` | `app/page.tsx` | Landing + main flow (capability-gated) |
 | `/dreams` | `app/dreams/page.tsx` | My Dreams list (auth required) |
 | `/dreams/[id]` | `app/dreams/[id]/page.tsx` | Dream detail (auth required) |
 | `/share/[token]` | `app/share/[token]/page.tsx` | Public share view (no auth) |
-| `/api/auth/[...nextauth]` | NextAuth handler | Standard |
+| `/settings` | `app/settings/page.tsx` | Per-user GMI key + base URL (auth + capability required) |
+| `/api/auth/[...nextauth]` | NextAuth handler | **Self-hosted only** — Pages static export cannot host this. Available on a Node/Hono deployment; the Pages deploy uses the simpler `/api/auth/dev-login` route instead. |
 
 **Do not** create additional pages (e.g., `/about`, `/pricing`, `/blog`). Out of scope.
 
