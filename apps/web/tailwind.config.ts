@@ -2,20 +2,22 @@ import type { Config } from 'tailwindcss';
 
 const config: Config = {
   content: ['./src/**/*.{ts,tsx}'],
-  darkMode: 'class',
+  // System dark mode first, manual .dark class on <html> as override.
+  // See apps/web/src/app/globals.css for the CSS variables that power it.
+  darkMode: ['selector', '.dark'],
   theme: {
     extend: {
       colors: {
-        bg: '#0A0A0F',
-        ink: '#F4F1EA',
-        muted: '#A8A29E',
+        bg: 'rgb(var(--bg) / <alpha-value>)',
+        ink: 'rgb(var(--ink) / <alpha-value>)',
+        muted: 'rgb(var(--muted) / <alpha-value>)',
         amber: {
-          DEFAULT: '#D4A574',
-          soft: '#B8915E',
+          DEFAULT: 'rgb(var(--amber) / <alpha-value>)',
+          soft: 'rgb(var(--amber-soft) / <alpha-value>)',
         },
-        crimson: '#8B2635',
-        rust: '#C44536',
-        moss: '#5C8068',
+        crimson: 'rgb(var(--crimson) / <alpha-value>)',
+        rust: 'rgb(var(--rust) / <alpha-value>)',
+        moss: 'rgb(var(--moss) / <alpha-value>)',
       },
       fontFamily: {
         serif: ['"IBM Plex Serif"', 'Georgia', 'serif'],
