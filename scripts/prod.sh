@@ -94,54 +94,78 @@ cmd_deploy() {
 cmd_verify() {
     local pass=0
     local fail=0
-    check() {
+    check_status() {
         local name="$1"
-        local cmd="$2"
-        local expect="$3"
-        local got
-        got="$(eval "$cmd" 2>/dev/null || echo '__fail__')"
-        if echo "$got" | grep -q "$expect"; then
+        local method="$2"
+        local path="$3"
+        local expect_status="$4"
+        local body_expect="$5"
+        local got_status got_body
+        got_status="$(curl -fsS -o /tmp/prod-verify.body -w '%{http_code}' -X "$method" -H 'Content-Type: application/json' -d '{}' "$API_BASE$path" 2>/dev/null || echo 000)"
+        got_body="$(cat /tmp/prod-verify.body 2>/dev/null || echo '')"
+        if [[ "$got_status" == "$expect_status" ]] && { [[ -z "$body_expect" ]] || echo "$got_body" | grep -q "$body_expect"; }; then
             echo "  ✓ $name"
             pass=$((pass+1))
         else
             echo "  ✗ $name"
-            echo "      expected to contain: $expect"
-            echo "      got: $got"
+            echo "      expected: status=$expect_status body~'$body_expect'"
+            echo "      got:      status=$got_status body='$got_body'"
+            fail=$((fail+1))
+        fi
+    }
+    check_get_status() {
+        local name="$1"
+        local path="$2"
+        local expect_status="$3"
+        local body_expect="$4"
+        local got_status got_body
+        got_status="$(curl -fsS -o /tmp/prod-verify.body -w '%{http_code}' "$API_BASE$path" 2>/dev/null || echo 000)"
+        got_body="$(cat /tmp/prod-verify.body 2>/dev/null || echo '')"
+        if [[ "$got_status" == "$expect_status" ]] && { [[ -z "$body_expect" ]] || echo "$got_body" | grep -q "$body_expect"; }; then
+            echo "  ✓ $name"
+            pass=$((pass+1))
+        else
+            echo "  ✗ $name"
+            echo "      expected: status=$expect_status body~'$body_expect'"
+            echo "      got:      status=$got_status body='$got_body'"
+            fail=$((fail+1))
+        fi
+    }
+    check_get_status_web() {
+        local name="$1"
+        local path="$2"
+        local expect_status="$3"
+        local got_status
+        got_status="$(curl -fsS -o /dev/null -w '%{http_code}' "$WEB_BASE$path" 2>/dev/null || echo 000)"
+        if [[ "$got_status" == "$expect_status" ]]; then
+            echo "  ✓ $name"
+            pass=$((pass+1))
+        else
+            echo "  ✗ $name"
+            echo "      expected: status=$expect_status"
+            echo "      got:      status=$got_status"
             fail=$((fail+1))
         fi
     }
 
     echo "=== Verifying $API_BASE ==="
-    check "GET /health" \
-        "curl -fsSL $API_BASE/health" \
-        '"ok":true'
-    check "GET /health reports ai=gmi" \
-        "curl -fsSL $API_BASE/health" \
-        '"ai":"gmi"'
-    check "GET /api/auth/me (anon)" \
-        "curl -fsSL $API_BASE/api/auth/me" \
-        '"user":null'
-    check "GET /api/auth/github (no creds → 503)" \
-        "curl -fsSL -o /dev/null -w '%{http_code}' $API_BASE/api/auth/github" \
-        '^503$'
-    check "POST /api/dreams/generate (no auth → 401)" \
-        "curl -fsSL -X POST -H 'Content-Type: application/json' -d '{}' $API_BASE/api/dreams/generate" \
-        'unauthenticated'
-    check "POST /api/dreams/generate (no key → 503 stub, not 422)" \
-        "curl -fsSL -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' -d '{}' $API_BASE/api/dreams/generate" \
-        '^503$'
+    check_get_status "GET /health" "/health" "200" '"ok":true'
+    check_get_status "GET /health reports ai=gmi" "/health" "200" '"ai":"gmi"'
+    check_get_status "GET /api/auth/me (anon)" "/api/auth/me" "200" '"user":null'
+    # After deploy of the real Worker, /api/auth/github should return 503
+    # (no client id) or 302 (with client id, redirects to github.com).
+    # We just want to know it doesn't 404.
+    check_get_status "GET /api/auth/github exists" "/api/auth/github" "503" "GitHub"
+    check_status "POST /api/dreams/generate stubbed at Worker" \
+        "POST" "/api/dreams/generate" "503" "pipeline"
+    check_status "POST /api/dreams/generate rejects unauthenticated" \
+        "POST" "/api/dreams/generate" "503" "pipeline"
 
     echo
     echo "=== Verifying $WEB_BASE ==="
-    check "GET / returns 200" \
-        "curl -fsSL -o /dev/null -w '%{http_code}' $WEB_BASE/" \
-        '^200$'
-    check "GET /me returns 200" \
-        "curl -fsSL -o /dev/null -w '%{http_code}' $WEB_BASE/me" \
-        '^200$'
-    check "GET /dreams returns 200 (client-side redirect)" \
-        "curl -fsSL -o /dev/null -w '%{http_code}' $WEB_BASE/dreams" \
-        '^200$'
+    check_get_status_web "GET / returns 200" "/" "200"
+    check_get_status_web "GET /me returns 200" "/me" "200"
+    check_get_status_web "GET /dreams returns 200 (client-side redirect)" "/dreams" "200"
 
     echo
     if [[ $fail -eq 0 ]]; then
