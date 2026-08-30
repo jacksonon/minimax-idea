@@ -34,7 +34,11 @@ const updateSchema = z.object({
 settingsRoutes.get('/api/settings', async (c) => {
   const user = await readSessionUser(c.req.header('cookie'));
   if (!user) return c.json({ error: 'Unauthorized' }, 401);
-  const s = await getUserSettings(user.id);
+  // Pass the encryption key in so we can decrypt at-rest values.
+  // In production it comes from c.env (Worker secret); in local Node
+  // dev it comes from process.env via .dev.vars.
+  const encKey = c.env?.GMI_ENC_KEY ?? process.env.GMI_ENC_KEY;
+  const s = await getUserSettings(user.id, encKey);
   if (!s) {
     return c.json({ hasKey: false, baseUrl: 'https://api.gmicloud.ai', updatedAt: null });
   }
