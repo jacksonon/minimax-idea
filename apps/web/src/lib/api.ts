@@ -15,6 +15,7 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     const body = await res.json().catch(() => ({}));
     const err = new Error(body?.error || `HTTP ${res.status}`);
     (err as any).status = res.status;
+    (err as any).code = body?.code;
     throw err;
   }
   return res.json() as Promise<T>;

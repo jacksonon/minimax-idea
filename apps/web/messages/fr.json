@@ -95,7 +95,10 @@
     "loadFailed": "Ce rêve s'est effacé.",
     "networkError": "Impossible de joindre l'usine à rêves. Réessayer ?",
     "tryAgain": "Réessayer",
-    "serverDemoMode": "Ce déploiement ne peut pas générer de nouveaux rêves. Lancez l'API en local ou déployez un Cloudflare Container avec l'étape de composition."
+    "serverDemoMode": "Ce déploiement ne peut pas générer de nouveaux rêves. Lancez l'API en local ou déployez un Cloudflare Container avec l'étape de composition.",
+    "needGmiKey": "Avant d'enregistrer un rêve, ajoutez votre clé API GMI dans Compte → Clé API.",
+    "needGmiKeyCta": "Ouvrir les réglages de clé API",
+    "providerInitFailed": "Impossible d'initialiser le fournisseur d'IA. Vérifiez votre clé API et réessayez."
   },
   "theme": {
     "switchToLight": "Passer en mode clair",

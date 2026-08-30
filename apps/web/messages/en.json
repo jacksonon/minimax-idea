@@ -95,7 +95,10 @@
     "loadFailed": "This dream has faded.",
     "networkError": "Couldn't reach the dream factory. Try again?",
     "tryAgain": "Try another",
-    "serverDemoMode": "This deployment can't generate new dreams. Run the API locally or deploy a Cloudflare Container with the composite step."
+    "serverDemoMode": "This deployment can't generate new dreams. Run the API locally or deploy a Cloudflare Container with the composite step.",
+    "needGmiKey": "Add your GMI API key in Account → API key before recording a dream.",
+    "needGmiKeyCta": "Open API key settings",
+    "providerInitFailed": "Couldn't initialize the AI provider. Check your API key and try again."
   },
   "theme": {
     "switchToLight": "Switch to light mode",

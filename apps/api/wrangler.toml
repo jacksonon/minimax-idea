@@ -36,7 +36,7 @@ H3_ENABLED = "false"
 ALLOWED_ORIGIN = "https://dreamreel.pages.dev"
 
 # Secrets — set these via `wrangler secret put <NAME>`. NEVER commit them.
-#   wrangler secret put GMI_API_KEY
+#
 #   wrangler secret put GMI_ENC_KEY     # AES-256-GCM key for at-rest
 #                                        # encryption of user API keys
 #                                        # (any length; SHA-256'd to 32 bytes)
@@ -45,6 +45,12 @@ ALLOWED_ORIGIN = "https://dreamreel.pages.dev"
 #   wrangler secret put GITHUB_CLIENT_SECRET
 #   wrangler secret put GOOGLE_ID
 #   wrangler secret put GOOGLE_SECRET
+#
+# IMPORTANT: do NOT set GMI_API_KEY. The service is a host only —
+# every user must bring their own GMI API key (stored encrypted in
+# D1). If GMI_API_KEY is set, the production API will still refuse
+# to use it for user-initiated dream generation; the routes/dreams
+# handler now requires a per-user key and 422s otherwise.
 
 # Local dev environment (use `wrangler dev` to run with these vars).
 [env.dev]

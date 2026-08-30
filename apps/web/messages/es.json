@@ -95,7 +95,10 @@
     "loadFailed": "Este sueño se ha desvanecido.",
     "networkError": "No se pudo contactar con la fábrica de sueños. ¿Intentar de nuevo?",
     "tryAgain": "Intentar de nuevo",
-    "serverDemoMode": "Este despliegue no puede generar nuevos sueños. Ejecuta la API localmente o despliega un Cloudflare Container con el paso de composición."
+    "serverDemoMode": "Este despliegue no puede generar nuevos sueños. Ejecuta la API localmente o despliega un Cloudflare Container con el paso de composición.",
+    "needGmiKey": "Antes de grabar un sueño, añade tu clave API de GMI en Cuenta → Clave API.",
+    "needGmiKeyCta": "Abrir ajustes de clave API",
+    "providerInitFailed": "No se pudo inicializar el proveedor de IA. Verifica tu clave API e inténtalo de nuevo."
   },
   "theme": {
     "switchToLight": "Cambiar a modo claro",

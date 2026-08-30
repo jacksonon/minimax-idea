@@ -95,7 +95,10 @@
     "loadFailed": "Dieser Traum ist verblasst.",
     "networkError": "Die Traumfabrik ist nicht erreichbar. Erneut versuchen?",
     "tryAgain": "Erneut versuchen",
-    "serverDemoMode": "Dieses Deployment kann keine neuen Träume erzeugen. Führe die API lokal aus oder deploye einen Cloudflare Container mit dem Komposit-Schritt."
+    "serverDemoMode": "Dieses Deployment kann keine neuen Träume erzeugen. Führe die API lokal aus oder deploye einen Cloudflare Container mit dem Komposit-Schritt.",
+    "needGmiKey": "Bevor du einen Traum aufzeichnest, füge deinen GMI-API-Schlüssel unter Konto → API-Schlüssel hinzu.",
+    "needGmiKeyCta": "API-Schlüssel-Einstellungen öffnen",
+    "providerInitFailed": "KI-Anbieter konnte nicht initialisiert werden. Überprüfe deinen API-Schlüssel und versuche es erneut."
   },
   "theme": {
     "switchToLight": "Zum hellen Modus wechseln",

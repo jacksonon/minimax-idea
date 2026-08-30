@@ -7,7 +7,10 @@
 # See: https://developers.cloudflare.com/workers/configuration/secrets/
 
 # GMI Cloud API key (https://console.gmicloud.ai)
-# This single key grants access to all 4 MiniMax models.
+# IMPORTANT: do NOT set this. The service is a host only — every
+# user must bring their own GMI API key (entered at /me?tab=key and
+# stored encrypted in D1). If you fill this in for local dev, the
+# production handler ignores it anyway; just leave it blank.
 GMI_API_KEY=
 
 # GMI Cloud base URL (do not change unless instructed)

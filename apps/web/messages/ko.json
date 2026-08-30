@@ -95,7 +95,10 @@
     "loadFailed": "이 꿈은 사라졌습니다.",
     "networkError": "꿈 공장에 연결할 수 없습니다. 다시 시도하시겠어요?",
     "tryAgain": "다시 시도",
-    "serverDemoMode": "이 배포 환경에서는 새로운 꿈을 생성할 수 없습니다. 로컬에서 API를 실행하거나 합성 단계를 포함한 Cloudflare Container를 배포하세요."
+    "serverDemoMode": "이 배포 환경에서는 새로운 꿈을 생성할 수 없습니다. 로컬에서 API를 실행하거나 합성 단계를 포함한 Cloudflare Container를 배포하세요.",
+    "needGmiKey": "꿈을 생성하기 전에 「계정 → API 키」에서 GMI API 키를 추가하세요.",
+    "needGmiKeyCta": "API 키 설정 열기",
+    "providerInitFailed": "AI 제공자를 초기화할 수 없습니다. API 키를 확인하고 다시 시도해 주세요."
   },
   "theme": {
     "switchToLight": "라이트 모드로 전환",

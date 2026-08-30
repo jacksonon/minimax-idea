@@ -58,7 +58,9 @@ settingsRoutes.put('/api/settings', async (c) => {
   if (!parsed.success) {
     return c.json({ error: 'Invalid input', issues: parsed.error.issues }, 400);
   }
-  const encKey = c.env?.GMI_ENC_KEY;
+  // In production, GMI_ENC_KEY comes from Worker secrets (c.env). In
+  // local Node dev it comes from process.env via .dev.vars.
+  const encKey = c.env?.GMI_ENC_KEY ?? process.env.GMI_ENC_KEY;
   const stored = encrypt(parsed.data.gmiApiKey, encKey);
   const s = await upsertUserSettings(user.id, {
     gmiApiKey: stored,

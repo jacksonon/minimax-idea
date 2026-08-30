@@ -115,17 +115,13 @@ export default function HomePage() {
   }, [stage, current?.id]);
 
   async function handleSubmit(transcript: string) {
-    // Gate: if the server can't generate, or we need auth but aren't logged
-    // in, short-circuit. (The Recorder/UI is hidden when !canGenerate, but
-    // someone could call this function directly. Defense in depth.)
+    // Gate: if the server can't generate, short-circuit. (The Recorder UI
+    // is hidden when !canGenerate, but someone could call this directly.)
     if (!capability.canGenerate) {
       alert(t('errors.serverDemoMode') || 'Demo deployment: generation is disabled.');
       return;
     }
     if (capability.needsAuth && !user) {
-      // Ask the user to sign in via the modal. The modal itself falls back
-      // to a local guest user if the server is unreachable, so this branch
-      // is rare in practice.
       setSignInOpen(true);
       return;
     }
@@ -145,7 +141,23 @@ export default function HomePage() {
       });
       setStage('generating');
     } catch (err: any) {
-      alert(err.message);
+      // Server returned a structured code we can act on.
+      if (err?.code === 'unauthenticated') {
+        setSignInOpen(true);
+        return;
+      }
+      if (err?.code === 'gmi_key_required') {
+        const go = window.confirm(`${t('errors.needGmiKey')}\n\n${t('errors.needGmiKeyCta')}`);
+        if (go) {
+          window.location.href = '/me?tab=key';
+        }
+        return;
+      }
+      if (err?.code === 'provider_init_failed') {
+        alert(t('errors.providerInitFailed') || err.message);
+        return;
+      }
+      alert(err?.message ?? 'Unknown error');
     }
   }
 

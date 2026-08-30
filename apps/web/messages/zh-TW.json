@@ -95,7 +95,10 @@
     "loadFailed": "這個夢已經消散。",
     "networkError": "無法連線到夢工廠。再試一次？",
     "tryAgain": "再試一次",
-    "serverDemoMode": "此部署無法生成新夢境。請在本機執行 API，或部署帶有合成步驟的 Cloudflare 容器。"
+    "serverDemoMode": "此部署無法生成新夢境。請在本機執行 API，或部署帶有合成步驟的 Cloudflare 容器。",
+    "needGmiKey": "生成夢境前，請先在「個人中心 → API 金鑰」中加入你的 GMI API 金鑰。",
+    "needGmiKeyCta": "開啟 API 金鑰設定",
+    "providerInitFailed": "無法初始化 AI 提供方，請檢查你的 API 金鑰後重試。"
   },
   "theme": {
     "switchToLight": "切換到日間模式",

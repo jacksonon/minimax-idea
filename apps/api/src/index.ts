@@ -53,16 +53,27 @@ function buildApp(): Hono<AppEnv> {
   });
 
   app.get('/health', (c) => {
-    // In Worker mode c.env is the Bindings; in Node mode it's undefined.
-    // The ai module is set up at import time and reflects env vars.
+    // Reflect the configured AI provider, but don't fail the health
+    // check if env is missing — that's a configuration issue for
+    // the operator, not a server outage. The dreams route will
+    // refuse to generate without a per-user key and surface the
+    // real error to the user.
+    let aiName: 'mock' | 'gmi' | 'unconfigured' = 'unconfigured';
+    let h3 = false;
+    try {
+      aiName = ai.name;
+      h3 = ai.h3Enabled;
+    } catch {
+      aiName = 'unconfigured';
+    }
     return c.json({
       ok: true,
       env: c.env?.ENVIRONMENT ?? 'development',
-      ai: ai.name,
-      h3: ai.h3Enabled,
-      canGenerate: true,    // local dev: full pipeline runs
-      needsAuth: false,     // dev mode: anonymous submissions allowed
-      note: 'Local dev server. Full pipeline (M3 + H3/Music/Speech + composite) is active.',
+      ai: aiName,
+      h3,
+      canGenerate: true,
+      needsAuth: true,
+      note: 'Local dev server. Full pipeline (M3 + H3/Music/Speech + composite) is active when a per-user GMI key is configured.',
     });
   });
 

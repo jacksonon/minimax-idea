@@ -19,14 +19,13 @@ import { moderate } from '../services/moderation.js';
 import { readSessionUser } from '../services/auth.js';
 import { env } from '../env.js';
 import { makeGmiProvider } from '../services/ai/gmi.js';
-import { ai as defaultAi } from '../services/ai/index.js';
+import { mockProvider } from '../services/ai/mock.js';
 import type { Bindings } from '../index.js';
 
 export const dreamsRoutes = new Hono<{ Bindings: Bindings }>();
 
 const generateSchema = z.object({
   transcript: z.string().min(5).max(2000),
-  anonymous: z.boolean().optional().default(false),
 });
 
 dreamsRoutes.post('/api/dreams/generate', async (c) => {
@@ -36,9 +35,17 @@ dreamsRoutes.post('/api/dreams/generate', async (c) => {
     return c.json({ error: 'Invalid input', issues: parsed.error.issues }, 400);
   }
 
-  const ip = c.req.header('cf-connecting-ip') || c.req.header('x-forwarded-for') || 'unknown';
+  // Authentication required. Anonymous dream submission is not
+  // supported: there's no way to bill the right account or attribute
+  // the dream to a user, and we don't want to spend the service
+  // owner's quota on strangers.
   const user = await readSessionUser(c.req.header('cookie'));
-  const rl = await check(ip, !!user);
+  if (!user) {
+    return c.json({ error: 'Sign in to record a dream.', code: 'unauthenticated' }, 401);
+  }
+
+  const ip = c.req.header('cf-connecting-ip') || c.req.header('x-forwarded-for') || 'unknown';
+  const rl = await check(ip, true);
   if (!rl.allowed) {
     return c.json({ error: 'Rate limit exceeded', limit: rl.limit }, 429);
   }
@@ -48,29 +55,45 @@ dreamsRoutes.post('/api/dreams/generate', async (c) => {
     return c.json({ error: mod.reason }, 422);
   }
 
-  const dream = await createDream({
-    userId: user?.id ?? null,
-    transcript: parsed.data.transcript,
-  });
-
-  // Build a per-user AI provider. Falls back to the deployment-wide
-  // default (and therefore the env-baked GMI key) when the user has
-  // not configured their own, or when the user is anonymous.
-  let ai = defaultAi;
-  if (user) {
-    const settings = await getUserSettings(user.id, c.env?.GMI_ENC_KEY);
-    if (settings?.gmiApiKey) {
-      try {
-        ai = makeGmiProvider({
-          apiKey: settings.gmiApiKey,
-          baseUrl: settings.gmiBaseUrl ?? env.GMI_BASE_URL,
-          h3Enabled: env.H3_ENABLED,
-        });
-      } catch (err) {
-        console.warn(`[dream ${dream.id}] failed to build per-user provider, using default`, err);
-      }
+  // Build a per-user AI provider. Two valid configurations:
+  //   1. AI_PROVIDER=mock (local dev): use the mock provider, no key
+  //      needed. This is for trying out the app without burning real
+  //      GMI credits.
+  //   2. AI_PROVIDER=gmi (production): the user MUST have stored a
+  //      GMI API key in their settings. We never fall back to a
+  //      deployment-wide key — the service owner should not pay for
+  //      other users' generations.
+  const encKey = c.env?.GMI_ENC_KEY ?? process.env.GMI_ENC_KEY;
+  let ai;
+  if (env.AI_PROVIDER === 'mock') {
+    ai = mockProvider;
+  } else {
+    const settings = await getUserSettings(user.id, encKey);
+    if (!settings?.gmiApiKey) {
+      return c.json(
+        {
+          error: 'Add your GMI API key in Account → API key before recording a dream.',
+          code: 'gmi_key_required',
+        },
+        422,
+      );
+    }
+    try {
+      ai = makeGmiProvider({
+        apiKey: settings.gmiApiKey,
+        baseUrl: settings.gmiBaseUrl ?? env.GMI_BASE_URL,
+        h3Enabled: env.H3_ENABLED,
+      });
+    } catch (err) {
+      console.error(`[dream] failed to build provider for user ${user.id}:`, err);
+      return c.json({ error: 'Failed to initialize AI provider.', code: 'provider_init_failed' }, 500);
     }
   }
+
+  const dream = await createDream({
+    userId: user.id,
+    transcript: parsed.data.transcript,
+  });
 
   // Fire and forget. In Workers, use ctx.executionCtx.waitUntil; in Node,
   // setImmediate. We sniff for the Worker context at runtime. Hono throws

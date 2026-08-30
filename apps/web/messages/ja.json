@@ -95,7 +95,10 @@
     "loadFailed": "この夢は消えました。",
     "networkError": "夢工場に接続できません。もう一度お試しください。",
     "tryAgain": "もう一度",
-    "serverDemoMode": "このデプロイでは新しい夢を生成できません。ローカルで API を実行するか、合成ステップを含む Cloudflare コンテナをデプロイしてください。"
+    "serverDemoMode": "このデプロイでは新しい夢を生成できません。ローカルで API を実行するか、合成ステップを含む Cloudflare コンテナをデプロイしてください。",
+    "needGmiKey": "夢を生成する前に、「アカウント → API キー」で GMI API キーを追加してください。",
+    "needGmiKeyCta": "API キー設定を開く",
+    "providerInitFailed": "AI プロバイダーを初期化できませんでした。API キーを確認して再試行してください。"
   },
   "theme": {
     "switchToLight": "ライトモードに切替",
