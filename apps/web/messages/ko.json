@@ -7,7 +7,7 @@
     "myDreams": "내 꿈들",
     "signIn": "로그인",
     "signOut": "로그아웃 ({name})",
-    "settings": "Settings"
+    "settings": "설정"
   },
   "home": {
     "heroTitle": "당신의 꿈을 묘사하세요.",
@@ -88,10 +88,10 @@
     "expiresIn": "{n}시간 후 만료"
   },
   "errors": {
-    "loadFailed": "This dream has faded.",
-    "networkError": "Couldn't reach the dream factory. Try again?",
-    "tryAgain": "Try another",
-    "serverDemoMode": "This deployment can't generate new dreams. Run the API locally or deploy a Cloudflare Container with the composite step."
+    "loadFailed": "이 꿈은 사라졌습니다.",
+    "networkError": "꿈 공장에 연결할 수 없습니다. 다시 시도하시겠어요?",
+    "tryAgain": "다시 시도",
+    "serverDemoMode": "이 배포 환경에서는 새로운 꿈을 생성할 수 없습니다. 로컬에서 API를 실행하거나 합성 단계를 포함한 Cloudflare Container를 배포하세요."
   },
   "theme": {
     "switchToLight": "라이트 모드로 전환",
@@ -103,37 +103,43 @@
   },
   "auth": {
     "loginFailed": "로그인 실패. 다시 시도해 주세요.",
-    "needSignIn": "Sign in to save your dream. Click OK to continue."
+    "needSignIn": "꿈을 저장하려면 로그인하세요. \"확인\"을 눌러 계속합니다.",
+    "loginTitle": "DreamReel 로그인",
+    "loginPlaceholder": "이름",
+    "loginCta": "계속",
+    "loginHint": "비밀번호는 필요 없습니다. 꿈에 태그를 다는 이름일 뿐입니다.",
+    "loginOffline": "꿈 서버에 연결할 수 없습니다. 대신 로컬 게스트로 로그인했습니다.",
+    "loginCancel": "취소"
   },
   "demo": {
-    "banner": "Demo deployment",
-    "headline": "Watch what DreamReel can make.",
-    "explanation": "This deployment serves pre-rendered demo videos because the live generation pipeline needs to run on a host with FFmpeg. The MiniMax models (M3, H3, Music 3.0, Speech 2.8) are the same; only the composition step differs.",
-    "transcriptLabel": "Original transcript",
-    "moreDreams": "Try another",
-    "enableTitle": "Want to generate new dreams?",
-    "enableBody": "Run the API locally with FFmpeg available, or deploy a Cloudflare Container that hosts the composite step. Set the GMI_API_KEY secret and the pipeline lights up.",
-    "enableCta": "View on GitHub"
+    "banner": "데모 배포",
+    "headline": "DreamReel이 만들 수 있는 것을 보세요.",
+    "explanation": "이 배포 환경은 사전 렌더링된 데모 영상을 제공합니다. 실시간 생성 파이프라인은 FFmpeg가 있는 호스트에서 실행되어야 하기 때문입니다. MiniMax 모델(M3, H3, Music 3.0, Speech 2.8)은 동일하며, 합성 단계만 다릅니다.",
+    "transcriptLabel": "원본 설명",
+    "moreDreams": "다른 꿈 보기",
+    "enableTitle": "새로운 꿈을 생성하고 싶으신가요?",
+    "enableBody": "FFmpeg가 있는 환경에서 로컬 API를 실행하거나, 합성 단계를 호스팅하는 Cloudflare Container를 배포하세요. GMI_API_KEY 시크릿을 설정하면 파이프라인이 활성화됩니다.",
+    "enableCta": "GitHub에서 보기"
   },
   "settings": {
-    "title": "Settings",
-    "back": "Back",
-    "notSignedIn": "Please sign in to view settings.",
-    "demoBadge": "Demo deployment",
-    "demoTitle": "Settings are not available in this deployment.",
-    "demoBody": "This is a static demo. The MiniMax API key is configured at deploy time, not per-user. To enable per-user settings, deploy a self-hosted API with ffmpeg support.",
-    "gmiKey": "GMI API key",
-    "configured": "Configured",
-    "notConfigured": "Not set",
-    "updatedAt": "Last updated: {when}",
-    "newKey": "New API key",
-    "newKeyHint": "Your key is stored encrypted in D1, scoped to your account. It is never logged or sent to the client after saving.",
-    "baseUrl": "API base URL",
-    "save": "Save",
-    "saving": "Saving…",
-    "saved": "Saved.",
-    "remove": "Remove key",
-    "confirmRemove": "Remove your GMI API key? You'll need to set it again to generate new dreams.",
-    "privacyNote": "Your key is sent over HTTPS to the server, stored in your account row, and used only to call the GMI Cloud API on your behalf. It is never included in any response to the browser."
+    "title": "설정",
+    "back": "뒤로",
+    "notSignedIn": "설정을 보려면 로그인해 주세요.",
+    "demoBadge": "데모 배포",
+    "demoTitle": "이 배포 환경에서는 설정을 사용할 수 없습니다.",
+    "demoBody": "이것은 정적 데모입니다. MiniMax API 키는 배포 시점에 설정되며 사용자별 설정은 지원되지 않습니다. 사용자별 설정을 활성화하려면 ffmpeg를 지원하는 자체 호스팅 API를 배포하세요.",
+    "gmiKey": "GMI API 키",
+    "configured": "설정됨",
+    "notConfigured": "설정 안 됨",
+    "updatedAt": "마지막 업데이트: {when}",
+    "newKey": "새 API 키",
+    "newKeyHint": "키는 D1에 암호화되어 저장되며 계정에 한정됩니다. 저장 후 로그에 남거나 클라이언트로 전송되지 않습니다.",
+    "baseUrl": "API 기본 URL",
+    "save": "저장",
+    "saving": "저장 중…",
+    "saved": "저장되었습니다.",
+    "remove": "키 제거",
+    "confirmRemove": "GMI API 키를 제거하시겠어요? 새 꿈을 생성하려면 다시 설정해야 합니다.",
+    "privacyNote": "키는 HTTPS를 통해 서버로 전송되고 계정 행에 저장되며 GMI Cloud API를 당신을 대신해 호출하는 데에만 사용됩니다. 브라우저로의 어떤 응답에도 포함되지 않습니다."
   }
 }

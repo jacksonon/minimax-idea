@@ -1,20 +1,21 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useTranslations } from '@/i18n/shim';
-import { useI18n, LOCALE_COOKIE, LOCALE_COOKIE_MAX_AGE } from '@/i18n/I18nProvider';
+import { useI18n, LOCALE_COOKIE, LOCALE_COOKIE_MAX_AGE, loadMessages } from '@/i18n/I18nProvider';
 import { locales, localeNames, localeFlags, type Locale } from '@/i18n/config';
 
 const COOKIE_NAME = LOCALE_COOKIE;
 const COOKIE_MAX_AGE = LOCALE_COOKIE_MAX_AGE;
 
 /**
- * Compact dropdown for switching the UI language. Writes a cookie and
- * reloads so the next render uses the new locale.
+ * Compact dropdown for switching the UI language. Writes a cookie so
+ * the choice persists across reloads, then asks the I18nProvider to
+ * swap the active locale immediately (no page reload — the change is
+ * instant because the provider re-renders children with the new
+ * messages).
  */
 export function LocaleSwitcher() {
-  const { locale: current } = useI18n();
-  const t = useTranslations('nav');
+  const { locale: current, setLocale } = useI18n();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -29,17 +30,19 @@ export function LocaleSwitcher() {
   }, []);
 
   function pick(loc: Locale) {
+    setOpen(false);
+    if (loc === current) return;
     document.cookie = `${COOKIE_NAME}=${loc}; Path=/; Max-Age=${COOKIE_MAX_AGE}; SameSite=Lax`;
-    window.location.reload();
+    setLocale(loc, loadMessages(loc));
   }
 
   return (
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((o) => !o)}
-        className="inline-flex items-center gap-1.5 rounded-full border border-ink/20 px-2.5 py-1 text-xs text-ink/80 hover:border-amber/40 hover:text-amber transition"
-        aria-label="Change language"
-        title="Change language"
+        className="inline-flex items-center justify-center gap-1.5 h-8 px-3 rounded-full border border-ink/20 text-xs text-ink/80 hover:border-amber/40 hover:text-amber transition"
+        aria-label={localeNames[current]}
+        title={localeNames[current]}
       >
         <span>{localeFlags[current]}</span>
         <span className="font-mono uppercase tracking-wider">{current}</span>

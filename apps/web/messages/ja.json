@@ -7,7 +7,7 @@
     "myDreams": "マイドリーム",
     "signIn": "ログイン",
     "signOut": "ログアウト（{name}）",
-    "settings": "Settings"
+    "settings": "設定"
   },
   "home": {
     "heroTitle": "夢を語ってください。",
@@ -88,10 +88,10 @@
     "expiresIn": "{n}時間後に期限切れ"
   },
   "errors": {
-    "loadFailed": "This dream has faded.",
-    "networkError": "Couldn't reach the dream factory. Try again?",
-    "tryAgain": "Try another",
-    "serverDemoMode": "This deployment can't generate new dreams. Run the API locally or deploy a Cloudflare Container with the composite step."
+    "loadFailed": "この夢は消えました。",
+    "networkError": "夢工場に接続できません。もう一度お試しください。",
+    "tryAgain": "もう一度",
+    "serverDemoMode": "このデプロイでは新しい夢を生成できません。ローカルで API を実行するか、合成ステップを含む Cloudflare コンテナをデプロイしてください。"
   },
   "theme": {
     "switchToLight": "ライトモードに切替",
@@ -103,37 +103,43 @@
   },
   "auth": {
     "loginFailed": "ログインに失敗しました。もう一度お試しください。",
-    "needSignIn": "Sign in to save your dream. Click OK to continue."
+    "needSignIn": "夢を保存するにはログインしてください。「OK」を押して続行します。",
+    "loginTitle": "DreamReel にログイン",
+    "loginPlaceholder": "お名前",
+    "loginCta": "続ける",
+    "loginHint": "パスワードは不要。あなたの夢をタグ付けするためのお名前だけです。",
+    "loginOffline": "夢サーバーに接続できません。代わりにローカルゲストとしてログインしました。",
+    "loginCancel": "キャンセル"
   },
   "demo": {
-    "banner": "Demo deployment",
-    "headline": "Watch what DreamReel can make.",
-    "explanation": "This deployment serves pre-rendered demo videos because the live generation pipeline needs to run on a host with FFmpeg. The MiniMax models (M3, H3, Music 3.0, Speech 2.8) are the same; only the composition step differs.",
-    "transcriptLabel": "Original transcript",
-    "moreDreams": "Try another",
-    "enableTitle": "Want to generate new dreams?",
-    "enableBody": "Run the API locally with FFmpeg available, or deploy a Cloudflare Container that hosts the composite step. Set the GMI_API_KEY secret and the pipeline lights up.",
-    "enableCta": "View on GitHub"
+    "banner": "デモデプロイ",
+    "headline": "DreamReel でできることを見てみましょう。",
+    "explanation": "このデプロイは事前レンダリングされたデモ動画を提供します。ライブ生成パイプラインは FFmpeg のあるホストで実行する必要があるためです。MiniMax モデル（M3、H3、Music 3.0、Speech 2.8）は同じで、合成ステップだけが異なります。",
+    "transcriptLabel": "元の語り",
+    "moreDreams": "別の夢を見る",
+    "enableTitle": "新しい夢を生成したいですか？",
+    "enableBody": "FFmpeg が利用可能な環境でローカル API を実行するか、合成ステップをホストする Cloudflare コンテナをデプロイしてください。GMI_API_KEY シークレットを設定するとパイプラインが起動します。",
+    "enableCta": "GitHub で見る"
   },
   "settings": {
-    "title": "Settings",
-    "back": "Back",
-    "notSignedIn": "Please sign in to view settings.",
-    "demoBadge": "Demo deployment",
-    "demoTitle": "Settings are not available in this deployment.",
-    "demoBody": "This is a static demo. The MiniMax API key is configured at deploy time, not per-user. To enable per-user settings, deploy a self-hosted API with ffmpeg support.",
-    "gmiKey": "GMI API key",
-    "configured": "Configured",
-    "notConfigured": "Not set",
-    "updatedAt": "Last updated: {when}",
-    "newKey": "New API key",
-    "newKeyHint": "Your key is stored encrypted in D1, scoped to your account. It is never logged or sent to the client after saving.",
-    "baseUrl": "API base URL",
-    "save": "Save",
-    "saving": "Saving…",
-    "saved": "Saved.",
-    "remove": "Remove key",
-    "confirmRemove": "Remove your GMI API key? You'll need to set it again to generate new dreams.",
-    "privacyNote": "Your key is sent over HTTPS to the server, stored in your account row, and used only to call the GMI Cloud API on your behalf. It is never included in any response to the browser."
+    "title": "設定",
+    "back": "戻る",
+    "notSignedIn": "設定を表示するにはログインしてください。",
+    "demoBadge": "デモデプロイ",
+    "demoTitle": "このデプロイでは設定は利用できません。",
+    "demoBody": "これは静的なデモです。MiniMax API キーはデプロイ時に設定され、ユーザーごとの設定には対応していません。ユーザーごとの設定を有効化するには、ffmpeg をサポートするセルフホスト API をデプロイしてください。",
+    "gmiKey": "GMI API キー",
+    "configured": "設定済み",
+    "notConfigured": "未設定",
+    "updatedAt": "最終更新：{when}",
+    "newKey": "新しい API キー",
+    "newKeyHint": "キーは D1 に暗号化されて保存され、あなたのアカウントに紐付けられます。保存後にログに記録されたりクライアントに送信されることはありません。",
+    "baseUrl": "API ベース URL",
+    "save": "保存",
+    "saving": "保存中…",
+    "saved": "保存しました。",
+    "remove": "キーを削除",
+    "confirmRemove": "GMI API キーを削除しますか？新しい夢を生成するには再設定が必要です。",
+    "privacyNote": "キーは HTTPS 経由でサーバーに送信され、あなたのアカウント行に保存され、GMI Cloud API をあなたに代わって呼び出すためだけに使用されます。ブラウザへの応答に含まれることはありません。"
   }
 }

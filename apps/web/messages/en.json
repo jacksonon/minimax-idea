@@ -103,7 +103,13 @@
   },
   "auth": {
     "loginFailed": "Sign in failed. Please try again.",
-    "needSignIn": "Sign in to save your dream. Click OK to continue."
+    "needSignIn": "Sign in to save your dream. Click OK to continue.",
+    "loginTitle": "Sign in to DreamReel",
+    "loginPlaceholder": "Your name",
+    "loginCta": "Continue",
+    "loginHint": "No password. Just a name to tag your dreams with.",
+    "loginOffline": "The dream server is unreachable. We signed you in as a local guest instead.",
+    "loginCancel": "Cancel"
   },
   "demo": {
     "banner": "Demo deployment",

@@ -62,6 +62,7 @@ export function negotiateLocale(acceptLanguage: string | null | undefined): Loca
 type I18nContextValue = {
   locale: Locale;
   messages: any;
+  setLocale: (locale: Locale, messages: any) => void;
 };
 
 const I18nContext = createContext<I18nContextValue | null>(null);
@@ -89,9 +90,23 @@ export function I18nProvider({
     }
   }, [initialLocale]);
 
+  // Keep <html lang> in sync with the active locale so screen readers
+  // and CSS pseudo-selectors that depend on the attribute behave correctly.
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const active = override?.locale ?? initialLocale;
+    if (document.documentElement.lang !== active) {
+      document.documentElement.lang = active;
+    }
+  }, [override, initialLocale]);
+
   const value = useMemo<I18nContextValue>(() => {
-    if (override) return { locale: override.locale, messages: override.messages };
-    return { locale: initialLocale, messages: initialMessages };
+    const active = override ?? { locale: initialLocale, messages: initialMessages };
+    return {
+      locale: active.locale,
+      messages: active.messages,
+      setLocale: (next, nextMessages) => setOverride({ locale: next, messages: nextMessages }),
+    };
   }, [override, initialLocale, initialMessages]);
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
@@ -101,7 +116,11 @@ export function useI18n(): I18nContextValue {
   const ctx = useContext(I18nContext);
   if (!ctx) {
     // Fallback for components rendered outside the provider (e.g. error pages)
-    return { locale: DEFAULT_LOCALE, messages: loadMessages(DEFAULT_LOCALE) };
+    return {
+      locale: DEFAULT_LOCALE,
+      messages: loadMessages(DEFAULT_LOCALE),
+      setLocale: () => {},
+    };
   }
   return ctx;
 }

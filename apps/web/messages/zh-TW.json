@@ -7,7 +7,7 @@
     "myDreams": "我的夢境",
     "signIn": "登入",
     "signOut": "登出（{name}）",
-    "settings": "Settings"
+    "settings": "設定"
   },
   "home": {
     "heroTitle": "描述你的夢。",
@@ -88,10 +88,10 @@
     "expiresIn": "{n} 小時後過期"
   },
   "errors": {
-    "loadFailed": "This dream has faded.",
-    "networkError": "Couldn't reach the dream factory. Try again?",
-    "tryAgain": "Try another",
-    "serverDemoMode": "This deployment can't generate new dreams. Run the API locally or deploy a Cloudflare Container with the composite step."
+    "loadFailed": "這個夢已經消散。",
+    "networkError": "無法連線到夢工廠。再試一次？",
+    "tryAgain": "再試一次",
+    "serverDemoMode": "此部署無法生成新夢境。請在本機執行 API，或部署帶有合成步驟的 Cloudflare 容器。"
   },
   "theme": {
     "switchToLight": "切換到日間模式",
@@ -103,37 +103,43 @@
   },
   "auth": {
     "loginFailed": "登入失敗，請重試。",
-    "needSignIn": "Sign in to save your dream. Click OK to continue."
+    "needSignIn": "登入以儲存你的夢境。點選「確定」繼續。",
+    "loginTitle": "登入 DreamReel",
+    "loginPlaceholder": "你的名字",
+    "loginCta": "繼續",
+    "loginHint": "不需要密碼。只是用來標記你的夢境。",
+    "loginOffline": "暫時無法連線到伺服器。已為你建立本地訪客身份。",
+    "loginCancel": "取消"
   },
   "demo": {
-    "banner": "Demo deployment",
-    "headline": "Watch what DreamReel can make.",
-    "explanation": "This deployment serves pre-rendered demo videos because the live generation pipeline needs to run on a host with FFmpeg. The MiniMax models (M3, H3, Music 3.0, Speech 2.8) are the same; only the composition step differs.",
-    "transcriptLabel": "Original transcript",
-    "moreDreams": "Try another",
-    "enableTitle": "Want to generate new dreams?",
-    "enableBody": "Run the API locally with FFmpeg available, or deploy a Cloudflare Container that hosts the composite step. Set the GMI_API_KEY secret and the pipeline lights up.",
-    "enableCta": "View on GitHub"
+    "banner": "示範部署",
+    "headline": "看看 DreamReel 能做什麼。",
+    "explanation": "此部署提供預先渲染的示範影片，因為即時生成流程需要執行在支援 FFmpeg 的主機上。MiniMax 模型（M3、H3、Music 3.0、Speech 2.8）相同；只有合成步驟不同。",
+    "transcriptLabel": "原始描述",
+    "moreDreams": "換一個夢",
+    "enableTitle": "想生成新夢境？",
+    "enableBody": "在本機執行帶有 FFmpeg 的 API，或部署託管合成步驟的 Cloudflare 容器。設定 GMI_API_KEY 密鑰後，流水線就會啟動。",
+    "enableCta": "在 GitHub 上查看"
   },
   "settings": {
-    "title": "Settings",
-    "back": "Back",
-    "notSignedIn": "Please sign in to view settings.",
-    "demoBadge": "Demo deployment",
-    "demoTitle": "Settings are not available in this deployment.",
-    "demoBody": "This is a static demo. The MiniMax API key is configured at deploy time, not per-user. To enable per-user settings, deploy a self-hosted API with ffmpeg support.",
-    "gmiKey": "GMI API key",
-    "configured": "Configured",
-    "notConfigured": "Not set",
-    "updatedAt": "Last updated: {when}",
-    "newKey": "New API key",
-    "newKeyHint": "Your key is stored encrypted in D1, scoped to your account. It is never logged or sent to the client after saving.",
-    "baseUrl": "API base URL",
-    "save": "Save",
-    "saving": "Saving…",
-    "saved": "Saved.",
-    "remove": "Remove key",
-    "confirmRemove": "Remove your GMI API key? You'll need to set it again to generate new dreams.",
-    "privacyNote": "Your key is sent over HTTPS to the server, stored in your account row, and used only to call the GMI Cloud API on your behalf. It is never included in any response to the browser."
+    "title": "設定",
+    "back": "返回",
+    "notSignedIn": "請先登入以查看設定。",
+    "demoBadge": "示範部署",
+    "demoTitle": "此部署無法使用設定。",
+    "demoBody": "這是靜態示範。MiniMax API 金鑰在部署時設定，不支援每個使用者單獨設定。如需啟用，請部署一個支援 ffmpeg 的自架 API。",
+    "gmiKey": "GMI API 金鑰",
+    "configured": "已設定",
+    "notConfigured": "未設定",
+    "updatedAt": "最近更新：{when}",
+    "newKey": "新的 API 金鑰",
+    "newKeyHint": "你的金鑰加密儲存在 D1 中，僅與你的帳號關聯。儲存後不會被記錄或傳送到用戶端。",
+    "baseUrl": "API 基礎 URL",
+    "save": "儲存",
+    "saving": "儲存中……",
+    "saved": "已儲存。",
+    "remove": "移除金鑰",
+    "confirmRemove": "確定移除你的 GMI API 金鑰？移除後需重新設定才能生成新夢境。",
+    "privacyNote": "你的金鑰透過 HTTPS 傳送到伺服器，儲存在你的帳號記錄中，僅用於代表你呼叫 GMI Cloud API。不會包含在傳回瀏覽器的任何回應中。"
   }
 }

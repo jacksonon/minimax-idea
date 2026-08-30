@@ -8,6 +8,7 @@ import { DreamPlayer } from '@/components/player/DreamPlayer';
 import { DemoShowcase } from '@/components/DemoShowcase';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { LocaleSwitcher } from '@/components/LocaleSwitcher';
+import { SignInModal } from '@/components/SignInModal';
 import { useStore, type Capability } from '@/lib/store';
 import { api, type StatusResponse } from '@/lib/api';
 import { POLL_INTERVAL_MS } from '@dreamreel/shared';
@@ -20,6 +21,7 @@ export default function HomePage() {
     capability, setCapability,
   } = useStore();
   const [elapsed, setElapsed] = useState(0);
+  const [signInOpen, setSignInOpen] = useState(false);
   const startTimeRef = useRef<number>(0);
   const pollRef = useRef<number | null>(null);
 
@@ -121,14 +123,11 @@ export default function HomePage() {
       return;
     }
     if (capability.needsAuth && !user) {
-      // Open a sign-in modal (handled inline for now)
-      const ok = window.confirm(t('auth.needSignIn'));
-      if (ok) {
-        const r = await api.devLogin('dreamer');
-        setUser(r.user);
-      } else {
-        return;
-      }
+      // Ask the user to sign in via the modal. The modal itself falls back
+      // to a local guest user if the server is unreachable, so this branch
+      // is rare in practice.
+      setSignInOpen(true);
+      return;
     }
     try {
       const r = await api.generate(transcript);
@@ -152,7 +151,7 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen flex flex-col">
-      <Header />
+      <Header onSignInClick={() => setSignInOpen(true)} />
       <section className="flex-1 flex items-center justify-center px-6 py-16">
         {stage === 'idle' && !capability.canGenerate && (
           <DemoShowcase />
@@ -177,11 +176,16 @@ export default function HomePage() {
         )}
       </section>
       <Footer />
+      <SignInModal
+        open={signInOpen}
+        onClose={() => setSignInOpen(false)}
+        onSignedIn={(u) => { setUser(u); setSignInOpen(false); }}
+      />
     </main>
   );
 }
 
-function Header() {
+function Header({ onSignInClick }: { onSignInClick: () => void }) {
   const { user, setUser, capability } = useStore();
   const t = useTranslations('nav');
   const tCommon = useTranslations('common');
@@ -190,29 +194,37 @@ function Header() {
       <a href="/" className="font-serif text-2xl tracking-wide">
         {tCommon('appName').split('Reel')[0]}<span className="text-amber">Reel</span>
       </a>
-      <nav className="flex items-center gap-3 text-sm text-ink/80">
+      <nav className="flex items-center gap-2 text-sm text-ink/80">
         <ThemeToggle />
         <LocaleSwitcher />
         {user && capability.canGenerate && (
-          <a href="/settings" className="hover:text-amber">{t('settings')}</a>
+          <a
+            href="/settings"
+            className="inline-flex items-center justify-center h-8 px-3 rounded-full border border-ink/20 text-xs text-ink/80 hover:border-amber/40 hover:text-amber transition"
+          >
+            {t('settings')}
+          </a>
         )}
         {user && (
-          <a href="/dreams" className="hover:text-amber">{t('myDreams')}</a>
+          <a
+            href="/dreams"
+            className="inline-flex items-center justify-center h-8 px-3 rounded-full border border-ink/20 text-xs text-ink/80 hover:border-amber/40 hover:text-amber transition"
+          >
+            {t('myDreams')}
+          </a>
         )}
         {user ? (
           <button
-            onClick={async () => { await api.logout(); setUser(null); }}
-            className="text-muted hover:text-ink"
+            onClick={async () => { try { await api.logout(); } catch {} setUser(null); }}
+            className="inline-flex items-center justify-center h-8 px-3 rounded-full border border-ink/20 text-xs text-ink/80 hover:border-amber/40 hover:text-amber transition"
+            title={t('signOut', { name: user.displayName })}
           >
             {t('signOut', { name: user.displayName })}
           </button>
         ) : (
           <button
-            onClick={async () => {
-              const r = await api.devLogin('dreamer');
-              setUser(r.user);
-            }}
-            className="btn-ghost text-xs"
+            onClick={onSignInClick}
+            className="inline-flex items-center justify-center h-8 px-3 rounded-full border border-ink/20 text-xs text-ink/80 hover:border-amber/40 hover:text-amber transition"
           >
             {t('signIn')}
           </button>

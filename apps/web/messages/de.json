@@ -7,7 +7,7 @@
     "myDreams": "Meine Träume",
     "signIn": "Anmelden",
     "signOut": "Abmelden ({name})",
-    "settings": "Settings"
+    "settings": "Einstellungen"
   },
   "home": {
     "heroTitle": "Beschreibe deinen Traum.",
@@ -88,10 +88,10 @@
     "expiresIn": "läuft in {n}h ab"
   },
   "errors": {
-    "loadFailed": "This dream has faded.",
-    "networkError": "Couldn't reach the dream factory. Try again?",
-    "tryAgain": "Try another",
-    "serverDemoMode": "This deployment can't generate new dreams. Run the API locally or deploy a Cloudflare Container with the composite step."
+    "loadFailed": "Dieser Traum ist verblasst.",
+    "networkError": "Die Traumfabrik ist nicht erreichbar. Erneut versuchen?",
+    "tryAgain": "Erneut versuchen",
+    "serverDemoMode": "Dieses Deployment kann keine neuen Träume erzeugen. Führe die API lokal aus oder deploye einen Cloudflare Container mit dem Komposit-Schritt."
   },
   "theme": {
     "switchToLight": "Zum hellen Modus wechseln",
@@ -103,37 +103,43 @@
   },
   "auth": {
     "loginFailed": "Anmeldung fehlgeschlagen. Bitte erneut versuchen.",
-    "needSignIn": "Sign in to save your dream. Click OK to continue."
+    "needSignIn": "Melde dich an, um deinen Traum zu speichern. Klicke auf OK, um fortzufahren.",
+    "loginTitle": "Bei DreamReel anmelden",
+    "loginPlaceholder": "Dein Name",
+    "loginCta": "Weiter",
+    "loginHint": "Kein Passwort. Nur ein Name, um deine Träume zu kennzeichnen.",
+    "loginOffline": "Der Traumserver ist nicht erreichbar. Du wurdest als lokaler Gast angemeldet.",
+    "loginCancel": "Abbrechen"
   },
   "demo": {
-    "banner": "Demo deployment",
-    "headline": "Watch what DreamReel can make.",
-    "explanation": "This deployment serves pre-rendered demo videos because the live generation pipeline needs to run on a host with FFmpeg. The MiniMax models (M3, H3, Music 3.0, Speech 2.8) are the same; only the composition step differs.",
-    "transcriptLabel": "Original transcript",
-    "moreDreams": "Try another",
-    "enableTitle": "Want to generate new dreams?",
-    "enableBody": "Run the API locally with FFmpeg available, or deploy a Cloudflare Container that hosts the composite step. Set the GMI_API_KEY secret and the pipeline lights up.",
-    "enableCta": "View on GitHub"
+    "banner": "Demo-Deployment",
+    "headline": "Schau, was DreamReel machen kann.",
+    "explanation": "Dieses Deployment liefert vorgemerkte Demo-Videos, da die Live-Generierungspipeline auf einem Host mit FFmpeg laufen muss. Die MiniMax-Modelle (M3, H3, Music 3.0, Speech 2.8) sind identisch; nur der Komposit-Schritt unterscheidet sich.",
+    "transcriptLabel": "Originaltranskript",
+    "moreDreams": "Anderen versuchen",
+    "enableTitle": "Willst du neue Träume erzeugen?",
+    "enableBody": "Führe die API lokal mit verfügbarem FFmpeg aus oder deploye einen Cloudflare Container, der den Komposit-Schritt hostet. Setze das GMI_API_KEY-Secret und die Pipeline startet.",
+    "enableCta": "Auf GitHub ansehen"
   },
   "settings": {
-    "title": "Settings",
-    "back": "Back",
-    "notSignedIn": "Please sign in to view settings.",
-    "demoBadge": "Demo deployment",
-    "demoTitle": "Settings are not available in this deployment.",
-    "demoBody": "This is a static demo. The MiniMax API key is configured at deploy time, not per-user. To enable per-user settings, deploy a self-hosted API with ffmpeg support.",
-    "gmiKey": "GMI API key",
-    "configured": "Configured",
-    "notConfigured": "Not set",
-    "updatedAt": "Last updated: {when}",
-    "newKey": "New API key",
-    "newKeyHint": "Your key is stored encrypted in D1, scoped to your account. It is never logged or sent to the client after saving.",
-    "baseUrl": "API base URL",
-    "save": "Save",
-    "saving": "Saving…",
-    "saved": "Saved.",
-    "remove": "Remove key",
-    "confirmRemove": "Remove your GMI API key? You'll need to set it again to generate new dreams.",
-    "privacyNote": "Your key is sent over HTTPS to the server, stored in your account row, and used only to call the GMI Cloud API on your behalf. It is never included in any response to the browser."
+    "title": "Einstellungen",
+    "back": "Zurück",
+    "notSignedIn": "Bitte melde dich an, um die Einstellungen zu sehen.",
+    "demoBadge": "Demo-Deployment",
+    "demoTitle": "Einstellungen sind in diesem Deployment nicht verfügbar.",
+    "demoBody": "Dies ist eine statische Demo. Der MiniMax-API-Schlüssel wird beim Deployment konfiguriert, nicht pro Nutzer. Um nutzerspezifische Einstellungen zu aktivieren, deploye eine selbstgehostete API mit ffmpeg-Unterstützung.",
+    "gmiKey": "GMI-API-Schlüssel",
+    "configured": "Konfiguriert",
+    "notConfigured": "Nicht gesetzt",
+    "updatedAt": "Zuletzt aktualisiert: {when}",
+    "newKey": "Neuer API-Schlüssel",
+    "newKeyHint": "Dein Schlüssel wird verschlüsselt in D1 gespeichert, an dein Konto gebunden. Er wird nach dem Speichern niemals geloggt oder an den Client gesendet.",
+    "baseUrl": "API-Basis-URL",
+    "save": "Speichern",
+    "saving": "Speichern…",
+    "saved": "Gespeichert.",
+    "remove": "Schlüssel entfernen",
+    "confirmRemove": "Deinen GMI-API-Schlüssel entfernen? Du musst ihn erneut setzen, um neue Träume zu erzeugen.",
+    "privacyNote": "Dein Schlüssel wird über HTTPS an den Server gesendet, in deiner Kontozeile gespeichert und ausschließlich dazu verwendet, die GMI-Cloud-API in deinem Namen aufzurufen. Er ist in keiner Antwort an den Browser enthalten."
   }
 }
