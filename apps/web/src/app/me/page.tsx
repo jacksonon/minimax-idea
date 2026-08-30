@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from '@/i18n/shim';
 import { LocaleSwitcher } from '@/components/LocaleSwitcher';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { SignInModal } from '@/components/SignInModal';
-import { useStore, type Capability } from '@/lib/store';
+import { useStore } from '@/lib/store';
 import { ProfilePane } from './ProfilePane';
 import { DreamsPane } from './DreamsPane';
 import { KeyPane } from './KeyPane';
@@ -18,12 +18,30 @@ const TABS: Tab[] = ['profile', 'dreams', 'key'];
 /**
  * The /me dashboard. Single page, three panes; the active pane is
  * reflected in the `?tab=` query parameter so each pane has a
- * shareable URL. In keeping with the design, the panes themselves
- * are full-page views (not hidden behind tab clicks) — the tab
- * parameter picks which one to mount, and each pane lazy-loads its
- * data on first activation.
+ * shareable URL.
+ *
+ * Implementation note: Next.js 14's static prerender requires
+ * `useSearchParams()` to be inside a `<Suspense>` boundary, so the
+ * page component just renders a fallback and the actual work lives
+ * in `MeDashboardInner`.
  */
 export default function MePage() {
+  return (
+    <Suspense fallback={<MeFallback />}>
+      <MeDashboardInner />
+    </Suspense>
+  );
+}
+
+function MeFallback() {
+  return (
+    <main className="min-h-screen px-6 py-12 max-w-2xl mx-auto">
+      <p className="text-muted text-sm">…</p>
+    </main>
+  );
+}
+
+function MeDashboardInner() {
   const router = useRouter();
   const params = useSearchParams();
   const t = useTranslations('me');
@@ -139,7 +157,3 @@ export default function MePage() {
     </main>
   );
 }
-
-// Capability is used implicitly by the not-signed-in branch above; we
-// keep the import in case future logic needs to read it.
-export type _CapabilityUsed = Capability;
