@@ -93,12 +93,28 @@ function buildApp(): Hono<AppEnv> {
 
 const app = buildApp();
 
+// Configure the AI provider from process.env. The Cloudflare Worker
+// fetch handler below re-configures per-request from c.env.
+import { configureAi } from './services/ai/index.js';
+configureAi({
+  apiKey: process.env.GMI_API_KEY ?? '',
+  baseUrl: process.env.GMI_BASE_URL ?? 'https://api.gmicloud.ai',
+  h3Enabled: process.env.H3_ENABLED === 'true' || !!process.env.H3_API_KEY,
+});
+
 // ---- Cloudflare Worker export ----
 // When this file is bundled by wrangler, it becomes a Worker. We default-
 // export the fetch handler. In Node dev mode (tsx), this export is ignored
 // and the Node server below takes over.
 export default {
   async fetch(request: Request, env: Bindings, ctx: ExecutionContext): Promise<Response> {
+    // Re-configure the AI provider from the per-request env so
+    // c.env.GMI_API_KEY (if the operator set one) takes effect.
+    configureAi({
+      apiKey: env.GMI_API_KEY ?? '',
+      baseUrl: env.GMI_BASE_URL ?? 'https://api.gmicloud.ai',
+      h3Enabled: env.H3_ENABLED === 'true',
+    });
     return app.fetch(request, { env });
   },
 } satisfies ExportedHandler<Bindings>;

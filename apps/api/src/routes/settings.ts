@@ -17,7 +17,10 @@ import {
   getUserSettings,
   upsertUserSettings,
 } from '../db/queries.js';
-import { encrypt } from '../services/crypto.js';
+// crypto.ts uses node:crypto, which is fine in local Node dev but
+// would crash a Cloudflare Worker bundle if statically imported.
+// We dynamic-import it inside the request handler so the import
+// is only resolved when an actual save happens.
 import type { Bindings } from '../index.js';
 
 export const settingsRoutes = new Hono<{ Bindings: Bindings }>();
@@ -65,6 +68,7 @@ settingsRoutes.put('/api/settings', async (c) => {
   // In production, GMI_ENC_KEY comes from Worker secrets (c.env). In
   // local Node dev it comes from process.env via .dev.vars.
   const encKey = c.env?.GMI_ENC_KEY ?? process.env.GMI_ENC_KEY;
+  const { encrypt } = await import('../services/crypto.js');
   const stored = encrypt(parsed.data.gmiApiKey, encKey);
   const s = await upsertUserSettings(user.id, {
     gmiApiKey: stored,

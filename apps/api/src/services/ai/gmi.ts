@@ -14,11 +14,18 @@
 // `makeGmiProvider({ apiKey, baseUrl, h3Enabled })`. The resulting
 // provider is a fully isolated client bound to that user's credentials.
 //
-// We fall back to the deployment-wide `env.GMI_API_KEY` if the user has
-// not configured their own. This is the path used in static demo
-// deployments, where the per-user Settings page is hidden.
+// We fall back to the deployment-wide key if the user has not configured
+// their own. That path is used in local Node dev where
+// `apps/api/.dev.vars` populates process.env. In production the
+// hosting service is deliberately NOT configured with a service-wide
+// GMI key — every user must bring their own.
+//
+// IMPORTANT: do NOT `import env from '../../env.js'` at the top of
+// this file. env.ts is a Node-only module (it reads process.env and
+// resolves paths with node:path). Statically importing it would
+// drag node:url into the Cloudflare Worker bundle and crash the
+// runtime. We take config via an explicit function argument instead.
 
-import { env } from '../../env.js';
 import type {
   AIProvider,
   ImageRequest,
@@ -225,24 +232,28 @@ export function makeGmiProvider(cfg: GmiConfig): AIProvider {
 }
 
 /**
- * The default provider, bound to the deployment-wide env values.
- * Used when the request has no user (anonymous) or the user has not
- * configured their own GMI key. Built lazily so importing this
- * module never throws when env is missing (e.g. in unit tests).
+ * The default provider, bound to a config object. Used when the
+ * request has no user (anonymous) or the user has not configured
+ * their own GMI key. The config is passed in by the caller
+ * (Node dev pushes env from .dev.vars; Cloudflare Workers push
+ * c.env at request time) so this module never reads from
+ * process.env itself — that's what keeps the Worker bundle clean
+ * of node:url / node:path.
  */
 let _default: AIProvider | null = null;
-export function getDefaultGmiProvider(): AIProvider {
+export function getDefaultGmiProvider(cfg: {
+  apiKey: string;
+  baseUrl: string;
+  h3Enabled: boolean;
+}): AIProvider {
   if (_default) return _default;
-  if (!env.GMI_API_KEY) {
+  if (!cfg.apiKey) {
     throw new Error(
-      'GMI_API_KEY is not set. The server cannot run the AI pipeline. ' +
-      'Set it in .dev.vars (local) or via `wrangler secret put GMI_API_KEY` (production).',
+      'GMI API key is not set. The server cannot run the AI pipeline. ' +
+      'Either set GMI_API_KEY in .dev.vars (local) or have the user configure ' +
+      'their own key in /me?tab=key (production).',
     );
   }
-  _default = makeGmiProvider({
-    apiKey: env.GMI_API_KEY,
-    baseUrl: env.GMI_BASE_URL,
-    h3Enabled: env.H3_ENABLED,
-  });
+  _default = makeGmiProvider(cfg);
   return _default;
 }

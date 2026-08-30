@@ -26,7 +26,7 @@ import { cors } from 'hono/cors';
 import { authRoutes } from './routes/auth.js';
 import { dreamsRoutes } from './routes/dreams.js';
 import { settingsRoutes } from './routes/settings.js';
-import { ai } from './services/ai/index.js';
+import { ai, configureAi } from './services/ai/index.js';
 import type { Bindings } from './types.js';
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -94,6 +94,16 @@ app.onError((err, c) => {
 
 export default {
   async fetch(request: Request, env: Bindings, ctx: ExecutionContext): Promise<Response> {
+    // Re-configure the AI provider from c.env. The hosting service
+    // does not set GMI_API_KEY in production (each user brings
+    // their own), so the getAi() helper degrades to the mock
+    // provider here. POST /api/dreams/generate will still 422
+    // when the user has no stored key.
+    configureAi({
+      apiKey: env.GMI_API_KEY ?? '',
+      baseUrl: env.GMI_BASE_URL ?? 'https://api.gmicloud.ai',
+      h3Enabled: env.H3_ENABLED === 'true',
+    });
     return app.fetch(request, { env });
   },
 } satisfies ExportedHandler<Bindings>;
