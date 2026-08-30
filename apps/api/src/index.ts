@@ -131,8 +131,8 @@ if (isMain) {
       if (fs.existsSync(varsPath)) {
         for (const line of fs.readFileSync(varsPath, 'utf8').split('\n')) {
           const m = line.match(/^([A-Z0-9_]+)\s*=\s*(.*)$/);
-          if (m && process.env[m[1]] === undefined) {
-            process.env[m[1]] = m[2];
+          if (m && process.env[m[1]!] === undefined) {
+            process.env[m[1]!] = m[2]!;
           }
         }
       }
