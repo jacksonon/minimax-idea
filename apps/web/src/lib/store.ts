@@ -41,7 +41,15 @@ export type Capability = {
 type State = {
   stage: Stage;
   current: CurrentDream | null;
-  user: { id: string; displayName: string; avatarUrl: string | null } | null;
+  user: {
+    id: string;
+    displayName: string;
+    avatarUrl: string | null;
+    oauthProvider: 'github' | 'google';
+    email: string | null;
+    createdAt: number;
+    lastSeenAt: number;
+  } | null;
   h3Enabled: boolean;
   capability: Capability;
   setStage: (s: Stage) => void;

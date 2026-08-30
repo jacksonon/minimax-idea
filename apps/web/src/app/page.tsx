@@ -197,9 +197,9 @@ function Header({ onSignInClick }: { onSignInClick: () => void }) {
       <nav className="flex items-center gap-2 text-sm text-ink/80">
         <ThemeToggle />
         <LocaleSwitcher />
-        {user && capability.canGenerate && (
+        {user && (
           <a
-            href="/settings"
+            href="/me?tab=key"
             className="inline-flex items-center justify-center h-8 px-3 rounded-full border border-ink/20 text-xs text-ink/80 hover:border-amber/40 hover:text-amber transition"
           >
             {t('settings')}
@@ -207,7 +207,7 @@ function Header({ onSignInClick }: { onSignInClick: () => void }) {
         )}
         {user && (
           <a
-            href="/dreams"
+            href="/me?tab=dreams"
             className="inline-flex items-center justify-center h-8 px-3 rounded-full border border-ink/20 text-xs text-ink/80 hover:border-amber/40 hover:text-amber transition"
           >
             {t('myDreams')}

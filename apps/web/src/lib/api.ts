@@ -47,7 +47,17 @@ export type DreamListItem = {
   status: 'pending' | 'rendering' | 'done' | 'failed';
 };
 
-export type MeResponse = { user: { id: string; displayName: string; avatarUrl: string | null } | null };
+export type MeResponse = {
+  user: {
+    id: string;
+    displayName: string;
+    avatarUrl: string | null;
+    oauthProvider: 'github' | 'google';
+    email: string | null;
+    createdAt: number;
+    lastSeenAt: number;
+  } | null;
+};
 
 export type HealthResponse = {
   ok: boolean;
@@ -84,7 +94,10 @@ export const api = {
 
   status: (id: string) => request<StatusResponse>(`/api/dreams/${id}/status`),
 
-  listMine: () => request<{ dreams: DreamListItem[] }>('/api/dreams'),
+  listMine: (cursor?: string) => {
+    const q = cursor ? `?cursor=${encodeURIComponent(cursor)}` : '';
+    return request<{ dreams: DreamListItem[]; nextCursor: string | null }>(`/api/dreams${q}`);
+  },
 
   dream: (id: string) => request<{ id: string; transcript: string; videoUrl: string | null; analysisText: string | null; emotionTag: string | null; dreamType: string | null; createdAt: number }>(`/api/dreams/${id}`),
 
@@ -98,10 +111,31 @@ export const api = {
   health: () => request<HealthResponse>('/health'),
 
   devLogin: (handle: string) =>
-    request<{ user: { id: string; displayName: string; avatarUrl: string | null } }>('/api/auth/dev-login', {
+    request<{ user: {
+      id: string;
+      displayName: string;
+      avatarUrl: string | null;
+      oauthProvider: 'github' | 'google';
+      email: string | null;
+      createdAt: number;
+      lastSeenAt: number;
+    } }>('/api/auth/dev-login', {
       method: 'POST',
       body: JSON.stringify({ handle }),
     }),
+
+  /**
+   * Begin the GitHub OAuth flow. We don't fetch — we navigate, because
+   * the API will return a 302 redirect that we want the browser to
+   * follow. `next` is the path to return to after the callback
+   * (defaults to the home page).
+   */
+  githubLogin: (next: string = '/') => {
+    if (typeof window !== 'undefined') {
+      const target = next ? `${next}` : '/';
+      window.location.href = `/api/auth/github?next=${encodeURIComponent(target)}`;
+    }
+  },
 
   logout: () => request<{ ok: boolean }>('/api/auth/logout', { method: 'POST' }),
 

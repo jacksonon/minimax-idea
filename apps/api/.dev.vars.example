@@ -13,6 +13,18 @@ GMI_API_KEY=
 # GMI Cloud base URL (do not change unless instructed)
 GMI_BASE_URL=https://api.gmicloud.ai
 
+# AES-256-GCM key for at-rest encryption of user API keys (the
+# `user_settings` table). Any non-empty string; SHA-256'd to 32 bytes
+# internally. In production, use `openssl rand -base64 32` and put it
+# via `wrangler secret put GMI_ENC_KEY`.
+GMI_ENC_KEY=dev-only-please-rotate
+
+# GitHub OAuth (https://github.com/settings/developers)
+# Authorization callback URL: ${ALLOWED_ORIGIN}/api/auth/github/callback
+# In production: wrangler secret put GITHUB_CLIENT_ID / GITHUB_CLIENT_SECRET
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+
 # Environment: development | production
 ENVIRONMENT=development
 

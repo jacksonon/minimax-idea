@@ -7,7 +7,8 @@
     "myDreams": "내 꿈들",
     "signIn": "로그인",
     "signOut": "로그아웃 ({name})",
-    "settings": "설정"
+    "settings": "설정",
+    "me": "계정"
   },
   "home": {
     "heroTitle": "당신의 꿈을 묘사하세요.",
@@ -68,7 +69,10 @@
     "today": "오늘",
     "yesterday": "어제",
     "daysAgo": "{n}일 전",
-    "weeksAgo": "{n}주 전"
+    "weeksAgo": "{n}주 전",
+    "loadMore": "더 오래된 꿈 불러오기",
+    "loadingMore": "불러오는 중…",
+    "noMore": "더 오래된 꿈이 없습니다."
   },
   "dream": {
     "backToList": "← 내 꿈으로",
@@ -109,7 +113,12 @@
     "loginCta": "계속",
     "loginHint": "비밀번호는 필요 없습니다. 꿈에 태그를 다는 이름일 뿐입니다.",
     "loginOffline": "꿈 서버에 연결할 수 없습니다. 대신 로컬 게스트로 로그인했습니다.",
-    "loginCancel": "취소"
+    "loginCancel": "취소",
+    "githubCta": "계속",
+    "githubNotConfigured": "계속",
+    "devModeTitle": "계속",
+    "devModeHint": "계속",
+    "devOr": "계속"
   },
   "demo": {
     "banner": "데모 배포",
@@ -141,5 +150,40 @@
     "remove": "키 제거",
     "confirmRemove": "GMI API 키를 제거하시겠어요? 새 꿈을 생성하려면 다시 설정해야 합니다.",
     "privacyNote": "키는 HTTPS를 통해 서버로 전송되고 계정 행에 저장되며 GMI Cloud API를 당신을 대신해 호출하는 데에만 사용됩니다. 브라우저로의 어떤 응답에도 포함되지 않습니다."
+  },
+  "me": {
+    "title": "계정",
+    "tabs": {
+      "profile": "프로필",
+      "dreams": "내 꿈",
+      "key": "API 키"
+    },
+    "notSignedIn": {
+      "title": "로그인하여 계정 보기",
+      "hint": "로그인하면 여기에 내 꿈, API 키, 설정이 표시됩니다.",
+      "cta": "로그인"
+    },
+    "profile": {
+      "heading": "프로필",
+      "signedInAs": "@{handle}(으)로 로그인됨",
+      "name": "표시 이름",
+      "provider": "로그인 방식",
+      "email": "이메일",
+      "emailUnknown": "제공자가 공유하지 않음",
+      "memberSince": "{when}부터 가입",
+      "lastSeen": "마지막 로그인 {when}",
+      "id": "계정 ID"
+    },
+    "dreams": {
+      "heading": "내 꿈",
+      "emptyTitle": "아직 꿈이 없습니다.",
+      "emptyHint": "홈페이지에서 기록하면 여기에 표시됩니다.",
+      "openHome": "홈으로",
+      "failed": "이 꿈을 영상으로 만들지 못했습니다.",
+      "pending": "렌더링 중…",
+      "videoUnavailable": "영상 없음",
+      "loadError": "내 꿈을 불러올 수 없습니다. 다시 시도해 주세요.",
+      "ready": "준비됨"
+    }
   }
 }

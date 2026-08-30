@@ -7,7 +7,8 @@
     "myDreams": "Mis sueños",
     "signIn": "Iniciar sesión",
     "signOut": "Cerrar sesión ({name})",
-    "settings": "Ajustes"
+    "settings": "Ajustes",
+    "me": "Cuenta"
   },
   "home": {
     "heroTitle": "Describe tu sueño.",
@@ -68,7 +69,10 @@
     "today": "hoy",
     "yesterday": "ayer",
     "daysAgo": "hace {n}d",
-    "weeksAgo": "hace {n}sem"
+    "weeksAgo": "hace {n}sem",
+    "loadMore": "Cargar sueños más antiguos",
+    "loadingMore": "Cargando…",
+    "noMore": "Has llegado al final de tus sueños."
   },
   "dream": {
     "backToList": "← Volver a mis sueños",
@@ -109,7 +113,12 @@
     "loginCta": "Continuar",
     "loginHint": "Sin contraseña. Solo un nombre para etiquetar tus sueños.",
     "loginOffline": "No se puede contactar con el servidor de sueños. Iniciamos sesión como invitado local.",
-    "loginCancel": "Cancelar"
+    "loginCancel": "Cancelar",
+    "githubCta": "Continuar",
+    "githubNotConfigured": "Continuar",
+    "devModeTitle": "Continuar",
+    "devModeHint": "Continuar",
+    "devOr": "Continuar"
   },
   "demo": {
     "banner": "Despliegue demo",
@@ -141,5 +150,40 @@
     "remove": "Eliminar clave",
     "confirmRemove": "¿Eliminar tu clave de la API GMI? Tendrás que definirla de nuevo para generar nuevos sueños.",
     "privacyNote": "Tu clave se envía por HTTPS al servidor, se almacena en la fila de tu cuenta y solo se usa para llamar a la API de GMI Cloud en tu nombre. Nunca se incluye en ninguna respuesta al navegador."
+  },
+  "me": {
+    "title": "Tu cuenta",
+    "tabs": {
+      "profile": "Perfil",
+      "dreams": "Mis sueños",
+      "key": "Clave API"
+    },
+    "notSignedIn": {
+      "title": "Inicia sesión para ver tu cuenta",
+      "hint": "Tus sueños, tu clave API y tus ajustes aparecen aquí cuando inicias sesión.",
+      "cta": "Iniciar sesión"
+    },
+    "profile": {
+      "heading": "Perfil",
+      "signedInAs": "Conectado como @{handle}",
+      "name": "Nombre",
+      "provider": "Método de inicio",
+      "email": "Correo",
+      "emailUnknown": "Tu proveedor no lo compartió",
+      "memberSince": "Miembro desde {when}",
+      "lastSeen": "Último inicio {when}",
+      "id": "ID de cuenta"
+    },
+    "dreams": {
+      "heading": "Mis sueños",
+      "emptyTitle": "Aún no hay sueños.",
+      "emptyHint": "Graba uno en la página principal. Aparecerá aquí, en tu línea de tiempo.",
+      "openHome": "Ir al inicio",
+      "failed": "Este sueño no pudo ser filmado.",
+      "pending": "Renderizando…",
+      "videoUnavailable": "Vídeo no disponible",
+      "loadError": "No se pudieron cargar tus sueños. Inténtalo de nuevo.",
+      "ready": "Listo"
+    }
   }
 }

@@ -81,7 +81,10 @@ const STATIC_DREAMS: any[] = [
   },
 ];
 
-app.get('/api/dreams', (c) => c.json({ dreams: STATIC_DREAMS }));
+app.get('/api/dreams', (c) => {
+  // Static demo: ignore cursor and return the same fixed list.
+  return c.json({ dreams: STATIC_DREAMS, nextCursor: null });
+});
 
 app.get('/api/dreams/:id', (c) => {
   const dream = STATIC_DREAMS.find((d) => d.id === c.req.param('id'));

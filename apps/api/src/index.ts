@@ -23,6 +23,9 @@ export type Bindings = {
   KV?: KVNamespace;
   // Secrets (set via `wrangler secret put`)
   GMI_API_KEY?: string;
+  GMI_ENC_KEY?: string;
+  GITHUB_CLIENT_ID?: string;
+  GITHUB_CLIENT_SECRET?: string;
   // Vars (set in wrangler.toml)
   ENVIRONMENT?: string;
   AI_PROVIDER?: 'mock' | 'gmi';

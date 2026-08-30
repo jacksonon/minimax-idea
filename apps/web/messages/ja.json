@@ -7,7 +7,8 @@
     "myDreams": "マイドリーム",
     "signIn": "ログイン",
     "signOut": "ログアウト（{name}）",
-    "settings": "設定"
+    "settings": "設定",
+    "me": "アカウント"
   },
   "home": {
     "heroTitle": "夢を語ってください。",
@@ -68,7 +69,10 @@
     "today": "今日",
     "yesterday": "昨日",
     "daysAgo": "{n}日前",
-    "weeksAgo": "{n}週間前"
+    "weeksAgo": "{n}週間前",
+    "loadMore": "もっと古い夢を読み込む",
+    "loadingMore": "読み込み中……",
+    "noMore": "これ以上古い夢はありません。"
   },
   "dream": {
     "backToList": "← マイドリームに戻る",
@@ -109,7 +113,12 @@
     "loginCta": "続ける",
     "loginHint": "パスワードは不要。あなたの夢をタグ付けするためのお名前だけです。",
     "loginOffline": "夢サーバーに接続できません。代わりにローカルゲストとしてログインしました。",
-    "loginCancel": "キャンセル"
+    "loginCancel": "キャンセル",
+    "githubCta": "続ける",
+    "githubNotConfigured": "続ける",
+    "devModeTitle": "続ける",
+    "devModeHint": "続ける",
+    "devOr": "続ける"
   },
   "demo": {
     "banner": "デモデプロイ",
@@ -141,5 +150,40 @@
     "remove": "キーを削除",
     "confirmRemove": "GMI API キーを削除しますか？新しい夢を生成するには再設定が必要です。",
     "privacyNote": "キーは HTTPS 経由でサーバーに送信され、あなたのアカウント行に保存され、GMI Cloud API をあなたに代わって呼び出すためだけに使用されます。ブラウザへの応答に含まれることはありません。"
+  },
+  "me": {
+    "title": "アカウント",
+    "tabs": {
+      "profile": "プロフィール",
+      "dreams": "マイドリーム",
+      "key": "API キー"
+    },
+    "notSignedIn": {
+      "title": "サインインしてアカウントを表示",
+      "hint": "サインインすると、ここにあなたの夢、API キー、設定が表示されます。",
+      "cta": "ログイン"
+    },
+    "profile": {
+      "heading": "プロフィール",
+      "signedInAs": "@{handle} としてサインイン中",
+      "name": "表示名",
+      "provider": "サインイン方法",
+      "email": "メール",
+      "emailUnknown": "プロバイダーは共有していません",
+      "memberSince": "{when} から登録",
+      "lastSeen": "最終サインイン {when}",
+      "id": "アカウント ID"
+    },
+    "dreams": {
+      "heading": "マイドリーム",
+      "emptyTitle": "まだ夢がありません。",
+      "emptyHint": "ホームページで記録すると、ここに表示されます。",
+      "openHome": "ホームへ",
+      "failed": "この夢は撮影できませんでした。",
+      "pending": "レンダリング中……",
+      "videoUnavailable": "動画なし",
+      "loadError": "夢を読み込めませんでした。もう一度お試しください。",
+      "ready": "完成"
+    }
   }
 }

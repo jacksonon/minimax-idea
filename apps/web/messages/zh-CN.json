@@ -7,7 +7,8 @@
     "myDreams": "我的梦境",
     "signIn": "登录",
     "signOut": "退出（{name}）",
-    "settings": "设置"
+    "settings": "设置",
+    "me": "个人中心"
   },
   "home": {
     "heroTitle": "描述你的梦。",
@@ -68,7 +69,10 @@
     "today": "今天",
     "yesterday": "昨天",
     "daysAgo": "{n} 天前",
-    "weeksAgo": "{n} 周前"
+    "weeksAgo": "{n} 周前",
+    "loadMore": "加载更早的梦境",
+    "loadingMore": "加载中……",
+    "noMore": "已到时间线最远端。"
   },
   "dream": {
     "backToList": "← 返回我的梦境",
@@ -109,7 +113,12 @@
     "loginCta": "继续",
     "loginHint": "无需密码。仅用于标记你的梦境归属。",
     "loginOffline": "暂时无法连接服务器。已为你创建本地访客身份。",
-    "loginCancel": "取消"
+    "loginCancel": "取消",
+    "githubCta": "继续",
+    "githubNotConfigured": "继续",
+    "devModeTitle": "继续",
+    "devModeHint": "继续",
+    "devOr": "继续"
   },
   "demo": {
     "banner": "演示部署",
@@ -141,5 +150,40 @@
     "remove": "移除密钥",
     "confirmRemove": "确定移除你的 GMI API 密钥？移除后需重新设置才能生成新梦境。",
     "privacyNote": "你的密钥通过 HTTPS 发送到服务器，存储在你的账号记录中，仅用于代表你调用 GMI Cloud API。不会包含在返回浏览器的任何响应中。"
+  },
+  "me": {
+    "title": "个人中心",
+    "tabs": {
+      "profile": "个人资料",
+      "dreams": "我的梦境",
+      "key": "API 密钥"
+    },
+    "notSignedIn": {
+      "title": "登录后查看你的账户",
+      "hint": "登录后这里会显示你的梦境、API 密钥和设置。",
+      "cta": "登录"
+    },
+    "profile": {
+      "heading": "个人资料",
+      "signedInAs": "已登录为 @{handle}",
+      "name": "显示名称",
+      "provider": "登录方式",
+      "email": "邮箱",
+      "emailUnknown": "你的登录方式未提供",
+      "memberSince": "注册于 {when}",
+      "lastSeen": "最近登录 {when}",
+      "id": "账户 ID"
+    },
+    "dreams": {
+      "heading": "我的梦境",
+      "emptyTitle": "还没有梦境。",
+      "emptyHint": "去首页记录一个，它会出现在这里的时间线上。",
+      "openHome": "去首页",
+      "failed": "这个梦没能被拍成片。",
+      "pending": "还在渲染中……",
+      "videoUnavailable": "视频不可用",
+      "loadError": "无法加载你的梦境。请重试。",
+      "ready": "已就绪"
+    }
   }
 }

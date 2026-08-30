@@ -37,9 +37,12 @@ ALLOWED_ORIGIN = "https://dreamreel.pages.dev"
 
 # Secrets — set these via `wrangler secret put <NAME>`. NEVER commit them.
 #   wrangler secret put GMI_API_KEY
+#   wrangler secret put GMI_ENC_KEY     # AES-256-GCM key for at-rest
+#                                        # encryption of user API keys
+#                                        # (any length; SHA-256'd to 32 bytes)
 #   wrangler secret put NEXTAUTH_SECRET
-#   wrangler secret put GITHUB_ID
-#   wrangler secret put GITHUB_SECRET
+#   wrangler secret put GITHUB_CLIENT_ID
+#   wrangler secret put GITHUB_CLIENT_SECRET
 #   wrangler secret put GOOGLE_ID
 #   wrangler secret put GOOGLE_SECRET
 

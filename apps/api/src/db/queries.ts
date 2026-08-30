@@ -42,6 +42,32 @@ export async function listDreamsForUser(userId: string, limit = 50): Promise<Dre
   return (rows as any[]).map(rowToDream);
 }
 
+/**
+ * Cursor-paginated list of a user's dreams. The cursor is the
+ * `created_at` timestamp of the last row in the previous page; the
+ * next page returns dreams strictly older than it. We also return
+ * one extra row to detect whether more pages exist.
+ */
+export async function listDreamsForUserPaged(
+  userId: string,
+  opts: { limit?: number; cursor?: number } = {},
+): Promise<{ dreams: Dream[]; nextCursor: number | null }> {
+  const db = getDb();
+  const limit = Math.min(opts.limit ?? 20, 50);
+  const cursor = opts.cursor;
+  const rows = await db.all(
+    cursor
+      ? `SELECT * FROM dreams WHERE user_id = ? AND created_at < ? ORDER BY created_at DESC LIMIT ?`
+      : `SELECT * FROM dreams WHERE user_id = ? ORDER BY created_at DESC LIMIT ?`,
+    cursor ? [userId, cursor, limit + 1] : [userId, limit + 1],
+  );
+  const all = (rows as any[]).map(rowToDream);
+  const hasMore = all.length > limit;
+  const dreams = hasMore ? all.slice(0, limit) : all;
+  const nextCursor = hasMore ? dreams[dreams.length - 1]!.createdAt : null;
+  return { dreams, nextCursor };
+}
+
 export async function updateDreamStatus(
   id: string,
   status: DreamStatus,
@@ -232,20 +258,29 @@ export async function getShareToken(token: string): Promise<{ dreamId: string; e
 // ----- per-user settings (GMI key, etc.) -----
 
 export type UserSettings = {
+  /** Plaintext GMI key, already decrypted for the caller. */
   gmiApiKey: string;
   gmiBaseUrl: string | null;
   updatedAt: number;
 };
 
-export async function getUserSettings(userId: string): Promise<UserSettings | null> {
+export async function getUserSettings(userId: string, encKey?: string): Promise<UserSettings | null> {
   const db = getDb();
   const row = await db.first(
-    `SELECT gmi_api_key, gmi_base_url, updated_at FROM user_settings WHERE user_id = ?`,
+    `SELECT gmi_api_key, gmi_base_url, updated_at, key_encrypted FROM user_settings WHERE user_id = ?`,
     [userId],
   );
   if (!row) return null;
+  let apiKey = (row as any).gmi_api_key as string;
+  const encrypted = !!(row as any).key_encrypted;
+  if (encrypted) {
+    // Lazy import to avoid pulling node:crypto into the Worker bundle
+    // for code paths that never decrypt.
+    const { decrypt } = await import('../services/crypto.js');
+    apiKey = decrypt(apiKey, encKey);
+  }
   return {
-    gmiApiKey: (row as any).gmi_api_key,
+    gmiApiKey: apiKey,
     gmiBaseUrl: (row as any).gmi_base_url,
     updatedAt: (row as any).updated_at,
   };
@@ -253,19 +288,21 @@ export async function getUserSettings(userId: string): Promise<UserSettings | nu
 
 export async function upsertUserSettings(
   userId: string,
-  payload: { gmiApiKey: string; gmiBaseUrl?: string | null },
+  payload: { gmiApiKey: string; gmiBaseUrl?: string | null; encrypted?: boolean },
 ): Promise<UserSettings> {
   const db = getDb();
   const ts = now();
   const baseUrl = payload.gmiBaseUrl ?? 'https://api.gmicloud.ai';
+  const encrypted = payload.encrypted ? 1 : 0;
   await db.run(
-    `INSERT INTO user_settings (user_id, gmi_api_key, gmi_base_url, updated_at)
-     VALUES (?, ?, ?, ?)
+    `INSERT INTO user_settings (user_id, gmi_api_key, gmi_base_url, updated_at, key_encrypted)
+     VALUES (?, ?, ?, ?, ?)
      ON CONFLICT(user_id) DO UPDATE SET
        gmi_api_key = excluded.gmi_api_key,
        gmi_base_url = excluded.gmi_base_url,
-       updated_at = excluded.updated_at`,
-    [userId, payload.gmiApiKey, baseUrl, ts],
+       updated_at = excluded.updated_at,
+       key_encrypted = excluded.key_encrypted`,
+    [userId, payload.gmiApiKey, baseUrl, ts, encrypted],
   );
   return { gmiApiKey: payload.gmiApiKey, gmiBaseUrl: baseUrl, updatedAt: ts };
 }

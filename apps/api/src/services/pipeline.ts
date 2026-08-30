@@ -4,14 +4,22 @@
 //   - h3Enabled  → 4 video clips (H3) + 1 music + 1 voiceover, composited to 30s
 //   - h3Disabled → 8 still images (slideshow) + 1 music + 1 voiceover, composited to 30s
 // Each mode is a graceful degradation; the rest of the pipeline is identical.
+//
+// Per-user credentials
+// --------------------
+// `runPipeline` accepts an optional `aiProvider` argument. The dream
+// creation route builds the provider from the user's decrypted GMI
+// key (if any), falling back to the deployment-wide key for anonymous
+// users and the demo deployment.
 
-import { ai } from './ai/index.js';
+import { ai as defaultAi } from './ai/index.js';
 import { composeDream } from './composite.js';
 import {
   STAGE_PROGRESS,
   type Dream,
   type Screenplay,
 } from '@dreamreel/shared';
+import type { AIProvider } from './ai/types.js';
 import {
   failDream,
   saveMediaUrls,
@@ -22,7 +30,8 @@ import {
 
 const SLIDESHOW_FRAME_COUNT = 8; // 8 stills × 3.75s = 30s when H3 is off
 
-export async function runPipeline(dream: Dream) {
+export async function runPipeline(dream: Dream, aiProvider: AIProvider = defaultAi) {
+  const ai = aiProvider;
   try {
     updateDreamStatus(dream.id, 'rendering', 'screenplay', STAGE_PROGRESS.screenplay);
 

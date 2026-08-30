@@ -7,7 +7,8 @@
     "myDreams": "Mes rêves",
     "signIn": "Se connecter",
     "signOut": "Se déconnecter ({name})",
-    "settings": "Réglages"
+    "settings": "Réglages",
+    "me": "Compte"
   },
   "home": {
     "heroTitle": "Décrivez votre rêve.",
@@ -68,7 +69,10 @@
     "today": "aujourd'hui",
     "yesterday": "hier",
     "daysAgo": "il y a {n}j",
-    "weeksAgo": "il y a {n}sem"
+    "weeksAgo": "il y a {n}sem",
+    "loadMore": "Charger des rêves plus anciens",
+    "loadingMore": "Chargement…",
+    "noMore": "Vous avez atteint la fin de vos rêves."
   },
   "dream": {
     "backToList": "← Retour à mes rêves",
@@ -109,7 +113,12 @@
     "loginCta": "Continuer",
     "loginHint": "Pas de mot de passe. Juste un nom pour étiqueter vos rêves.",
     "loginOffline": "Le serveur de rêves est injoignable. Vous êtes connecté comme invité local.",
-    "loginCancel": "Annuler"
+    "loginCancel": "Annuler",
+    "githubCta": "Continuer",
+    "githubNotConfigured": "Continuer",
+    "devModeTitle": "Continuer",
+    "devModeHint": "Continuer",
+    "devOr": "Continuer"
   },
   "demo": {
     "banner": "Déploiement de démo",
@@ -141,5 +150,40 @@
     "remove": "Supprimer la clé",
     "confirmRemove": "Supprimer votre clé d'API GMI ? Vous devrez la redéfinir pour générer de nouveaux rêves.",
     "privacyNote": "Votre clé est envoyée via HTTPS au serveur, stockée dans la ligne de votre compte, et utilisée uniquement pour appeler l'API GMI Cloud en votre nom. Elle n'est incluse dans aucune réponse au navigateur."
+  },
+  "me": {
+    "title": "Votre compte",
+    "tabs": {
+      "profile": "Profil",
+      "dreams": "Mes rêves",
+      "key": "Clé API"
+    },
+    "notSignedIn": {
+      "title": "Connectez-vous pour voir votre compte",
+      "hint": "Vos rêves, votre clé API et vos réglages apparaîtront ici une fois connecté.",
+      "cta": "Se connecter"
+    },
+    "profile": {
+      "heading": "Profil",
+      "signedInAs": "Connecté en tant que @{handle}",
+      "name": "Nom",
+      "provider": "Méthode de connexion",
+      "email": "E-mail",
+      "emailUnknown": "Non partagé par votre fournisseur",
+      "memberSince": "Membre depuis le {when}",
+      "lastSeen": "Dernière connexion {when}",
+      "id": "ID du compte"
+    },
+    "dreams": {
+      "heading": "Mes rêves",
+      "emptyTitle": "Pas encore de rêves.",
+      "emptyHint": "Enregistrez-en un sur la page d'accueil. Il apparaîtra ici, dans votre chronologie.",
+      "openHome": "Aller à l'accueil",
+      "failed": "Ce rêve n'a pas pu être filmé.",
+      "pending": "Rendu en cours…",
+      "videoUnavailable": "Vidéo indisponible",
+      "loadError": "Impossible de charger vos rêves. Réessayez.",
+      "ready": "Prêt"
+    }
   }
 }

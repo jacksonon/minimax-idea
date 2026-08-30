@@ -28,6 +28,30 @@ export async function loginAsMock(provider: 'github' | 'google', sub: string) {
   return { user, token };
 }
 
+/**
+ * Authenticate a real GitHub user: upsert the user row (creating it on
+ * first login) and issue a session cookie. Called from the GitHub
+ * OAuth callback after the code has been exchanged for an access
+ * token.
+ */
+export async function loginWithGitHub(input: {
+  oauthId: string;
+  login: string;
+  displayName: string;
+  email: string | null;
+  avatarUrl: string | null;
+}) {
+  const user = await upsertUser({
+    provider: 'github',
+    oauthId: input.oauthId,
+    email: input.email,
+    displayName: input.displayName,
+    avatarUrl: input.avatarUrl,
+  });
+  const token = await createSession(user.id, SESSION_TTL_MS);
+  return { user, token };
+}
+
 export function logout(token: string) {
   return deleteSession(token);
 }

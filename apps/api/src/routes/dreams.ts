@@ -8,13 +8,18 @@ import {
   deleteDream,
   getDreamById,
   getShareToken,
+  getUserSettings,
   listDreamsForUser,
+  listDreamsForUserPaged,
   setDreamPublic,
 } from '../db/queries.js';
 import { runPipeline } from '../services/pipeline.js';
 import { check } from '../services/rate-limit.js';
 import { moderate } from '../services/moderation.js';
 import { readSessionUser } from '../services/auth.js';
+import { env } from '../env.js';
+import { makeGmiProvider } from '../services/ai/gmi.js';
+import { ai as defaultAi } from '../services/ai/index.js';
 import type { Bindings } from '../index.js';
 
 export const dreamsRoutes = new Hono<{ Bindings: Bindings }>();
@@ -48,6 +53,25 @@ dreamsRoutes.post('/api/dreams/generate', async (c) => {
     transcript: parsed.data.transcript,
   });
 
+  // Build a per-user AI provider. Falls back to the deployment-wide
+  // default (and therefore the env-baked GMI key) when the user has
+  // not configured their own, or when the user is anonymous.
+  let ai = defaultAi;
+  if (user) {
+    const settings = await getUserSettings(user.id, c.env?.GMI_ENC_KEY);
+    if (settings?.gmiApiKey) {
+      try {
+        ai = makeGmiProvider({
+          apiKey: settings.gmiApiKey,
+          baseUrl: settings.gmiBaseUrl ?? env.GMI_BASE_URL,
+          h3Enabled: env.H3_ENABLED,
+        });
+      } catch (err) {
+        console.warn(`[dream ${dream.id}] failed to build per-user provider, using default`, err);
+      }
+    }
+  }
+
   // Fire and forget. In Workers, use ctx.executionCtx.waitUntil; in Node,
   // setImmediate. We sniff for the Worker context at runtime. Hono throws
   // when c.executionCtx is accessed in a Node dev server, so we wrap in try.
@@ -58,9 +82,9 @@ dreamsRoutes.post('/api/dreams/generate', async (c) => {
     execCtx = undefined;
   }
   if (execCtx && typeof execCtx.waitUntil === 'function') {
-    execCtx.waitUntil(runPipeline(dream));
+    execCtx.waitUntil(runPipeline(dream, ai));
   } else {
-    setImmediate(() => { runPipeline(dream); });
+    setImmediate(() => { runPipeline(dream, ai); });
   }
 
   return c.json(
@@ -104,8 +128,18 @@ dreamsRoutes.get('/api/dreams/:id', async (c) => {
 dreamsRoutes.get('/api/dreams', async (c) => {
   const user = await readSessionUser(c.req.header('cookie'));
   if (!user) return c.json({ error: 'Unauthorized' }, 401);
-  const list = await listDreamsForUser(user.id);
-  return c.json({ dreams: list });
+  const cursorRaw = c.req.query('cursor');
+  const cursor = cursorRaw ? Number(cursorRaw) : undefined;
+  const limitRaw = c.req.query('limit');
+  const limit = limitRaw ? Number(limitRaw) : undefined;
+  const result = await listDreamsForUserPaged(user.id, {
+    cursor: Number.isFinite(cursor) ? cursor : undefined,
+    limit: Number.isFinite(limit) ? limit : undefined,
+  });
+  return c.json({
+    dreams: result.dreams,
+    nextCursor: result.nextCursor,
+  });
 });
 
 dreamsRoutes.delete('/api/dreams/:id', async (c) => {

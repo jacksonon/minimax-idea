@@ -5,6 +5,9 @@
 // Per AGENTS.md §15.2 the key MUST NEVER be embedded in the repo,
 // in wrangler.toml, or in any committed file. This route is the only
 // way it enters the system.
+//
+// The stored value is AES-256-GCM encrypted with a deployment secret
+// (GMI_ENC_KEY), so even a raw D1 dump does not leak the key.
 
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -14,6 +17,7 @@ import {
   getUserSettings,
   upsertUserSettings,
 } from '../db/queries.js';
+import { encrypt } from '../services/crypto.js';
 import type { Bindings } from '../index.js';
 
 export const settingsRoutes = new Hono<{ Bindings: Bindings }>();
@@ -42,7 +46,9 @@ settingsRoutes.get('/api/settings', async (c) => {
 });
 
 /**
- * PUT /api/settings — save or update the user's GMI key.
+ * PUT /api/settings — save or update the user's GMI key. The key is
+ * encrypted with the deployment's GMI_ENC_KEY before it ever touches
+ * D1.
  */
 settingsRoutes.put('/api/settings', async (c) => {
   const user = await readSessionUser(c.req.header('cookie'));
@@ -52,9 +58,12 @@ settingsRoutes.put('/api/settings', async (c) => {
   if (!parsed.success) {
     return c.json({ error: 'Invalid input', issues: parsed.error.issues }, 400);
   }
+  const encKey = c.env?.GMI_ENC_KEY;
+  const stored = encrypt(parsed.data.gmiApiKey, encKey);
   const s = await upsertUserSettings(user.id, {
-    gmiApiKey: parsed.data.gmiApiKey,
+    gmiApiKey: stored,
     gmiBaseUrl: parsed.data.gmiBaseUrl,
+    encrypted: true,
   });
   return c.json({
     hasKey: true,

@@ -7,7 +7,8 @@
     "myDreams": "My dreams",
     "signIn": "Sign in",
     "signOut": "Sign out ({name})",
-    "settings": "Settings"
+    "settings": "Settings",
+    "me": "Account"
   },
   "home": {
     "heroTitle": "Describe your dream.",
@@ -68,7 +69,10 @@
     "today": "today",
     "yesterday": "yesterday",
     "daysAgo": "{n}d ago",
-    "weeksAgo": "{n}w ago"
+    "weeksAgo": "{n}w ago",
+    "loadMore": "Load older dreams",
+    "loadingMore": "Loading…",
+    "noMore": "You've reached the end of your dreams."
   },
   "dream": {
     "backToList": "← Back to my dreams",
@@ -109,7 +113,12 @@
     "loginCta": "Continue",
     "loginHint": "No password. Just a name to tag your dreams with.",
     "loginOffline": "The dream server is unreachable. We signed you in as a local guest instead.",
-    "loginCancel": "Cancel"
+    "loginCancel": "Cancel",
+    "githubCta": "Sign in with GitHub",
+    "githubNotConfigured": "GitHub sign-in is not configured on the server. The site owner needs to register a GitHub OAuth app and add the credentials.",
+    "devModeTitle": "Dev sign-in",
+    "devModeHint": "Production deployments disable this. Use it only in local development.",
+    "devOr": "or"
   },
   "demo": {
     "banner": "Demo deployment",
@@ -141,5 +150,40 @@
     "remove": "Remove key",
     "confirmRemove": "Remove your GMI API key? You'll need to set it again to generate new dreams.",
     "privacyNote": "Your key is sent over HTTPS to the server, stored in your account row, and used only to call the GMI Cloud API on your behalf. It is never included in any response to the browser."
+  },
+  "me": {
+    "title": "Your account",
+    "tabs": {
+      "profile": "Profile",
+      "dreams": "My dreams",
+      "key": "API key"
+    },
+    "notSignedIn": {
+      "title": "Sign in to see your account",
+      "hint": "Your dreams, your API key, and your settings live here once you sign in.",
+      "cta": "Sign in"
+    },
+    "profile": {
+      "heading": "Profile",
+      "signedInAs": "Signed in as @{handle}",
+      "name": "Display name",
+      "provider": "Sign-in method",
+      "email": "Email",
+      "emailUnknown": "Not shared by your provider",
+      "memberSince": "Member since {when}",
+      "lastSeen": "Last sign-in {when}",
+      "id": "Account ID"
+    },
+    "dreams": {
+      "heading": "My dreams",
+      "emptyTitle": "No dreams yet.",
+      "emptyHint": "Record one on the home page. It will land here, in your timeline.",
+      "openHome": "Go to home",
+      "failed": "This dream couldn't be filmed.",
+      "pending": "Still rendering…",
+      "ready": "Ready",
+      "videoUnavailable": "Video not available",
+      "loadError": "Couldn't load your dreams. Try again."
+    }
   }
 }

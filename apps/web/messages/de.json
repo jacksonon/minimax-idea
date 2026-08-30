@@ -7,7 +7,8 @@
     "myDreams": "Meine Träume",
     "signIn": "Anmelden",
     "signOut": "Abmelden ({name})",
-    "settings": "Einstellungen"
+    "settings": "Einstellungen",
+    "me": "Konto"
   },
   "home": {
     "heroTitle": "Beschreibe deinen Traum.",
@@ -68,7 +69,10 @@
     "today": "heute",
     "yesterday": "gestern",
     "daysAgo": "vor {n}T",
-    "weeksAgo": "vor {n}W"
+    "weeksAgo": "vor {n}W",
+    "loadMore": "Ältere Träume laden",
+    "loadingMore": "Lädt…",
+    "noMore": "Du hast das Ende deiner Träume erreicht."
   },
   "dream": {
     "backToList": "← Zurück zu meinen Träumen",
@@ -109,7 +113,12 @@
     "loginCta": "Weiter",
     "loginHint": "Kein Passwort. Nur ein Name, um deine Träume zu kennzeichnen.",
     "loginOffline": "Der Traumserver ist nicht erreichbar. Du wurdest als lokaler Gast angemeldet.",
-    "loginCancel": "Abbrechen"
+    "loginCancel": "Abbrechen",
+    "githubCta": "Weiter",
+    "githubNotConfigured": "Weiter",
+    "devModeTitle": "Weiter",
+    "devModeHint": "Weiter",
+    "devOr": "Weiter"
   },
   "demo": {
     "banner": "Demo-Deployment",
@@ -141,5 +150,40 @@
     "remove": "Schlüssel entfernen",
     "confirmRemove": "Deinen GMI-API-Schlüssel entfernen? Du musst ihn erneut setzen, um neue Träume zu erzeugen.",
     "privacyNote": "Dein Schlüssel wird über HTTPS an den Server gesendet, in deiner Kontozeile gespeichert und ausschließlich dazu verwendet, die GMI-Cloud-API in deinem Namen aufzurufen. Er ist in keiner Antwort an den Browser enthalten."
+  },
+  "me": {
+    "title": "Dein Konto",
+    "tabs": {
+      "profile": "Profil",
+      "dreams": "Meine Träume",
+      "key": "API-Schlüssel"
+    },
+    "notSignedIn": {
+      "title": "Melde dich an, um dein Konto zu sehen",
+      "hint": "Deine Träume, dein API-Schlüssel und deine Einstellungen erscheinen hier nach der Anmeldung.",
+      "cta": "Anmelden"
+    },
+    "profile": {
+      "heading": "Profil",
+      "signedInAs": "Angemeldet als @{handle}",
+      "name": "Anzeigename",
+      "provider": "Anmeldemethode",
+      "email": "E-Mail",
+      "emailUnknown": "Vom Anbieter nicht geteilt",
+      "memberSince": "Mitglied seit {when}",
+      "lastSeen": "Letzte Anmeldung {when}",
+      "id": "Konto-ID"
+    },
+    "dreams": {
+      "heading": "Meine Träume",
+      "emptyTitle": "Noch keine Träume.",
+      "emptyHint": "Nimm einen auf der Startseite auf. Er erscheint hier, in deiner Zeitleiste.",
+      "openHome": "Zur Startseite",
+      "failed": "Dieser Traum konnte nicht verfilmt werden.",
+      "pending": "Wird gerendert…",
+      "videoUnavailable": "Video nicht verfügbar",
+      "loadError": "Träume konnten nicht geladen werden. Bitte erneut versuchen.",
+      "ready": "Bereit"
+    }
   }
 }
