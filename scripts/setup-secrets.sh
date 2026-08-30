@@ -37,22 +37,25 @@ fi
 
 cat <<'EOF'
 # === One-time production setup for the dreamreel-api Worker ===
-# Run these from the apps/api directory.
+# Run these from the apps/api directory. We use `pnpm exec wrangler`
+# because wrangler lives in apps/api/node_modules/.bin/ (not on the
+# global PATH). If you have wrangler installed globally, you can drop
+# the `pnpm exec` prefix.
 
 cd "$(dirname "$0")/../apps/api"
 
 # 1. Set the encryption key for user-stored GMI keys.
 #    Paste the value (or a fresh `openssl rand -base64 32`) when prompted.
-wrangler secret put GMI_ENC_KEY
+pnpm exec wrangler secret put GMI_ENC_KEY
 
 # 2. Set the GitHub OAuth client id and secret.
 #    Create the OAuth app at https://github.com/settings/developers
 #    with callback URL = ${ALLOWED_ORIGIN}/api/auth/github/callback
-wrangler secret put GITHUB_CLIENT_ID
-wrangler secret put GITHUB_CLIENT_SECRET
+pnpm exec wrangler secret put GITHUB_CLIENT_ID
+pnpm exec wrangler secret put GITHUB_CLIENT_SECRET
 
 # 3. Apply the database migration that adds the key_encrypted column.
-wrangler d1 migrations apply dreamreel-db
+pnpm exec wrangler d1 migrations apply dreamreel-db
 
 # === Optional: rotate GMI_ENC_KEY (re-encrypts all user keys) ===
 # Re-encrypting in bulk is a one-shot script we have not written yet.
