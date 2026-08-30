@@ -43,8 +43,21 @@ fi
 
 # 2. Reset dev DB so the test is deterministic.
 #    (Only if we own the DB; if you have real data, comment this out.)
-if [[ "${DREAMREEL_KEEP_DB:-0}" != "1" ]]; then
-    sqlite3 "$API_DIR/dev.db" "DELETE FROM user_settings; DELETE FROM sessions; DELETE FROM users; DELETE FROM dreams;" >/dev/null 2>&1 || true
+#    Uses a one-shot Node script so we don't depend on the sqlite3
+#    CLI being installed (CI runners don't ship it by default).
+if [[ "${DREAMREEL_KEEP_DB:-0}" != "1" && -f "$API_DIR/dev.db" ]]; then
+    cd "$API_DIR"
+    node --import tsx -e "
+      import('./src/db/index.js').then(async ({ getDb }) => {
+        const db = getDb();
+        await db.run('DELETE FROM user_settings');
+        await db.run('DELETE FROM sessions');
+        await db.run('DELETE FROM users');
+        await db.run('DELETE FROM dreams');
+        process.exit(0);
+      }).catch((e) => { console.error('reset failed:', e); process.exit(1); });
+    " 2>/dev/null || true
+    cd "$REPO_ROOT"
 fi
 
 pass=0; fail=0
@@ -93,8 +106,18 @@ check "POST /api/dreams/generate in mock mode" "dream_id" "$g"
 g=$(curl -sS -b /tmp/e2e.cookies -X PUT $B/api/settings -H 'Content-Type: application/json' -d '{"gmiApiKey":"sk-test-e2e-fake","gmiBaseUrl":"https://api.gmicloud.ai"}')
 check "PUT /api/settings saves (returns hasKey:true)" "hasKey" "$g"
 
-# D1: ciphertext not plaintext
-ENC=$(sqlite3 "$API_DIR/dev.db" "SELECT gmi_api_key FROM user_settings LIMIT 1;")
+# D1: ciphertext not plaintext. Use a one-shot Node script so
+# we don't depend on the sqlite3 CLI being installed.
+cd "$API_DIR"
+ENC=$(node --import tsx -e "
+  import('./src/db/index.js').then(async ({ getDb }) => {
+    const db = getDb();
+    const row = await db.first('SELECT gmi_api_key FROM user_settings LIMIT 1');
+    process.stdout.write(row?.gmi_api_key ?? '');
+    process.exit(0);
+  }).catch((e) => { console.error(e); process.exit(1); });
+" 2>/dev/null || echo "")
+cd "$REPO_ROOT"
 check "D1 stores ciphertext (has {1} separator)" "{1}" "$ENC"
 if echo "$ENC" | grep -q "sk-test-e2e-fake"; then
     echo "  ✗ FAIL: D1 stored PLAINTEXT key (encryption broken)"; fail=$((fail+1))
