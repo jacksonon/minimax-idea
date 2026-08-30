@@ -16,25 +16,27 @@ REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 API_DIR="$REPO_ROOT/apps/api"
 B="http://localhost:8787"
 
-# 1. Make sure the API is running. If not, start it in the background.
+# 1. Make sure the API is running. The caller is expected to have
+#    started it. If not, we'll start it ourselves and clean up.
+#    In CI, scripts/acceptance.sh starts it before calling us.
 NEED_START=0
+APIPID=""
 if ! curl -fsS -o /dev/null "$B/health" 2>/dev/null; then
     NEED_START=1
-    echo "Starting API on :8787 ..."
+    echo "API not running, starting it ..."
     cd "$API_DIR"
-    pnpm dev > /tmp/dreamreel-api.log 2>&1 &
+    ( node --import tsx src/index.ts > /tmp/dreamreel-api.log 2>&1 ) &
     APIPID=$!
     cd "$REPO_ROOT"
-    # Wait up to 15s for /health to come up
-    for i in $(seq 1 30); do
+    for i in $(seq 1 60); do
         sleep 0.5
         if curl -fsS -o /dev/null "$B/health" 2>/dev/null; then
-            echo "API is up."
             break
         fi
     done
     if ! curl -fsS -o /dev/null "$B/health" 2>/dev/null; then
-        echo "ERROR: API did not start within 15s. See /tmp/dreamreel-api.log."
+        echo "ERROR: API did not start within 30s. See /tmp/dreamreel-api.log."
+        if [[ -n "$APIPID" ]]; then kill "$APIPID" 2>/dev/null || true; fi
         exit 1
     fi
 fi
@@ -109,14 +111,27 @@ else
 fi
 
 echo
-if [[ $fail -eq 0 ]]; then
-    echo "All $pass checks passed."
-    if [[ $NEED_START -eq 1 ]]; then
-        echo
-        echo "(API was started by this script; it is still running in the background."
-        echo " Stop it with: kill $APIPID)"
-    fi
-else
+if [[ $fail -ne 0 ]]; then
     echo "$fail of $((pass+fail)) failed."
+    # Clean up the API we started even on failure.
+    if [[ "$NEED_START" -eq 1 && -n "$APIPID" ]]; then
+        kill "$APIPID" 2>/dev/null || true
+    fi
     exit 1
+fi
+
+echo "All $pass checks passed."
+
+# If we started the API ourselves, leave it running for follow-up
+# inspection unless DREAMREEL_STOP_API=1 is set.
+if [[ "$NEED_START" -eq 1 && -n "$APIPID" ]]; then
+    if [[ "${DREAMREEL_STOP_API:-0}" == "1" ]]; then
+        kill "$APIPID" 2>/dev/null || true
+    else
+        echo
+        echo "(API was started by this script; it is still running in"
+        echo " the background (pid=$APIPID). Stop it with:"
+        echo "   kill $APIPID"
+        echo " or set DREAMREEL_STOP_API=1)"
+    fi
 fi
