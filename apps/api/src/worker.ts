@@ -92,6 +92,10 @@ app.onError((err, c) => {
   return c.json({ error: err.message || 'Internal error' }, 500);
 });
 
+function getEnv(e: any, key: string): string | undefined {
+  return e?.[key] ?? e?.env?.[key];
+}
+
 export default {
   async fetch(request: Request, env: Bindings, ctx: ExecutionContext): Promise<Response> {
     // Re-configure the AI provider from c.env. The hosting service
@@ -100,9 +104,9 @@ export default {
     // provider here. POST /api/dreams/generate will still 422
     // when the user has no stored key.
     configureAi({
-      apiKey: env.GMI_API_KEY ?? '',
-      baseUrl: env.GMI_BASE_URL ?? 'https://api.gmicloud.ai',
-      h3Enabled: env.H3_ENABLED === 'true',
+      apiKey: getEnv(env, 'GMI_API_KEY') ?? '',
+      baseUrl: getEnv(env, 'GMI_BASE_URL') ?? 'https://api.gmicloud.ai',
+      h3Enabled: getEnv(env, 'H3_ENABLED') === 'true',
     });
     return app.fetch(request, { env });
   },

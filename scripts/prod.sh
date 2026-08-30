@@ -154,7 +154,11 @@ cmd_verify() {
 
     echo "=== Verifying $API_BASE ==="
     check_get_status "GET /health" "/health" "200" '"ok":true'
-    check_get_status "GET /health reports ai=gmi" "/health" "200" '"ai":"gmi"'
+    # ai is 'mock' if no GMI_API_KEY is set in the env (the normal
+    # case for the per-user-key architecture), or 'gmi' if the
+    # operator set one. Either is fine; what matters is the
+    # endpoint serves a 200.
+    check_get_status "GET /health env=production" "/health" "200" '"env":"production"'
     check_get_status "GET /api/auth/me (anon)" "/api/auth/me" "200" '"user":null'
 
     # After the latest Worker is deployed, /api/auth/github should

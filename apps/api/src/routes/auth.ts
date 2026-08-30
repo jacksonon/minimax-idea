@@ -27,6 +27,16 @@ import type { Bindings } from '../index.js';
 
 export const authRoutes = new Hono<{ Bindings: Bindings }>();
 
+/**
+ * Look up a secret / env var on c.env. Hono in Cloudflare Workers
+ * mode (v4.x) nests bindings under c.env.env, while top-level
+ * c.env is reserved for actual Cloudflare bindings (D1, R2, KV).
+ * We try both so this works on every wrangler/hono combination.
+ */
+function getEnv(c: any, key: string): string | undefined {
+  return c.env?.[key] ?? c.env?.env?.[key];
+}
+
 function isDev(env: Bindings | undefined): boolean {
   return (env?.ENVIRONMENT ?? 'development') !== 'production';
 }
@@ -56,7 +66,7 @@ authRoutes.post('/api/auth/dev-login', async (c) => {
  * and redirects the user agent to GitHub's authorize endpoint.
  */
 authRoutes.get('/api/auth/github', (c) => {
-  const clientId = c.env?.GITHUB_CLIENT_ID;
+  const clientId = getEnv(c, "GITHUB_CLIENT_ID");
   if (!clientId) {
     return c.json(
       {
@@ -115,8 +125,8 @@ authRoutes.get('/api/auth/github/callback', async (c) => {
     return c.text('OAuth state mismatch. Please try signing in again.', 400);
   }
 
-  const clientId = c.env?.GITHUB_CLIENT_ID;
-  const clientSecret = c.env?.GITHUB_CLIENT_SECRET;
+  const clientId = getEnv(c, "GITHUB_CLIENT_ID");
+  const clientSecret = getEnv(c, "GITHUB_CLIENT_SECRET");
   if (!clientId || !clientSecret) {
     return c.json({ error: 'GitHub OAuth is not configured on the server.' }, 503);
   }

@@ -25,6 +25,16 @@ import type { Bindings } from '../index.js';
 
 export const settingsRoutes = new Hono<{ Bindings: Bindings }>();
 
+/**
+ * Look up a secret / env var on c.env. Hono in Cloudflare Workers
+ * mode nests bindings under c.env.env, while top-level c.env is
+ * reserved for actual Cloudflare bindings. We try both so this
+ * works on every wrangler/hono combination.
+ */
+function getEnv(c: any, key: string): string | undefined {
+  return c.env?.[key] ?? c.env?.env?.[key];
+}
+
 const updateSchema = z.object({
   gmiApiKey: z.string().min(10).max(500),
   gmiBaseUrl: z.string().url().optional(),
@@ -40,7 +50,7 @@ settingsRoutes.get('/api/settings', async (c) => {
   // Pass the encryption key in so we can decrypt at-rest values.
   // In production it comes from c.env (Worker secret); in local Node
   // dev it comes from process.env via .dev.vars.
-  const encKey = c.env?.GMI_ENC_KEY ?? process.env.GMI_ENC_KEY;
+  const encKey = getEnv(c, "GMI_ENC_KEY") ?? process.env.GMI_ENC_KEY;
   const s = await getUserSettings(user.id, encKey);
   if (!s) {
     return c.json({ hasKey: false, baseUrl: 'https://api.gmicloud.ai', updatedAt: null });
@@ -67,7 +77,7 @@ settingsRoutes.put('/api/settings', async (c) => {
   }
   // In production, GMI_ENC_KEY comes from Worker secrets (c.env). In
   // local Node dev it comes from process.env via .dev.vars.
-  const encKey = c.env?.GMI_ENC_KEY ?? process.env.GMI_ENC_KEY;
+  const encKey = getEnv(c, "GMI_ENC_KEY") ?? process.env.GMI_ENC_KEY;
   const { encrypt } = await import('../services/crypto.js');
   const stored = encrypt(parsed.data.gmiApiKey, encKey);
   const s = await upsertUserSettings(user.id, {

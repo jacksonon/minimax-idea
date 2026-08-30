@@ -48,7 +48,7 @@ These rules are non-negotiable. An agent must stop and ask the human if a task s
 - **Database**: Cloudflare D1 (SQLite). Do not propose Postgres, Turso, or a different provider.
 - **Object storage**: Cloudflare R2. Do not propose S3, GCS, or local disk.
 - **Cache/session/rate-limit**: Cloudflare KV. Do not propose Redis or Upstash.
-- **Auth**: NextAuth v5 (Auth.js) with GitHub + Google providers. Do not propose Clerk, Auth0, or a custom JWT system.
+- **Auth**: hand-rolled GitHub OAuth flow in `apps/api/src/routes/auth.ts`, driven by `apps/web/src/components/SignInModal.tsx`. Sessions are stored in D1 (`sessions` table) and tracked via an `HttpOnly` cookie. The PRD's original NextAuth v5 design was replaced by this approach because (a) it works on the static Cloudflare Pages deploy (NextAuth would require a Node handler), and (b) it keeps the per-user-key architecture co-located with the rest of the auth code. Do not add NextAuth, Clerk, Auth0, or a third-party auth provider.
 - **Package manager**: `pnpm` with workspaces. Do not use npm or yarn.
 - **Monorepo layout**: `apps/web`, `apps/api`, `packages/shared`. Do not collapse to a single package.
 
@@ -102,18 +102,22 @@ dreamreel/
 
 ### 3.1 Pages
 
-Pages live in `apps/web/app/`. Allowed pages (per PRD §3.2 / §7.1):
+Pages live in `apps/web/app/`. Allowed pages:
 
 | Route | Component | Notes |
 |---|---|---|
 | `/` | `app/page.tsx` | Landing + main flow (capability-gated) |
-| `/dreams` | `app/dreams/page.tsx` | My Dreams list (auth required) |
+| `/me` | `app/me/page.tsx` | Per-user dashboard with three tabs: Profile / My dreams / API key. `?tab=` selects a tab. |
+| `/me?tab=dreams` | (same component) | "My dreams" timeline view |
+| `/me?tab=key` | (same component) | "API key" management view |
+| `/dreams` | `app/dreams/page.tsx` | Client-side redirect to `/me?tab=dreams`. Kept so old links don't 404. |
 | `/dreams/[id]` | `app/dreams/[id]/page.tsx` | Dream detail (auth required) |
+| `/settings` | `app/settings/page.tsx` | Legacy settings page. The current dashboard absorbs its functionality under `/me?tab=key`; the route is kept to avoid breaking old links. |
 | `/share/[token]` | `app/share/[token]/page.tsx` | Public share view (no auth) |
-| `/settings` | `app/settings/page.tsx` | Per-user GMI key + base URL (auth + capability required) |
-| `/api/auth/[...nextauth]` | NextAuth handler | **Self-hosted only** — Pages static export cannot host this. Available on a Node/Hono deployment; the Pages deploy uses the simpler `/api/auth/dev-login` route instead. |
 
 **Do not** create additional pages (e.g., `/about`, `/pricing`, `/blog`). Out of scope.
+
+Note: there is **no** `/api/auth/[...nextauth]` handler. The original PRD's NextAuth integration was replaced by a hand-rolled GitHub OAuth flow in `apps/api/src/routes/auth.ts`. Sign-in is initiated by `apps/web/src/components/SignInModal.tsx` which navigates to `/api/auth/github` on the API Worker.
 
 ### 3.2 Components
 
@@ -145,9 +149,9 @@ Pages live in `apps/web/app/`. Allowed pages (per PRD §3.2 / §7.1):
 
 ### 3.5 What the Frontend Must NOT Do
 
-- Must not call GMI Cloud APIs directly. Always go through `apps/api`.
-- Must not embed AI API keys. They live in the Worker only.
-- Must not use `localStorage` for sensitive data (e.g., dream transcripts before save). Use session storage at most, and clear on completion.
+- Must not call GMI Cloud APIs directly. Always go through `apps/api` (which uses the per-user key).
+- Must not embed any API key (the service's or any user's). Keys live in the Worker's encrypted D1 rows.
+- Must not use `localStorage` for sensitive data (e.g., dream transcripts before save, the user's own GMI key — though the web never sees it). Use `sessionStorage` at most, and clear on completion.
 - Must not block the UI thread with long computations. If you must, move it to a Web Worker.
 
 ---
@@ -164,6 +168,11 @@ Pages live in `apps/web/app/`. Allowed pages (per PRD §3.2 / §7.1):
 ### 4.2 Bindings (defined in `wrangler.toml`)
 
 ```toml
+name = "dreamreel-api"
+main = "src/worker.ts"
+compatibility_date = "2024-12-02"
+compatibility_flags = ["nodejs_compat"]
+
 [[d1_databases]]
 binding = "DB"
 database_name = "dreamreel-db"
@@ -179,60 +188,74 @@ id = "<TBD>"
 
 [vars]
 ENVIRONMENT = "production"
-ALLOWED_ORIGIN = "https://dreamreel.app"
+ALLOWED_ORIGIN = "https://dreamreel-web.pages.dev"
 GMI_BASE_URL = "https://api.gmicloud.ai"
-GMI_API_KEY = "<SECRET>"  # via wrangler secret, NOT here
-
-[[containers]]
-binding = "FFMPEG"
-image = "dreamreel/ffmpeg:latest"
-max_instances = 3
+# H3 is opt-in. When false, the pipeline falls back to a static-
+# image slideshow. Set to "true" to enable real video generation.
+H3_ENABLED = "false"
 ```
 
-The `Env` type in `src/types/env.ts` must export all of these. Agents must not invent new bindings without human approval.
+**Secrets** (set via `wrangler secret put`, never in `wrangler.toml`):
+
+| Secret | Required? | Purpose |
+|---|---|---|
+| `GMI_ENC_KEY` | yes | AES-256-GCM key for encrypting user API keys at rest. Generate with `openssl rand -base64 32`. |
+| `GITHUB_CLIENT_ID` | yes | OAuth app client id. Sign in breaks without it. |
+| `GITHUB_CLIENT_SECRET` | yes | OAuth app client secret. Same. |
+| `GMI_API_KEY` | **no, do not set** | The service is a host; users bring their own. If you set it, the Worker still refuses to use it for user-initiated generation (see `routes/dreams.ts`). |
+
+The Cloudflare Worker runtime nests worker secrets and vars **under `c.env.env`** rather than at the top level of `c.env`. All route handlers use a small `getEnv(c, key)` helper that checks both, so the same code runs locally (`c.env` is a Node `process.env`-style object) and in the Worker (`c.env` is a Cloudflare binding proxy).
+
+The `Bindings` type in `src/types.ts` is the source of truth for the worker-side env shape. Agents must not invent new bindings without human approval.
 
 ### 4.3 External Service Boundaries
 
 Each external service gets its own file. Allowed:
 
-- `services/m3.ts` — calls GMI Cloud M3 chat completions, JSON-mode output
-- `services/h3.ts` — calls GMI Cloud H3 video generation (async poll pattern)
-- `services/music.ts` — calls GMI Cloud Music 3.0
-- `services/speech.ts` — calls GMI Cloud Speech 2.8
-- `services/composite.ts` — invokes ffmpeg container to stitch 4 clips + audio
-- `services/storage.ts` — R2 put/get/presign helpers
-- `services/rate-limit.ts` — KV-backed rate limiting
-- `services/auth.ts` — NextAuth JWT verification (called from Worker)
-- `services/moderation.ts` — pre-generation content check (M3-based or keyword)
+- `services/ai/gmi.ts` — `makeGmiProvider({apiKey, baseUrl, h3Enabled})` builds an isolated `AIProvider` bound to a specific GMI Cloud credential set. The per-user-key architecture creates a new provider instance for each user, so one user's key never crosses into another user's request.
+- `services/ai/mock.ts` — local stub used in `AI_PROVIDER=mock` mode (local dev) and as a fallback when no GMI key is configured in production.
+- `services/ai/index.ts` — the AI selector. `ai` is a Proxy that lazily resolves the provider on first use. `configureAi({apiKey, baseUrl, h3Enabled})` is called by the Cloudflare Worker / Node dev server at startup with values from `c.env` / `process.env`.
+- `services/auth.ts` — session helpers: `readSessionUser`, `loginAsMock` (dev only), `loginWithGitHub` (upserts user from GitHub profile).
+- `services/crypto.ts` — AES-256-GCM encrypt/decrypt for the `user_settings.gmi_api_key` column. The encryption key is the deployment secret `GMI_ENC_KEY`. Node-only module; `routes/settings.ts` dynamic-imports it so the Worker bundle stays clean.
+- `services/pipeline.ts` — orchestrates the dream generation: M3 → H3×4 + Music + Speech → ffmpeg composite. Accepts an injected `AIProvider`; the route in `routes/dreams.ts` builds the provider from the user's stored key.
+- `services/composite.ts` — ffmpeg invocation. Cannot run on Cloudflare Workers.
+- `services/storage.ts` — R2 put/get.
+- `services/rate-limit.ts` — KV-backed per-IP counter.
+- `services/moderation.ts` — pre-generation content check (keyword + M3-based).
 
 **No service may call another vendor's AI API** (see §1.1).
 
 ### 4.4 Async Generation Pipeline
 
-The dream generation flow is **asynchronous** because H3 takes 20-30 seconds per clip and we run 4 in parallel.
+The dream generation flow is **asynchronous** because H3 takes 20-30 seconds per clip and we run 4 in parallel. The current production deployment **cannot run the pipeline** because the Cloudflare Worker runtime has no `ffmpeg` — `POST /api/dreams/generate` returns 503 with a clear message, and the user is told to run `pnpm dev:api` locally (or to deploy a Cloudflare Container that hosts the composition step) for end-to-end generation. The pipeline itself is fully wired and works in any environment that can host ffmpeg + Node.
 
 **Pattern** (must be followed exactly):
 
 ```
 1. POST /api/dreams/generate
-   - Validate body (zod)
-   - Check rate limit
-   - Run moderation
-   - Insert dream row with status='pending'
-   - enqueue: ctx.waitUntil(runPipeline(dreamId))
-   - Return 202 with { dream_id, poll_url }
+   - Validate body (zod): { transcript: string (5..2000) }
+   - 401 unauthenticated if no session cookie
+   - 422 gmi_key_required if AI_PROVIDER=gmi and user has no stored key
+       (the service is a host — every user must bring their own)
+   - 503 ai_unavailable in AI_PROVIDER=mock mode is fine for local dev
+   - Check rate limit (KV-backed, higher quota for logged-in users)
+   - Run moderation (keyword + optional M3)
+   - Insert dream row with status='pending', user_id = session.user.id
+   - Build per-user AIProvider from getUserSettings(user.id, encKey).gmiApiKey
+   - enqueue: ctx.waitUntil(runPipeline(dream, ai))  (or setImmediate in Node)
+   - Return 202 with { dream_id, status, poll_url }
 
-2. runPipeline(dreamId) — internal, runs in waitUntil
+2. runPipeline(dream, ai) — internal, runs in waitUntil
    a. Set status='rendering', stage='screenplay'
-   b. Call M3 → get screenplay JSON
+   b. ai.generateScreenplay({ transcript }) → M3 → screenplay JSON
    c. Parse + validate against zod schema
-   d. Save screenplay_json, analysis_text, emotion_tag
+   d. Save screenplay_json, analysis_text, emotion_tag, dream_type
    e. Set stage='scene-1' ... 'scene-4' (interleave with H3 calls)
-   f. await Promise.all([H3×4, Music, Speech])
+   f. Promise.all([H3×4, Music, Speech])
       - Each must have its own retry policy (max 2 retries, exponential backoff)
       - If H3 fails twice, scene becomes a black 8s frame with text "this scene slipped from memory"
    g. Set stage='compositing'
-   h. Call composite service (ffmpeg container) → upload final.mp4 to R2
+   h. composeDream() → ffmpeg → upload final.mp4 to R2
    i. Set status='done', video_r2_key, duration_ms
 
 3. GET /api/dreams/:id/status
@@ -265,9 +288,11 @@ The dream generation flow is **asynchronous** because H3 takes 20-30 seconds per
 ### 4.8 What the Backend Must NOT Do
 
 - Must not do any rendering of HTML (this is the frontend's job).
-- Must not store AI API keys in code. Use `wrangler secret put GMI_API_KEY`.
+- Must not store AI API keys in code. Users bring their own; the per-user key is stored encrypted in D1 via `services/crypto.ts`.
+- Must not store the service owner's `GMI_API_KEY` in production. The hosting service is a host, not a customer — see §1.1 and `routes/dreams.ts`.
 - Must not call the frontend's domain. If you need data, query D1 / KV / R2 directly.
 - Must not block the request handler on H3. Always async via `waitUntil`.
+- Must not statically import `node:url`, `node:path`, or `node:crypto`. The Worker bundle would crash on startup. Use `process.cwd()` instead of resolving `import.meta.url`; dynamic-import the crypto module from inside the request handler.
 
 ---
 
@@ -291,19 +316,20 @@ Frontend:
 - `zustand`
 - `swr`
 - `zod`
-- `next-auth` (v5 beta)
 - `clsx` (for conditional className)
 - `lucide-react` (icons)
 - `framer-motion` (animations; use sparingly)
+- `@hono/cookie` is allowed under the `hono` umbrella (used by the auth routes)
 
 Backend:
 - `hono`
 - `wrangler`
-- `drizzle-orm` + `drizzle-kit`
+- `drizzle-orm` + `drizzle-kit` (currently not used — we go through raw D1 prepared statements via `apps/api/src/db/queries.ts`. Kept on the list because the migration path is documented; if you start a new module that benefits from a query builder, drizzle is the right pick.)
 - `zod`
-- `jose` (JWT)
 - `nanoid` (id generation)
-- `pino` (structured logging)
+- `node:crypto` (built-in) for AES-256-GCM at-rest encryption of user API keys
+
+Removed: `next-auth` (replaced by hand-rolled GitHub OAuth in `apps/api/src/routes/auth.ts`), `jose` (no JWTs in the new auth flow — sessions are opaque random tokens stored in D1), `pino` (we use `console.log` for now; revisit if log volume becomes a problem).
 
 ### 5.2 Explicitly Forbidden
 
@@ -424,27 +450,37 @@ Maintain `docs/prompts/test-corpus.json` with 20+ real (anonymized) dream descri
 
 ### 9.1 Local Development
 
-`.env.example` (committed) shows required keys. `.env.local` (gitignored) provides values.
+`.env.example` files (committed) show required keys. Real values go in `.env.local` / `apps/api/.dev.vars` (gitignored).
 
 ```
 # apps/web/.env.local
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=<random 32 bytes>
-GITHUB_ID=<from GitHub OAuth app>
-GITHUB_SECRET=<from GitHub OAuth app>
-GOOGLE_ID=<from Google Cloud console>
-GOOGLE_SECRET=<from Google Cloud console>
-API_INTERNAL_URL=http://localhost:8787
+NEXT_PUBLIC_API_URL=http://localhost:8787
+# No other secrets on the web side — sign-in is initiated by
+# navigating to /api/auth/github on the API server.
 
 # apps/api/.dev.vars
-GMI_API_KEY=<from console.gmicloud.ai>
+GMI_ENC_KEY=<openssl rand -base64 32>
+GITHUB_CLIENT_ID=<from GitHub OAuth app>
+GITHUB_CLIENT_SECRET=<from GitHub OAuth app>
 ENVIRONMENT=development
 ALLOWED_ORIGIN=http://localhost:3000
+# AI_PROVIDER=mock is the default. Set to "gmi" to use the user's
+# own stored key (you'll need to set GMI_ENC_KEY for that path).
 ```
+
+The Node dev server (`tsx watch src/index.ts`) loads `.dev.vars` into `process.env` at startup. The Cloudflare Worker runtime reads `c.env` and `c.env.env` (see `getEnv()` in the route handlers).
 
 ### 9.2 Production Secrets
 
-Use `wrangler secret put <NAME>` for the Worker, and Cloudflare Pages environment variables for the frontend. **Never put production secrets in `wrangler.toml`.**
+Use `wrangler secret put <NAME>` for the Worker. **Never put production secrets in `wrangler.toml`**, and never commit a real value to the repo.
+
+| Secret | Set with | Why |
+|---|---|---|
+| `GMI_ENC_KEY` | `wrangler secret put GMI_ENC_KEY` (value: `openssl rand -base64 32`) | Encrypts user GMI keys at rest in D1. |
+| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | `wrangler secret put ...` | OAuth sign-in. |
+| `GMI_API_KEY` | **do not set** | The service is a host — users bring their own. |
+
+The Cloudflare Pages frontend does **not** need any secrets in production. `NEXT_PUBLIC_API_URL` is set at build time by the deploy workflow; the OAuth dance happens entirely on the API side.
 
 ### 9.3 What the Agent Must NEVER Do
 

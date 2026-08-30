@@ -106,14 +106,18 @@ configureAi({
 // When this file is bundled by wrangler, it becomes a Worker. We default-
 // export the fetch handler. In Node dev mode (tsx), this export is ignored
 // and the Node server below takes over.
+function getEnv(e: any, key: string): string | undefined {
+  return e?.[key] ?? e?.env?.[key];
+}
+
 export default {
   async fetch(request: Request, env: Bindings, ctx: ExecutionContext): Promise<Response> {
     // Re-configure the AI provider from the per-request env so
     // c.env.GMI_API_KEY (if the operator set one) takes effect.
     configureAi({
-      apiKey: env.GMI_API_KEY ?? '',
-      baseUrl: env.GMI_BASE_URL ?? 'https://api.gmicloud.ai',
-      h3Enabled: env.H3_ENABLED === 'true',
+      apiKey: getEnv(env, 'GMI_API_KEY') ?? '',
+      baseUrl: getEnv(env, 'GMI_BASE_URL') ?? 'https://api.gmicloud.ai',
+      h3Enabled: getEnv(env, 'H3_ENABLED') === 'true',
     });
     return app.fetch(request, { env });
   },

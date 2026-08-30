@@ -24,6 +24,16 @@ import type { Bindings } from '../index.js';
 
 export const dreamsRoutes = new Hono<{ Bindings: Bindings }>();
 
+/**
+ * Look up a secret / env var on c.env. Hono in Cloudflare Workers
+ * mode nests bindings under c.env.env, while top-level c.env is
+ * reserved for actual Cloudflare bindings. We try both so this
+ * works on every wrangler/hono combination.
+ */
+function getEnv(c: any, key: string): string | undefined {
+  return c.env?.[key] ?? c.env?.env?.[key];
+}
+
 const generateSchema = z.object({
   transcript: z.string().min(5).max(2000),
 });
@@ -63,7 +73,7 @@ dreamsRoutes.post('/api/dreams/generate', async (c) => {
   //      GMI API key in their settings. We never fall back to a
   //      deployment-wide key — the service owner should not pay for
   //      other users' generations.
-  const encKey = c.env?.GMI_ENC_KEY ?? process.env.GMI_ENC_KEY;
+  const encKey = getEnv(c, "GMI_ENC_KEY") ?? process.env.GMI_ENC_KEY;
   let ai;
   if (env.AI_PROVIDER === 'mock') {
     ai = mockProvider;

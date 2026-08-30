@@ -253,9 +253,42 @@ useEffect(() => {
 
 The `database_id` in `wrangler.toml` is wrong. Re-run `pnpm wrangler d1 create dreamreel-db` and copy the actual ID.
 
-### `wrangler secret put GMI_API_KEY` doesn't seem to take
+### `wrangler secret list` shows a secret, but the Worker can't read it
 
-Run `pnpm wrangler secret list` to verify. Secrets are per-environment — make sure you're in the right one (`wrangler secret put --env production`).
+The Cloudflare Worker runtime nests secrets **under `c.env.env`**, not at the top level of `c.env`. So `c.env?.GITHUB_CLIENT_ID` is always `undefined`; the correct access is `c.env?.env?.GITHUB_CLIENT_ID` (or `c.env?.env?.[key]`).
+
+The repo's route handlers use a small `getEnv(c, key)` helper that checks both layers, so this is handled for you. If you add a new route and read a secret directly from `c.env`, the value will always be undefined.
+
+You can verify what the Worker actually sees by hitting a debug route that prints `Object.keys(c.env.env)`:
+```ts
+app.get('/__debug/env', (c) => c.json(Object.fromEntries(
+  Object.keys((c.env as any).env ?? {}).map((k) => [k, 'set' in ((c.env as any).env[k])])
+)));
+```
+
+The default response is `ai: "mock"` (i.e. the worker has no GMI key in env, which is correct — users bring their own). If you need the worker itself to call GMI, set `GMI_API_KEY` via `wrangler secret put`.
+
+### `wrangler secret put` and `wrangler deploy` were run with different `--env` values
+
+The `wrangler.toml` declares a top-level environment *and* a `[env.dev]` block. `wrangler secret put` without `--env` writes to the top-level env; `wrangler deploy` without `--env` warns about ambiguity and may pick `dev`. The two then target different storage and the secret is invisible to the deployed Worker.
+
+**Fix:** always pass `--env ""` to both. The deploy script in `scripts/prod.sh` does this. The full sequence:
+
+```bash
+cd apps/api
+./node_modules/.bin/wrangler secret put GMI_ENC_KEY --env ""          # paste
+./node_modules/.bin/wrangler secret put GITHUB_CLIENT_ID --env ""     # paste
+./node_modules/.bin/wrangler secret put GITHUB_CLIENT_SECRET --env "" # paste
+./node_modules/.bin/wrangler deploy --env ""
+```
+
+Verify with `./node_modules/.bin/wrangler secret list` (lists names only) and a quick `curl https://<api>/api/auth/github` (should return 302, not 503).
+
+### Worker runtime fails to start: "The 'path' argument must be of type string or an instance of URL. Received undefined" at `fileURLToPath`
+
+Some module in the bundle statically imports `node:url` and calls `fileURLToPath(import.meta.url)`. In `workerd`, `import.meta.url` is `undefined`, so the call throws and the Worker fails to boot with the cryptic "service core: Uncaught TypeError" message above.
+
+The repo's `src/env.ts` is Node-only (originally). If you re-introduce a `node:url` or `node:path` import into something `worker.ts` transitively pulls in (like a service module), the Worker will refuse to start. Use `process.cwd()` and pass config through function arguments instead. The pattern in `services/ai/gmi.ts` (a `makeGmiProvider(config)` factory that takes its config as an argument) is the safe one.
 
 ### Pages deploy: "No build output found"
 
@@ -282,27 +315,50 @@ Set `AbortSignal.timeout(60_000)` on the fetch in `apps/api/src/services/ai/gmi.
 
 Same as local §1 — `onlyBuiltDependencies` in `pnpm-workspace.yaml` must include `better-sqlite3`. It does, but check the YAML is committed.
 
+### Install step fails with `ERR_PNPM_IGNORED_BUILDS` even with `onlyBuiltDependencies` set
+
+pnpm 11 + Node 20 in CI: `actions/setup-node@v4` was failing on Node 20 because the GH-hosted runner only ships Node 24 (Node 20 is deprecated). Bumping `NODE_VERSION` to `'22'` in `.github/workflows/ci.yml` fixed it. Always use a Node version the runner still supports.
+
+### Install step still fails after fixing Node version
+
+Add `--ignore-scripts` to `pnpm install` in CI (matching the Deploy workflow). pnpm 11 hard-errors on native build scripts that aren't in `onlyBuiltDependencies`, even when the lockfile approved them previously.
+
 ### E2E job times out at 8 min
 
 `scripts/acceptance.sh` polls up to 120s. Total budget should be 4-5 min. If GitHub-hosted runners are slow, increase `timeout-minutes` in `.github/workflows/ci.yml`.
+
+### E2E job fails on `scripts/acceptance.sh` with EADDRINUSE
+
+Both `scripts/acceptance.sh` and `scripts/test-api.sh` were trying to bind to :8787. `scripts/acceptance.sh` is the single owner now — it starts the API itself, then calls `test-api.sh` which uses the existing server. If you've added a third script that also starts a server, you'll get port conflicts in CI. The fix is to either (a) make every script that needs the API check-and-start or (b) only let `scripts/acceptance.sh` start it and have everything else assume the server is up.
 
 ### Playwright install fails in E2E
 
 The step has `|| true` to ignore failures — it's optional. The E2E doesn't actually drive a browser; it uses `curl` against the API.
 
+### Acceptance logs are silent — failures show only "Run acceptance script" failed in the workflow UI
+
+The script writes a detailed transcript to `/tmp/dreamreel-acceptance.log` and uploads it as the `acceptance-logs` artifact. Open the failed run in the GitHub Actions UI, scroll to the **Artifacts** section at the bottom of the page, and download `acceptance-logs` to see exactly which check failed and why.
+
 ### Artifact `acceptance-dream` is empty
 
-Either the pipeline never reached `done` (check logs) or the script's `/tmp/final_dream.mp4` path doesn't survive into the upload step. Add `if-no-files-found: error` to fail loudly instead of silently skipping.
+The full dream-generation E2E was removed in favor of the smoke-test approach. We no longer run the pipeline in CI (it requires ffmpeg, the user has not provided a GMI key, and the production Worker can't run ffmpeg anyway). The `acceptance-dream` artifact upload was deleted from `.github/workflows/ci.yml` when that change was made.
 
 ---
 
-## Bonus: when in doubt, run the acceptance script
+## Bonus: when in doubt, run the test scripts
 
 ```bash
-./scripts/acceptance.sh
+# Local API end-to-end (boots the API on :8787, runs 11 checks)
+bash scripts/test-api.sh
+
+# End-to-end against the deployed production (no local server)
+bash scripts/acceptance.sh
+
+# Production smoke test (requires the latest code already deployed)
+bash scripts/prod.sh verify
 ```
 
-If it passes, the system is healthy. If it fails, the script names which step broke, and the API log at `/tmp/api.log` has the stack trace.
+If a check fails, the script names which step broke and prints the actual response vs. what was expected. The local `test-api.sh` tails the dev API log on startup failure; the CI `acceptance.sh` writes a full transcript to `/tmp/dreamreel-acceptance.log` and uploads it as a workflow artifact (`acceptance-logs`).
 
 ---
 
