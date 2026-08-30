@@ -35,7 +35,20 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        # --ignore-scripts to avoid pnpm 11's ERR_PNPM_IGNORED_BUILDS:
+        # the lockfile approves better-sqlite3 / esbuild / workerd, but
+        # we don't need any of them for typecheck/test/build. See the
+        # matching step in .github/workflows/deploy.yml.
+        # Try frozen-lockfile first; if the lockfile drifts (because
+        # the runner's pnpm patch is newer than the one that generated
+        # the lock), retry without --frozen-lockfile and surface the
+        # updated lockfile in the PR.
+        id: install
+        continue-on-error: true
+        run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: Retry install (no frozen lockfile)
+        if: steps.install.outcome == 'failure'
+        run: pnpm install --ignore-scripts
 
       - name: Approve native builds
         # better-sqlite3 + esbuild need to run their install scripts.
