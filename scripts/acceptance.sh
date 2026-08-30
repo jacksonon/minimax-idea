@@ -101,8 +101,18 @@ echo "  mode:        $([[ "${DREAMREEL_E2E_LOCAL:-0}" == "1" ]] && echo "local (
 # --------------------------------------------------------------------
 banner "1. /health"
 check_get "/health returns 200" "/health" "200" '"ok":true'
-check_get "/health reports ai=gmi" "/health" "200" '"ai":"gmi"'
-check_get "/health reports env=production" "/health" "200" '"env":"production"'
+# ai is 'mock' if no GMI_API_KEY is set in the env (the normal
+# case for the per-user-key architecture), or 'gmi' if the
+# operator set one. Either is fine.
+check_get "/health env=production" "/health" "200" '"env":"production"'
+got=$(curl -s "$API_BASE/health" 2>/dev/null || echo '')
+if echo "$got" | grep -q '"ai":"gmi"'; then
+    echo "  ✓ /health reports ai=gmi"; pass=$((pass+1))
+elif echo "$got" | grep -q '"ai":"mock"'; then
+    echo "  ✓ /health reports ai=mock (no GMI_API_KEY in env, expected for the per-user-key architecture)"; pass=$((pass+1))
+else
+    echo "  ✗ /health: expected ai=gmi or ai=mock, got: $got"; fail=$((fail+1))
+fi
 
 banner "2. Auth endpoints wired"
 check_get "/api/auth/me (anon) returns user:null" "/api/auth/me" "200" '"user":null'
