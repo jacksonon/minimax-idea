@@ -148,6 +148,15 @@ jobs:
         run: bash scripts/acceptance.sh
         timeout-minutes: 8
 
+      - name: Upload acceptance logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acceptance-logs
+          path: /tmp/dreamreel-acceptance.log
+          if-no-files-found: ignore
+          retention-days: 7
+
       - name: Upload generated video artifact
         if: always()
         uses: actions/upload-artifact@v4
