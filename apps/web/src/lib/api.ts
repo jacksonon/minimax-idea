@@ -133,8 +133,11 @@ export const api = {
    */
   githubLogin: (next: string = '/') => {
     if (typeof window !== 'undefined') {
+      // Use the absolute API base so we hit the Worker, not the
+      // Pages origin (where this /api/auth/github route does not
+      // exist). The Worker returns a 302 to github.com.
       const target = next ? `${next}` : '/';
-      window.location.href = `/api/auth/github?next=${encodeURIComponent(target)}`;
+      window.location.href = `${base()}/api/auth/github?next=${encodeURIComponent(target)}`;
     }
   },
 
