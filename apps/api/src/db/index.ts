@@ -4,11 +4,12 @@
 //
 // We expose a uniform `Db` interface that always returns Promises so callers
 // can `await` consistently regardless of the backend.
-
-import Database from 'better-sqlite3';
-import fs from 'node:fs';
-import path from 'node:path';
-import { env } from '../env.js';
+//
+// IMPORTANT: this module is bundled into the Cloudflare Worker. We
+// therefore keep the better-sqlite3 / node:fs / node:path imports
+// behind dynamic imports so they are not resolved at module-load
+// time. Otherwise the Worker bundle would try to mkdirSync at boot
+// and crash with "[unenv] fs.mkdirSync is not implemented yet!".
 
 export type SqlParam = string | number | null;
 
@@ -36,8 +37,14 @@ export function getDb(): Db {
     _db = makeD1Db(_activeD1);
     _activeBinding = 'd1';
   } else {
-    _db = makeSqliteDb();
-    _activeBinding = 'sqlite';
+    // DYNAMIC import: better-sqlite3 is a Node-only module. The Worker
+    // bundle must not load it. We only resolve this import when the
+    // Node dev server actually needs the sqlite backend.
+    throw new Error(
+      'SQLite backend was not initialized. In Cloudflare Workers the DB is ' +
+      'set up via setD1Database() at request time; in local Node dev, ' +
+      'call ensureSqliteDb() from src/index.ts before the first query.'
+    );
   }
   return _db;
 }
@@ -51,34 +58,33 @@ export function setD1Database(d1: D1Database): void {
   _db = null; // force re-init on next getDb()
 }
 
-/** Currently active backend. */
-export function dbKind(): 'sqlite' | 'd1' {
-  return _activeBinding;
-}
-
-/** For tests: reset the singleton and clear the local DB file. */
-export function resetDb(): void {
-  if (_db && _activeBinding === 'sqlite') {
-    (_db as any)._raw.close();
+/**
+ * Initialize the SQLite backend for local dev. Dynamic-imports
+ * better-sqlite3, node:fs, node:path so the Worker bundle stays
+ * clean. Call from src/index.ts before serving the first request.
+ */
+export async function ensureSqliteDb(): Promise<void> {
+  if (_db) return;
+  if (_activeD1) {
+    _db = makeD1Db(_activeD1);
+    _activeBinding = 'd1';
+    return;
   }
-  _db = null;
-  _activeD1 = null;
-  _activeBinding = 'sqlite';
-  if (fs.existsSync(env.DB_PATH)) fs.unlinkSync(env.DB_PATH);
-}
-
-// ===== SQLite backend =====
-
-function makeSqliteDb(): Db {
-  const dir = path.dirname(env.DB_PATH);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  const [{ default: Database }, fsMod, pathMod, envMod] = await Promise.all([
+    import('better-sqlite3'),
+    import('node:fs'),
+    import('node:path'),
+    import('../env.js'),
+  ]);
+  const env = envMod.env;
+  const dir = pathMod.dirname(env.DB_PATH);
+  if (!fsMod.existsSync(dir)) fsMod.mkdirSync(dir, { recursive: true });
   const raw = new Database(env.DB_PATH);
   raw.pragma('journal_mode = WAL');
   raw.pragma('foreign_keys = ON');
 
-  const wrapper: Db & { _raw: Database.Database } = {
+  const wrapper: Db = {
     kind: 'sqlite',
-    _raw: raw,
     async first(sql, params = []) {
       const stmt = raw.prepare(sql);
       return (stmt.get(...(params as any)) as any) ?? null;
@@ -94,7 +100,6 @@ function makeSqliteDb(): Db {
     },
     async migrate() {
       raw.exec(SCHEMA_SQL);
-      // share_tokens table is added in queries.ts on first use; keep for safety:
       raw.exec(`
         CREATE TABLE IF NOT EXISTS share_tokens (
           token      TEXT PRIMARY KEY,
@@ -106,10 +111,31 @@ function makeSqliteDb(): Db {
     },
   };
 
-  // Apply schema synchronously on construction; the migrate() wrapper is also
-  // exposed for symmetry with the D1 backend.
-  void wrapper.migrate();
-  return wrapper;
+  await wrapper.migrate();
+  _db = wrapper;
+  _activeBinding = 'sqlite';
+}
+
+/** Currently active backend. */
+export function dbKind(): 'sqlite' | 'd1' {
+  return _activeBinding;
+}
+
+/** For tests: reset the singleton and clear the local DB file. */
+export async function resetDb(): Promise<void> {
+  if (_db && _activeBinding === 'sqlite') {
+    (_db as any)._raw.close();
+  }
+  _db = null;
+  _activeD1 = null;
+  _activeBinding = 'sqlite';
+  try {
+    const fsMod = await import('node:fs');
+    const envMod = await import('../env.js');
+    if (fsMod.existsSync(envMod.env.DB_PATH)) fsMod.unlinkSync(envMod.env.DB_PATH);
+  } catch {
+    // fs/env not available (e.g. on Workers); nothing to do.
+  }
 }
 
 // ===== D1 backend =====

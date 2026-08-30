@@ -98,6 +98,15 @@ function getEnv(e: any, key: string): string | undefined {
 
 export default {
   async fetch(request: Request, env: Bindings, ctx: ExecutionContext): Promise<Response> {
+    // Bind D1 once per request. The DB layer in apps/api/src/db/index.ts
+    // reads _activeD1 (set here) and switches off its lazy
+    // sqlite init path. Without this, getDb() in the route
+    // handlers would throw because no sqlite backend is available
+    // on Workers.
+    if (env.DB) {
+      const { setD1Database } = await import('./db/index.js');
+      setD1Database(env.DB);
+    }
     // Re-configure the AI provider from c.env. The hosting service
     // does not set GMI_API_KEY in production (each user brings
     // their own), so the getAi() helper degrades to the mock

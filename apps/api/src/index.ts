@@ -162,6 +162,12 @@ if (isMain) {
 
     const { serve } = await import('@hono/node-server');
     const port = Number(process.env.PORT) || 8787;
+
+    // Bring up the local SQLite database before serving traffic.
+    // In the Cloudflare Worker, the equivalent is `setD1Database(c.env.DB)`
+    // called from each request handler (see worker.ts).
+    const { ensureSqliteDb } = await import('./db/index.js');
+    await ensureSqliteDb();
     serve({ fetch: app.fetch, port }, (info: { port: number }) => {
       console.log(`\n  DreamReel API listening on http://localhost:${info.port}`);
       console.log(`  ENV: development  AI: ${process.env.AI_PROVIDER ?? 'mock'}  CORS: ${process.env.ALLOWED_ORIGIN ?? 'http://localhost:3000'}\n`);
