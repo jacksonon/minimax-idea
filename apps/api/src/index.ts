@@ -118,11 +118,33 @@ if (isMain) {
   // Lazy-import the Node-only deps so the Worker bundle stays small.
   // This branch never executes in the Worker runtime.
   (async () => {
+    // Load .dev.vars into process.env so route handlers that read
+    // from process.env (GMI_ENC_KEY, etc.) see the same values that
+    // wrangler would inject in production. .dev.vars is in
+    // .gitignore. Format: KEY=VALUE per line, # for comments.
+    try {
+      const fs = await import('node:fs');
+      const path = await import('node:path');
+      const url = await import('node:url');
+      const here = path.dirname(url.fileURLToPath(import.meta.url));
+      const varsPath = path.resolve(here, '..', '.dev.vars');
+      if (fs.existsSync(varsPath)) {
+        for (const line of fs.readFileSync(varsPath, 'utf8').split('\n')) {
+          const m = line.match(/^([A-Z0-9_]+)\s*=\s*(.*)$/);
+          if (m && process.env[m[1]] === undefined) {
+            process.env[m[1]] = m[2];
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('[startup] could not load .dev.vars:', err);
+    }
+
     const { serve } = await import('@hono/node-server');
     const port = Number(process.env.PORT) || 8787;
     serve({ fetch: app.fetch, port }, (info: { port: number }) => {
       console.log(`\n  DreamReel API listening on http://localhost:${info.port}`);
-      console.log(`  ENV: development  AI: mock  CORS: http://localhost:3000\n`);
+      console.log(`  ENV: development  AI: ${process.env.AI_PROVIDER ?? 'mock'}  CORS: ${process.env.ALLOWED_ORIGIN ?? 'http://localhost:3000'}\n`);
     });
   })().catch((err) => {
     console.error('[startup]', err);
