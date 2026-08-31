@@ -11,6 +11,7 @@ import { LocaleSwitcher } from '@/components/LocaleSwitcher';
 import { SignInModal } from '@/components/SignInModal';
 import { useStore, type Capability } from '@/lib/store';
 import { api, type StatusResponse } from '@/lib/api';
+import { Info } from 'lucide-react';
 import { POLL_INTERVAL_MS } from '@dreamreel/shared';
 
 export default function HomePage() {
@@ -115,12 +116,9 @@ export default function HomePage() {
   }, [stage, current?.id]);
 
   async function handleSubmit(transcript: string) {
-    // Gate: if the server can't generate, short-circuit. (The Recorder UI
-    // is hidden when !canGenerate, but someone could call this directly.)
-    if (!capability.canGenerate) {
-      alert(t('errors.serverDemoMode') || 'Demo deployment: generation is disabled.');
-      return;
-    }
+    // The Recorder is shown to signed-in users even on read-only demo
+    // deployments. If the server needs a session first, ask for it
+    // before attempting a submission.
     if (capability.needsAuth && !user) {
       setSignInOpen(true);
       return;
@@ -157,6 +155,24 @@ export default function HomePage() {
         alert(t('errors.providerInitFailed') || err.message);
         return;
       }
+      if (err?.code === 'pipeline_unavailable') {
+        // Read-only demo deployment: no ffmpeg host. Surface a clear
+        // error panel instead of a raw 503 alert.
+        setCurrent({
+          id: 'local-error',
+          status: 'failed',
+          stage: null,
+          progress: 0,
+          videoUrl: null,
+          analysisText: null,
+          emotionTag: null,
+          dreamType: null,
+          error: err.message,
+          transcript,
+        });
+        setStage('error');
+        return;
+      }
       alert(err?.message ?? 'Unknown error');
     }
   }
@@ -165,8 +181,19 @@ export default function HomePage() {
     <main className="min-h-screen flex flex-col">
       <Header onSignInClick={() => setSignInOpen(true)} />
       <section className="flex-1 flex items-center justify-center px-6 py-16">
-        {stage === 'idle' && !capability.canGenerate && (
+        {stage === 'idle' && !capability.canGenerate && !user && (
           <DemoShowcase />
+        )}
+        {stage === 'idle' && !capability.canGenerate && user && (
+          <div className="w-full flex flex-col items-center gap-12">
+            <div className="w-full max-w-2xl">
+              <ReadOnlyNotice />
+              <Recorder onSubmit={handleSubmit} />
+            </div>
+            <div className="w-full border-t border-ink/10 pt-10">
+              <DemoShowcase />
+            </div>
+          </div>
         )}
         {stage === 'idle' && capability.canGenerate && (
           <div className="w-full max-w-2xl">
@@ -258,11 +285,46 @@ function Footer() {
 
 function ErrorPanel({ message, onRetry }: { message: string; onRetry: () => void }) {
   const t = useTranslations('errors');
+  const tDemo = useTranslations('demo');
+  const demoMode = message.includes('pipeline') || message.includes('ffmpeg') || message.includes('FFmpeg');
   return (
     <div className="text-center space-y-6 max-w-md">
-      <p className="font-serif text-3xl text-ink">{t('loadFailed')}</p>
-      <p className="text-sm text-muted">{message}</p>
-      <button onClick={onRetry} className="btn-primary">{t('tryAgain')}</button>
+      <p className="font-serif text-3xl text-ink">
+        {demoMode ? tDemo('unavailableTitle') : t('loadFailed')}
+      </p>
+      <p className="text-sm text-muted">
+        {demoMode ? tDemo('unavailableBody') : message}
+      </p>
+      <div className="flex items-center justify-center gap-3">
+        {demoMode ? (
+          <a
+            href="https://github.com/jacksonon/minimax-idea"
+            target="_blank"
+            rel="noreferrer"
+            className="btn-ghost inline-flex"
+          >
+            {tDemo('unavailableCta')}
+          </a>
+        ) : (
+          <button onClick={onRetry} className="btn-primary">{t('tryAgain')}</button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Shown to signed-in users on read-only demo deployments, above the
+ * Recorder. The recorder still works (microphone + transcript), but
+ * submission will fail with pipeline_unavailable — the notice makes
+ * that clear up front instead of surprising them mid-flow.
+ */
+function ReadOnlyNotice() {
+  const t = useTranslations('demo');
+  return (
+    <div className="mb-6 flex items-start gap-3 rounded-xl border border-amber/25 bg-amber/5 px-4 py-3 text-sm text-ink/80">
+      <Info className="h-4 w-4 shrink-0 mt-0.5 text-amber" strokeWidth={1.5} />
+      <p>{t('readonlyNotice')}</p>
     </div>
   );
 }
