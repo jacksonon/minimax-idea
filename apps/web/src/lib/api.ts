@@ -2,6 +2,33 @@
 
 const base = () => (typeof window === 'undefined' ? '' : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8787'));
 
+/**
+ * Rewrite a relative path into a URL the browser can load. Used for
+ * media URLs returned by the API (palette placeholders, video clips,
+ * music, voiceover) that the GMI provider may hand back as paths on
+ * the API host itself.
+ */
+function absUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  if (/^https?:\/\//i.test(url)) return url;
+  if (url.startsWith('/')) {
+    return `${base().replace(/\/+$/, '')}${url}`;
+  }
+  return `${base().replace(/\/+$/, '')}/${url}`;
+}
+
+/** Same, for the `media` payload returned by /api/dreams/:id/status. */
+function absMedia(m: DreamMediaPayload | null): DreamMediaPayload | null {
+  if (!m) return m;
+  return {
+    mode: m.mode,
+    durationMs: m.durationMs,
+    videos: m.videos.map((u) => absUrl(u) ?? u),
+    musicUrl: absUrl(m.musicUrl),
+    voiceoverUrl: absUrl(m.voiceoverUrl),
+  };
+}
+
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const res = await fetch(`${base()}${path}`, {
     credentials: 'include',
@@ -27,6 +54,14 @@ export type GenerateResponse = {
   poll_url: string;
 };
 
+export type DreamMediaPayload = {
+  mode: 'video' | 'slideshow' | 'text';
+  videos: string[];
+  musicUrl: string | null;
+  voiceoverUrl: string | null;
+  durationMs: number;
+};
+
 export type StatusResponse = {
   id: string;
   status: 'pending' | 'rendering' | 'done' | 'failed';
@@ -37,6 +72,7 @@ export type StatusResponse = {
   emotion_tag: string | null;
   dream_type: string | null;
   error: string | null;
+  media: DreamMediaPayload | null;
 };
 
 export type DreamListItem = {
@@ -46,6 +82,7 @@ export type DreamListItem = {
   videoUrl: string | null;
   createdAt: number;
   status: 'pending' | 'rendering' | 'done' | 'failed';
+  media: DreamMediaPayload | null;
 };
 
 export type MeResponse = {
@@ -95,12 +132,27 @@ export const api = {
 
   status: (id: string) => request<StatusResponse>(`/api/dreams/${id}/status`),
 
-  listMine: (cursor?: string) => {
+  listMine: async (cursor?: string) => {
     const q = cursor ? `?cursor=${encodeURIComponent(cursor)}` : '';
-    return request<{ dreams: DreamListItem[]; nextCursor: string | null }>(`/api/dreams${q}`);
+    const r = await request<{ dreams: DreamListItem[]; nextCursor: string | null }>(`/api/dreams${q}`);
+    return {
+      dreams: r.dreams.map((d) => ({
+        ...d,
+        videoUrl: absUrl(d.videoUrl),
+        media: absMedia(d.media),
+      })),
+      nextCursor: r.nextCursor,
+    };
   },
 
-  dream: (id: string) => request<{ id: string; transcript: string; videoUrl: string | null; analysisText: string | null; emotionTag: string | null; dreamType: string | null; createdAt: number }>(`/api/dreams/${id}`),
+  dream: async (id: string) => {
+    const r = await request<{ id: string; transcript: string; videoUrl: string | null; analysisText: string | null; emotionTag: string | null; dreamType: string | null; createdAt: number; media: DreamMediaPayload | null }>(`/api/dreams/${id}`);
+    return {
+      ...r,
+      videoUrl: absUrl(r.videoUrl),
+      media: absMedia(r.media),
+    };
+  },
 
   share: (id: string) =>
     request<{ share_url: string; expires_at: number }>(`/api/dreams/${id}/share`, { method: 'POST' }),

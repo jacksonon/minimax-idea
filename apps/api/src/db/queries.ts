@@ -6,7 +6,13 @@
 
 import { nanoid } from 'nanoid';
 import { getDb } from './index.js';
-import type { Dream, DreamStatus, DreamStage, User } from '@dreamreel/shared';
+import type {
+  Dream,
+  DreamMedia,
+  DreamStatus,
+  DreamStage,
+  User,
+} from '@dreamreel/shared';
 
 const now = () => Date.now();
 
@@ -110,6 +116,32 @@ export async function saveMediaUrls(
            voiceover_url = COALESCE(?, voiceover_url), duration_ms = ?
      WHERE id = ?`,
     [payload.videoUrl, payload.musicUrl ?? null, payload.voiceoverUrl ?? null, payload.durationMs, id],
+  );
+}
+
+/**
+ * Persist the full artifact set in a single column. The pipeline
+ * writes this after every H3 / Music / Speech call returns. The
+ * frontend reads it back via /api/dreams/:id.
+ */
+export async function saveDreamMedia(id: string, media: DreamMedia): Promise<void> {
+  const db = getDb();
+  const videoUrl = media.videos[0] ?? null; // legacy single-URL column
+  await db.run(
+    `UPDATE dreams
+       SET media_json = ?, video_url = COALESCE(?, video_url),
+           music_url = COALESCE(?, music_url),
+           voiceover_url = COALESCE(?, voiceover_url),
+           duration_ms = ?
+     WHERE id = ?`,
+    [
+      JSON.stringify(media),
+      videoUrl,
+      media.musicUrl,
+      media.voiceoverUrl,
+      media.durationMs,
+      id,
+    ],
   );
 }
 
@@ -316,6 +348,14 @@ export async function deleteUserSettings(userId: string): Promise<boolean> {
 // ----- row mapping -----
 
 function rowToDream(row: any): Dream {
+  let media: DreamMedia | null = null;
+  if (row.media_json) {
+    try {
+      media = JSON.parse(row.media_json) as DreamMedia;
+    } catch {
+      // Fall through — leave media null so the frontend can degrade.
+    }
+  }
   return {
     id: row.id,
     userId: row.user_id,
@@ -328,6 +368,7 @@ function rowToDream(row: any): Dream {
     musicUrl: row.music_url,
     voiceoverUrl: row.voiceover_url,
     durationMs: row.duration_ms,
+    media,
     status: row.status,
     stage: row.stage,
     progress: row.progress,

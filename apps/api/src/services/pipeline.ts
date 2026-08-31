@@ -1,9 +1,19 @@
 // Generation pipeline. See AGENTS.md §4.4 and PRD §7.2.
 //
-// Modes:
-//   - h3Enabled  → 4 video clips (H3) + 1 music + 1 voiceover, composited to 30s
-//   - h3Disabled → 8 still images (slideshow) + 1 music + 1 voiceover, composited to 30s
-// Each mode is a graceful degradation; the rest of the pipeline is identical.
+// The pipeline no longer composes a single MP4 on the server. Each
+// GMI model returns a URL:
+//   - M3     → 4 scene prompts + voiceover text + emotion + analysis
+//   - H3     → 4 video clip URLs (when H3_ENABLED=true)
+//   - Music  → 1 music URL
+//   - Speech → 1 voiceover URL
+//
+// We persist them in `dreams.media_json` as a `DreamMedia` blob and
+// let the browser sequence them: <video> onended swaps to the next
+// clip, <audio> plays music and voiceover in parallel, and a
+// typewriter overlay shows the transcript when H3 isn't available.
+//
+// This removes the only step that needed ffmpeg, so the same code
+// runs in the local Node dev server and in Cloudflare Workers.
 //
 // Per-user credentials
 // --------------------
@@ -13,16 +23,16 @@
 // users and the demo deployment.
 
 import { ai as defaultAi } from './ai/index.js';
-import { composeDream } from './composite.js';
 import {
   STAGE_PROGRESS,
   type Dream,
+  type DreamMedia,
   type Screenplay,
 } from '@dreamreel/shared';
 import type { AIProvider } from './ai/types.js';
 import {
   failDream,
-  saveMediaUrls,
+  saveDreamMedia,
   saveScreenplay,
   updateDreamStage,
   updateDreamStatus,
@@ -44,7 +54,7 @@ export async function runPipeline(dream: Dream, aiProvider: AIProvider = default
       dreamType: screenplay.dreamType,
     });
 
-    // 2. Parallel generation: visual media + music + speech
+    // 2. Parallel generation: visual media + music + speech.
     const useVideo = ai.h3Enabled;
     updateDreamStage(dream.id, 'scene-1', STAGE_PROGRESS['scene-1']);
 
@@ -54,34 +64,29 @@ export async function runPipeline(dream: Dream, aiProvider: AIProvider = default
       updateDreamStage(dream.id, next as any, progress);
     };
 
-    // Build a list of (kind, prompt, targetDuration) tuples. In video mode it's
-    // the 4 screenplay scenes; in slideshow mode we synthesize 8 prompts that
-    // interpolate the 4 scenes so the story still flows.
-    const mediaJobs: Array<{ kind: 'video' | 'image'; prompt: string; duration: number }> = useVideo
-      ? screenplay.scenes.map((s) => ({
-          kind: 'video' as const,
-          prompt: s.visualPrompt,
-          duration: s.durationSeconds,
-        }))
+    // Decide what each "scene" produces. In video mode, each screenplay
+    // scene is one H3 call. In slideshow mode we synthesize 8 image
+    // prompts that interpolate between scenes.
+    const mediaJobs: Array<{ kind: 'video' | 'image'; prompt: string }> = useVideo
+      ? screenplay.scenes.map((s) => ({ kind: 'video' as const, prompt: s.visualPrompt }))
       : expandToSlideshow(screenplay);
 
     const mediaPromises = mediaJobs.map(async (job, i) => {
-      advanceScene(Math.min(i, 3)); // stage labels only go up to scene-4
+      advanceScene(Math.min(i, 3));
       try {
         if (job.kind === 'video') {
           const r = await ai.generateSceneVideo({
             prompt: job.prompt,
-            durationSeconds: job.duration,
+            durationSeconds: 7.5,
           });
-          return { kind: 'video' as const, url: r.url, durationMs: r.durationMs };
+          return r.url;
         } else {
           const r = await ai.generateSceneImage({
             prompt: job.prompt,
             width: 1280,
             height: 720,
           });
-          // Image is held for 3.75s in the slideshow
-          return { kind: 'image' as const, url: r.url, durationMs: 3750 };
+          return r.url;
         }
       } catch (err) {
         console.error(`[dream ${dream.id}] ${job.kind} ${i + 1} failed`, err);
@@ -113,36 +118,40 @@ export async function runPipeline(dream: Dream, aiProvider: AIProvider = default
       }
     })();
 
-    const [media, music, speech] = await Promise.all([
+    const [videosRaw, music, speech] = await Promise.all([
       Promise.all(mediaPromises),
       musicPromise,
       speechPromise,
     ]);
 
-    if (media.every((m) => !m)) {
-      throw new Error('All scene generations failed.');
-    }
-
+    const videos = videosRaw.filter((u): u is string => !!u);
     updateDreamStage(dream.id, 'compositing', STAGE_PROGRESS.compositing);
 
-    // 3. Compose (compositeDream handles both video and image inputs).
-    const { url, durationMs } = await composeDream({
-      media: media.filter((m): m is NonNullable<typeof m> => m !== null),
+    // 3. Decide the final media mode. The frontend renders differently
+    // for each one:
+    //   - 'video'      → 4 H3 clips, <video> with onended swap
+    //   - 'slideshow'  → 8 stills, <img> rotation
+    //   - 'text'       → no visual; transcript typewriter
+    const mode: DreamMedia['mode'] = useVideo
+      ? videos.length > 0
+        ? 'video'
+        : 'text'
+      : videos.length > 0
+        ? 'slideshow'
+        : 'text';
+
+    const media: DreamMedia = {
+      mode,
+      videos: mode === 'video' ? videos.slice(0, 4) : mode === 'slideshow' ? videos : [],
       musicUrl: music?.url ?? null,
       voiceoverUrl: speech?.url ?? null,
-      durationSeconds: 30,
-    });
+      durationMs: (music?.durationMs ?? 30_000),
+    };
 
-    saveMediaUrls(dream.id, {
-      videoUrl: url,
-      musicUrl: music?.url,
-      voiceoverUrl: speech?.url,
-      durationMs,
-    });
+    saveDreamMedia(dream.id, media);
 
     updateDreamStatus(dream.id, 'done', null, 1.0);
-
-    console.log(`[dream ${dream.id}] done (mode: ${useVideo ? 'h3-video' : 'slideshow'})`);
+    console.log(`[dream ${dream.id}] done (mode: ${mode})`);
   } catch (err: any) {
     console.error(`[dream ${dream.id}] failed`, err);
     failDream(dream.id, err?.message ?? 'Unknown error');
@@ -150,19 +159,20 @@ export async function runPipeline(dream: Dream, aiProvider: AIProvider = default
 }
 
 /**
- * Expand 4 screenplay scenes into 8 image prompts that interpolate between them,
- * so the slideshow still feels like a single story rather than 4 unrelated stills.
+ * Expand 4 screenplay scenes into 8 image prompts that interpolate
+ * between them so the slideshow still feels like one story rather than
+ * 4 unrelated stills.
  */
-function expandToSlideshow(s: Screenplay): Array<{ kind: 'image'; prompt: string; duration: number }> {
-  const out: Array<{ kind: 'image'; prompt: string; duration: number }> = [];
+function expandToSlideshow(s: Screenplay): Array<{ kind: 'image'; prompt: string }> {
+  const out: Array<{ kind: 'image'; prompt: string }> = [];
   for (let i = 0; i < SLIDESHOW_FRAME_COUNT; i++) {
-    const sceneIdx = Math.min(Math.floor(i * s.scenes.length / SLIDESHOW_FRAME_COUNT), s.scenes.length - 1);
+    const sceneIdx = Math.min(Math.floor((i * s.scenes.length) / SLIDESHOW_FRAME_COUNT), s.scenes.length - 1);
     const nextIdx = Math.min(sceneIdx + 1, s.scenes.length - 1);
     const scene = s.scenes[sceneIdx]!;
     const next = s.scenes[nextIdx]!;
-    const t = (i * s.scenes.length / SLIDESHOW_FRAME_COUNT) - sceneIdx; // 0..1 within segment
+    const t = (i * s.scenes.length) / SLIDESHOW_FRAME_COUNT - sceneIdx; // 0..1
     const prompt = t < 0.5 ? scene.visualPrompt : next.visualPrompt;
-    out.push({ kind: 'image', prompt, duration: 3.75 });
+    out.push({ kind: 'image', prompt });
   }
   return out;
 }

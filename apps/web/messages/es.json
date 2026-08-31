@@ -61,7 +61,12 @@
     "transcriptLabel": "Descripción original",
     "videoUnavailable": "Vídeo no disponible.",
     "analysisPlaceholder": "El sueño aún se está asentando.",
-    "creating": "Creando…"
+    "creating": "Creando…",
+    "mode": {
+      "video": "vídeo",
+      "slideshow": "diapositivas",
+      "text": "solo texto"
+    }
   },
   "dreams": {
     "title": "Mis sueños",

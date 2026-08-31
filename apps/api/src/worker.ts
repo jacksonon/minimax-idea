@@ -25,6 +25,7 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { authRoutes } from './routes/auth.js';
 import { dreamsRoutes } from './routes/dreams.js';
+import { mediaRoutes } from './routes/media.js';
 import { settingsRoutes } from './routes/settings.js';
 import { ai, configureAi } from './services/ai/index.js';
 import type { Bindings } from './types.js';
@@ -61,21 +62,19 @@ app.get('/health', (c) => {
     env: c.env?.ENVIRONMENT ?? 'production',
     ai: aiName,
     h3,
-    canGenerate: false, // Workers have no ffmpeg; pipeline always off here
+    canGenerate: true, // pipeline now runs on the Worker too (no ffmpeg)
     needsAuth: true,
-    note: 'Cloudflare Worker deployment. Auth, user data, and per-user API keys are live. New-dream generation is disabled here because video composition needs ffmpeg; deploy a Cloudflare Container or use pnpm dev:api to enable end-to-end generation.',
+    note: 'Cloudflare Worker deployment. Each user must bring their own GMI API key (Account → API key) to generate dreams. New-dream generation is live.',
   });
 });
 
 // Stubs first — they take precedence over the real handlers mounted
-// below. Cloudflare Workers cannot run ffmpeg, so the generation
-// pipeline can never complete here. We surface a clear 503 instead
-// of letting dreams.ts start work that can never finish.
-app.post('/api/dreams/generate', (c) => c.json({
-  error: 'This deployment cannot run the generation pipeline (no ffmpeg). Auth, dream archival, and per-user API keys are live — but new-dream generation requires a host with ffmpeg. Deploy a Cloudflare Container or run pnpm dev:api to enable end-to-end generation.',
-  code: 'pipeline_unavailable',
-}, 503));
-
+// below. The pipeline no longer needs ffmpeg (it persists GMI URLs
+// and lets the browser play them), so the real `dreamsRoutes` POST
+// /generate handler will work here when a logged-in user has a
+// stored GMI key. We keep the share endpoints stubbed for now —
+// they need R2 access control that hasn't been wired into the
+// Worker yet.
 app.post('/api/dreams/:id/share', (c) => c.json({
   error: 'Sharing is disabled in this deployment.',
 }, 503));
@@ -83,10 +82,12 @@ app.post('/api/dreams/:id/share', (c) => c.json({
 app.get('/api/share/:token', (c) => c.json({ error: 'Share tokens are not enabled in this deployment.' }, 503));
 
 // Real routes. All the auth, dream, and settings logic is here.
-// The generation endpoint above intercepts before any of these
-// handlers ever see a generate request.
+// The generation endpoint is delegated to the same handler the local
+// dev server uses; it can now complete end-to-end on the Worker
+// because the pipeline no longer requires ffmpeg.
 app.route('/', authRoutes);
 app.route('/', dreamsRoutes);
+app.route('/', mediaRoutes);
 app.route('/', settingsRoutes);
 
 app.notFound((c) => c.json({ error: 'Not found' }, 404));

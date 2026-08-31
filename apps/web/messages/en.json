@@ -61,7 +61,12 @@
     "transcriptLabel": "Original transcript",
     "videoUnavailable": "Video unavailable.",
     "analysisPlaceholder": "The dream is still settling.",
-    "creating": "Creating…"
+    "creating": "Creating…",
+    "mode": {
+      "video": "video",
+      "slideshow": "slideshow",
+      "text": "text only"
+    }
   },
   "dreams": {
     "title": "My dreams",

@@ -84,6 +84,14 @@ export default function HomePage() {
             emotionTag: s.emotion_tag,
             dreamType: s.dream_type,
             error: null,
+            media: s.media
+              ? {
+                  ...s.media,
+                  videos: s.media.videos.map(absolutize),
+                  musicUrl: s.media.musicUrl ? absolutize(s.media.musicUrl) : null,
+                  voiceoverUrl: s.media.voiceoverUrl ? absolutize(s.media.voiceoverUrl) : null,
+                }
+              : null,
           });
           if (pollRef.current) window.clearInterval(pollRef.current);
           setStage('watching');
@@ -102,6 +110,14 @@ export default function HomePage() {
             emotionTag: s.emotion_tag,
             dreamType: s.dream_type,
             error: s.error,
+            media: s.media
+              ? {
+                  ...s.media,
+                  videos: s.media.videos.map(absolutize),
+                  musicUrl: s.media.musicUrl ? absolutize(s.media.musicUrl) : null,
+                  voiceoverUrl: s.media.voiceoverUrl ? absolutize(s.media.voiceoverUrl) : null,
+                }
+              : current.media,
           });
         }
       } catch (err) {
@@ -136,6 +152,7 @@ export default function HomePage() {
         dreamType: null,
         error: null,
         transcript,
+        media: null,
       });
       setStage('generating');
     } catch (err: any) {
@@ -169,6 +186,7 @@ export default function HomePage() {
           dreamType: null,
           error: err.message,
           transcript,
+          media: null,
         });
         setStage('error');
         return;

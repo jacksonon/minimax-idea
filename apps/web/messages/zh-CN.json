@@ -61,7 +61,12 @@
     "transcriptLabel": "原始描述",
     "videoUnavailable": "视频不可用。",
     "analysisPlaceholder": "梦境还在成形。",
-    "creating": "正在创建……"
+    "creating": "正在创建……",
+    "mode": {
+      "video": "视频",
+      "slideshow": "幻灯片",
+      "text": "仅文本"
+    }
   },
   "dreams": {
     "title": "我的梦境",

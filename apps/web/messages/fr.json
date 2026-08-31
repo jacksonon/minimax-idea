@@ -61,7 +61,12 @@
     "transcriptLabel": "Description originale",
     "videoUnavailable": "Vidéo indisponible.",
     "analysisPlaceholder": "Le rêve n'est pas encore posé.",
-    "creating": "Création…"
+    "creating": "Création…",
+    "mode": {
+      "video": "vidéo",
+      "slideshow": "diaporama",
+      "text": "texte seul"
+    }
   },
   "dreams": {
     "title": "Mes rêves",

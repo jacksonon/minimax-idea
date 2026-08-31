@@ -100,6 +100,13 @@ export async function ensureSqliteDb(): Promise<void> {
     },
     async migrate() {
       raw.exec(SCHEMA_SQL);
+      // Idempotent column add for existing local dev databases created
+      // before media_json existed. SQLite has no IF NOT EXISTS on
+      // ALTER TABLE ADD COLUMN, so we probe pragma_table_info first.
+      const cols = raw.prepare(`PRAGMA table_info(dreams)`).all() as Array<{ name: string }>;
+      if (!cols.some((c) => c.name === 'media_json')) {
+        raw.exec(`ALTER TABLE dreams ADD COLUMN media_json TEXT`);
+      }
       raw.exec(`
         CREATE TABLE IF NOT EXISTS share_tokens (
           token      TEXT PRIMARY KEY,
@@ -164,6 +171,16 @@ function makeD1Db(d1: D1Database): Db {
       for (const stmtSql of stmts) {
         await d1.prepare(stmtSql + ';').run();
       }
+      // Idempotent ALTER for existing D1 databases. D1 doesn't have
+      // IF NOT EXISTS for ADD COLUMN, but the SQL itself will fail with
+      // a "duplicate column" error which we swallow.
+      try {
+        await d1.prepare(`ALTER TABLE dreams ADD COLUMN media_json TEXT`).run();
+      } catch (err: any) {
+        if (!/duplicate column/i.test(String(err?.message ?? err))) {
+          throw err;
+        }
+      }
     },
   };
 }
@@ -193,6 +210,11 @@ CREATE TABLE IF NOT EXISTS dreams (
   music_url        TEXT,
   voiceover_url    TEXT,
   duration_ms      INTEGER,
+  -- New in v2: a JSON blob describing all the artifacts the frontend
+  -- needs to play a dream without any local composition. Replaces the
+  -- old "composite one MP4 with ffmpeg" step. See DreamMedia in
+  -- packages/shared/src/index.ts.
+  media_json       TEXT,
   status           TEXT NOT NULL DEFAULT 'pending',
   stage            TEXT,
   progress         REAL NOT NULL DEFAULT 0,

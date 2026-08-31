@@ -61,7 +61,12 @@
     "transcriptLabel": "元の語り",
     "videoUnavailable": "動画は利用できません。",
     "analysisPlaceholder": "夢はまだ形になりかけています。",
-    "creating": "作成中……"
+    "creating": "作成中……",
+    "mode": {
+      "video": "動画",
+      "slideshow": "スライドショー",
+      "text": "テキストのみ"
+    }
   },
   "dreams": {
     "title": "マイドリーム",

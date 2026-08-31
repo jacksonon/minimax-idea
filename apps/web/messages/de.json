@@ -61,7 +61,12 @@
     "transcriptLabel": "Originalbeschreibung",
     "videoUnavailable": "Video nicht verfügbar.",
     "analysisPlaceholder": "Der Traum setzt sich noch.",
-    "creating": "Wird erstellt…"
+    "creating": "Wird erstellt…",
+    "mode": {
+      "video": "Video",
+      "slideshow": "Diashow",
+      "text": "Nur Text"
+    }
   },
   "dreams": {
     "title": "Meine Träume",

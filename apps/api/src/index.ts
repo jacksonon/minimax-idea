@@ -76,7 +76,7 @@ function buildApp(): Hono<AppEnv> {
       h3,
       canGenerate: true,
       needsAuth: true,
-      note: 'Local dev server. Full pipeline (M3 + H3/Music/Speech + composite) is active when a per-user GMI key is configured.',
+      note: 'Local dev server. Pipeline (M3 + H3 / Music / Speech) is active when a per-user GMI key is configured.',
     });
   });
 

@@ -145,6 +145,7 @@ function DreamRow({ dream }: { dream: DreamListItem }) {
   const isDone = dream.status === 'done';
   const isFailed = dream.status === 'failed';
   const isPending = dream.status === 'pending' || dream.status === 'rendering';
+  const preview = dream.media?.videos?.[0] ?? dream.videoUrl;
   return (
     <Link
       href={`/dreams/${dream.id}`}
@@ -152,14 +153,22 @@ function DreamRow({ dream }: { dream: DreamListItem }) {
     >
       <div className="flex flex-col sm:flex-row">
         <div className="sm:w-48 sm:shrink-0 aspect-video bg-ink/5">
-          {dream.videoUrl ? (
-            <video
-              src={dream.videoUrl}
-              muted
-              playsInline
-              preload="metadata"
-              className="h-full w-full object-cover"
-            />
+          {preview ? (
+            dream.media?.mode === 'slideshow' ? (
+              <img
+                src={preview}
+                alt=""
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <video
+                src={preview}
+                muted
+                playsInline
+                preload="metadata"
+                className="h-full w-full object-cover"
+              />
+            )
           ) : (
             <div className="h-full w-full flex items-center justify-center text-muted/40 text-xs uppercase tracking-widest">
               {isPending ? t('pending') : t('videoUnavailable')}

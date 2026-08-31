@@ -144,6 +144,7 @@ dreamsRoutes.get('/api/dreams/:id/status', async (c) => {
     emotion_tag: dream.emotionTag,
     dream_type: dream.dreamType,
     error: dream.errorMessage,
+    media: dream.media,
   });
 });
 

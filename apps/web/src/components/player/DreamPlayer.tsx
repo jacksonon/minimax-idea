@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useTranslations, useTag } from '@/i18n/shim';
 import { useStore } from '@/lib/store';
 import { api } from '@/lib/api';
-import { EMOTION_TAGS } from '@dreamreel/shared';
+import { DreamMediaView } from './DreamMediaView';
 
 export function DreamPlayer() {
   const t = useTranslations('player');
@@ -19,14 +19,12 @@ export function DreamPlayer() {
 
   async function handleSave() {
     try {
-      // Saving is implicit: dreams created while logged in are already saved.
-      // For anonymous dreams we trigger a soft "claim" via dev login.
       const me = await api.me();
       if (!me.user) {
         await api.devLogin('dreamer');
       }
       setSaved(true);
-      setTimeout(() => setSaved(false), 1800);
+      window.setTimeout(() => setSaved(false), 1800);
     } catch {
       // ignore
     }
@@ -48,26 +46,16 @@ export function DreamPlayer() {
     if (!shareUrl) return;
     await navigator.clipboard.writeText(shareUrl);
     setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
+    window.setTimeout(() => setCopied(false), 1500);
   }
 
   return (
     <div className="w-full max-w-3xl mx-auto space-y-8">
-      <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-ink/10 shadow-[0_30px_120px_-30px_rgba(0,0,0,0.8)]">
-        {current.videoUrl ? (
-          <video
-            src={current.videoUrl}
-            controls
-            autoPlay
-            playsInline
-            className="h-full w-full"
-          />
-        ) : (
-          <div className="h-full w-full flex items-center justify-center text-muted">
-            <p>{t('videoUnavailable')}</p>
-          </div>
-        )}
-      </div>
+      <DreamMediaView
+        media={current.media}
+        fallbackUrl={current.videoUrl}
+        transcript={current.transcript}
+      />
 
       <div className="flex flex-wrap items-center gap-2">
         {current.emotionTag && (
@@ -75,6 +63,11 @@ export function DreamPlayer() {
         )}
         {current.dreamType && (
           <span className="tag">{tag('dreamType', current.dreamType)}</span>
+        )}
+        {current.media?.mode && (
+          <span className="tag text-muted/70">
+            {t(`mode.${current.media.mode}` as any)}
+          </span>
         )}
       </div>
 

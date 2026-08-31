@@ -61,7 +61,12 @@
     "transcriptLabel": "원본 설명",
     "videoUnavailable": "영상을 사용할 수 없습니다.",
     "analysisPlaceholder": "아직 꿈이 정리되고 있습니다.",
-    "creating": "만드는 중…"
+    "creating": "만드는 중…",
+    "mode": {
+      "video": "영상",
+      "slideshow": "슬라이드쇼",
+      "text": "텍스트만"
+    }
   },
   "dreams": {
     "title": "내 꿈들",

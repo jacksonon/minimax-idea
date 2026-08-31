@@ -9,6 +9,14 @@ export type Stage =
   | 'watching'
   | 'error';
 
+export type DreamMediaPayload = {
+  mode: 'video' | 'slideshow' | 'text';
+  videos: string[];
+  musicUrl: string | null;
+  voiceoverUrl: string | null;
+  durationMs: number;
+};
+
 export type CurrentDream = {
   id: string;
   status: 'pending' | 'rendering' | 'done' | 'failed';
@@ -20,6 +28,7 @@ export type CurrentDream = {
   dreamType: string | null;
   error: string | null;
   transcript: string;
+  media: DreamMediaPayload | null;
 };
 
 /**

@@ -3,10 +3,11 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useTranslations } from '@/i18n/shim';
+import { useTranslations, useTag } from '@/i18n/shim';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { LocaleSwitcher } from '@/components/LocaleSwitcher';
-import { api } from '@/lib/api';
+import { DreamMediaView } from '@/components/player/DreamMediaView';
+import { api, type DreamMediaPayload } from '@/lib/api';
 
 type Dream = {
   id: string;
@@ -16,11 +17,13 @@ type Dream = {
   emotionTag: string | null;
   dreamType: string | null;
   createdAt: number;
+  media: DreamMediaPayload | null;
 };
 
 export default function DreamDetail() {
   const t = useTranslations('dream');
   const tPlayer = useTranslations('player');
+  const tag = useTag();
   const params = useParams<{ id: string }>();
   const [dream, setDream] = useState<Dream | null>(null);
   const [copied, setCopied] = useState(false);
@@ -54,17 +57,21 @@ export default function DreamDetail() {
       </div>
 
       <div className="mt-8 space-y-8">
-        <div className="aspect-video w-full bg-black rounded-lg overflow-hidden border border-ink/10">
-          {dream.videoUrl ? (
-            <video src={dream.videoUrl} controls className="h-full w-full" />
-          ) : (
-            <div className="flex h-full items-center justify-center text-muted">{t('noVideo')}</div>
-          )}
-        </div>
+        <DreamMediaView
+          media={dream.media}
+          fallbackUrl={dream.videoUrl}
+          transcript={dream.transcript}
+          className="rounded-lg border border-ink/10"
+        />
 
         <div className="flex flex-wrap items-center gap-2 text-xs text-muted/60">
-          {dream.emotionTag && <span className="tag">{dream.emotionTag}</span>}
-          {dream.dreamType && <span className="tag">{dream.dreamType.replace(/-/g, ' ')}</span>}
+          {dream.emotionTag && <span className="tag">{tag('emotion', dream.emotionTag)}</span>}
+          {dream.dreamType && <span className="tag">{tag('dreamType', dream.dreamType)}</span>}
+          {dream.media?.mode && (
+            <span className="tag text-muted/70">
+              {tPlayer(`mode.${dream.media.mode}` as any)}
+            </span>
+          )}
           <span>{new Date(dream.createdAt).toLocaleString()}</span>
         </div>
 

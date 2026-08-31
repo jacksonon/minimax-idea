@@ -92,6 +92,27 @@ export type DreamStage =
   | 'voiceover'
   | 'compositing';
 
+export type DreamMediaMode = 'video' | 'slideshow' | 'text';
+
+/**
+ * The post-pipeline artifacts. The frontend uses `mode` to decide how
+ * to render. `videos[]` holds H3 clips when mode='video' (4 entries)
+ * or palette/placeholder URLs when mode='slideshow' (8 entries); it
+ * is empty for mode='text' (the transcript itself becomes the
+ * "visual").
+ *
+ * No local composition: each entry is a URL the browser can play or
+ * display directly, so a single deployment host can render the dream
+ * end-to-end without ffmpeg or any binary tool.
+ */
+export type DreamMedia = {
+  mode: DreamMediaMode;
+  videos: string[];
+  musicUrl: string | null;
+  voiceoverUrl: string | null;
+  durationMs: number;
+};
+
 export type Dream = {
   id: string;
   userId: string | null;
@@ -100,10 +121,16 @@ export type Dream = {
   analysisText: string | null;
   emotionTag: EmotionTag | null;
   dreamType: DreamType | null;
+  /**
+   * @deprecated prefer `media`. Kept so older frontends can still play
+   * the first H3 clip with a single `<video src=>`. When media.mode is
+   * 'video', this is the first clip's URL; otherwise null.
+   */
   videoUrl: string | null;
   musicUrl: string | null;
   voiceoverUrl: string | null;
   durationMs: number | null;
+  media: DreamMedia | null;
   status: DreamStatus;
   stage: DreamStage | null;
   progress: number;
@@ -148,7 +175,7 @@ export const STAGE_LABEL: Record<DreamStage, string> = {
   'scene-4': 'Shooting scene 4 of 4\u2026',
   music: 'Scoring the music\u2026',
   voiceover: 'Recording the voiceover\u2026',
-  compositing: 'Assembling the final cut\u2026',
+  compositing: 'Wrapping up\u2026',
 };
 
 export const H3_PROMPT_SUFFIX =
