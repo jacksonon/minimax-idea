@@ -33,7 +33,10 @@
     "transcribing": {
       "title": "聴き取っています……",
       "hint": "夢を言葉にしています。"
-    }
+    },
+    "micDenied": "マイクへのアクセスが拒否されました。下に夢を直接入力することもできます。",
+    "typePrompt": "夢を 1〜2 文で入力してください：",
+    "ariaHold": "押して夢を録音する"
   },
   "generator": {
     "stages": {
@@ -55,7 +58,10 @@
     "copyLink": "リンクをコピー",
     "copied": "コピーしました",
     "shareCreated": "共有リンクを作成しました",
-    "transcriptLabel": "元の語り"
+    "transcriptLabel": "元の語り",
+    "videoUnavailable": "動画は利用できません。",
+    "analysisPlaceholder": "夢はまだ形になりかけています。",
+    "creating": "作成中……"
   },
   "dreams": {
     "title": "マイドリーム",
@@ -72,7 +78,8 @@
     "weeksAgo": "{n}週間前",
     "loadMore": "もっと古い夢を読み込む",
     "loadingMore": "読み込み中……",
-    "noMore": "これ以上古い夢はありません。"
+    "noMore": "これ以上古い夢はありません。",
+    "duration": "{n}秒"
   },
   "dream": {
     "backToList": "← マイドリームに戻る",
@@ -98,7 +105,9 @@
     "serverDemoMode": "このデプロイでは新しい夢を生成できません。ローカルで API を実行するか、合成ステップを含む Cloudflare コンテナをデプロイしてください。",
     "needGmiKey": "夢を生成する前に、「アカウント → API キー」で GMI API キーを追加してください。",
     "needGmiKeyCta": "API キー設定を開く",
-    "providerInitFailed": "AI プロバイダーを初期化できませんでした。API キーを確認して再試行してください。"
+    "providerInitFailed": "AI プロバイダーを初期化できませんでした。API キーを確認して再試行してください。",
+    "unknown": "問題が発生しました。もう一度お試しください。",
+    "dreamRefusedFilmed": "夢は映画にされることを拒否しました。"
   },
   "theme": {
     "switchToLight": "ライトモードに切替",
@@ -135,7 +144,47 @@
     "moreDreams": "別の夢を見る",
     "enableTitle": "新しい夢を生成したいですか？",
     "enableBody": "FFmpeg が利用可能な環境でローカル API を実行するか、合成ステップをホストする Cloudflare コンテナをデプロイしてください。GMI_API_KEY シークレットを設定するとパイプラインが起動します。",
-    "enableCta": "GitHub で見る"
+    "enableCta": "GitHub で見る",
+    "items": {
+      "d1": {
+        "transcript": "私は上下逆さまの図書館にいた。階段は水でできていて、白い服の女が私の名前を知っているのに、それを言わなかった。",
+        "analysis": "図書館はただの図書館ではない。それは、分類できないものを棚に並べようとする、心のふりだ。"
+      },
+      "d2": {
+        "transcript": "祖母がキッチンでお茶を入れていた。彼女はまた若かった、私が覚えている通りの姿で。",
+        "analysis": "あなたの中には、まだ灯りのついた部屋がある。今夜、あなたはそこを歩いた。"
+      }
+    }
+  },
+  "tags": {
+    "emotion": {
+      "surreal": "シュール",
+      "melancholic": "メランコリック",
+      "terror": "恐怖",
+      "love": "愛",
+      "bliss": "至福",
+      "cosmic": "コスミック",
+      "absurd": "不条理",
+      "nightmare": "悪夢",
+      "pursuit": "追跡",
+      "falling": "落下"
+    },
+    "dreamType": {
+      "being-chased": "追われる",
+      "falling": "落下",
+      "flying": "飛ぶ",
+      "arriving-too-late": "間に合わない",
+      "teeth-falling-out": "歯が抜ける",
+      "death": "死",
+      "water": "水",
+      "animals": "動物",
+      "unfamiliar-people": "見知らぬ人",
+      "sexual": "性",
+      "school-teacher": "先生",
+      "paralyzed": "金縛り",
+      "vivid-color": "鮮やかな色",
+      "recurring-place": "繰り返し現れる場所"
+    }
   },
   "settings": {
     "title": "設定",

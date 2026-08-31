@@ -40,3 +40,35 @@ export function useTranslations(namespace?: string) {
 
 // Re-export makeT for convenience
 export { makeT };
+
+/**
+ * Resolve a dotted path against the messages object. Returns `undefined`
+ * when any segment is missing (so callers can fall back gracefully).
+ */
+export function resolveMessage(messages: any, path: string): string | undefined {
+  const v = getPath(messages, path);
+  return typeof v === 'string' ? v : undefined;
+}
+
+/**
+ * Returns the human label for an enum value (emotion / dreamType) at the
+ * given i18n path. Falls back to the raw key when no translation exists,
+ * so unknown values still render something readable.
+ *
+ *   useTag('tags.emotion', 'surreal')          → "超现实" (zh-CN) / "surreal" (en)
+ *   useTag('tags.dreamType', 'recurring-place')→ "recurring place" (en) / "反复出现的地点" (zh-CN)
+ */
+export function useTag() {
+  const { messages, locale } = useI18n();
+  return function tag(kind: 'emotion' | 'dreamType', key: string): string {
+    const ns = kind === 'emotion' ? 'tags.emotion' : 'tags.dreamType';
+    const translated = resolveMessage(messages, `${ns}.${key}`);
+    if (translated) return translated;
+    // English fallback: humanize the kebab-case (recurring-place → recurring place)
+    if (locale === 'en') return key.replace(/-/g, ' ');
+    // Other locale fallback: try the English copy of the same key before
+    // giving up, so an untranslated enum value still renders in English
+    // rather than as `surreal`.
+    return key.replace(/-/g, ' ');
+  };
+}

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { useTranslations } from '@/i18n/shim';
+import { useTranslations, useTag } from '@/i18n/shim';
 import { api, type DreamListItem } from '@/lib/api';
 
 const PAGE_SIZE = 12;
@@ -140,6 +140,8 @@ export function DreamsPane() {
 function DreamRow({ dream }: { dream: DreamListItem }) {
   const t = useTranslations('me.dreams');
   const tRoot = useTranslations();
+  const tDreams = useTranslations('dreams');
+  const tag = useTag();
   const isDone = dream.status === 'done';
   const isFailed = dream.status === 'failed';
   const isPending = dream.status === 'pending' || dream.status === 'rendering';
@@ -167,8 +169,8 @@ function DreamRow({ dream }: { dream: DreamListItem }) {
         <div className="p-4 flex-1 min-w-0">
           <p className="font-serif text-base text-ink line-clamp-2">{dream.transcript}</p>
           <div className="mt-2 flex items-center gap-3 text-xs text-muted/70">
-            {dream.emotionTag && <span className="tag">{dream.emotionTag}</span>}
-            <span>{relative(dream.createdAt)}</span>
+            {dream.emotionTag && <span className="tag">{tag('emotion', dream.emotionTag)}</span>}
+            <span>{relative(dream.createdAt, tDreams)}</span>
             {isFailed && <span className="text-rust">{t('failed')}</span>}
             {isPending && <span className="text-amber">{t('pending')}</span>}
             {isDone && <span className="text-moss">{t('ready')}</span>}
@@ -179,12 +181,12 @@ function DreamRow({ dream }: { dream: DreamListItem }) {
   );
 }
 
-function relative(ts: number): string {
+function relative(ts: number, t: (k: string, v?: any) => string): string {
   const diff = Date.now() - ts;
   const day = 86400000;
-  if (diff < day) return 'today';
-  if (diff < 2 * day) return 'yesterday';
-  if (diff < 7 * day) return `${Math.floor(diff / day)}d ago`;
-  if (diff < 30 * day) return `${Math.floor(diff / (7 * day))}w ago`;
+  if (diff < day) return t('today');
+  if (diff < 2 * day) return t('yesterday');
+  if (diff < 7 * day) return t('daysAgo', { n: Math.floor(diff / day) });
+  if (diff < 30 * day) return t('weeksAgo', { n: Math.floor(diff / (7 * day)) });
   return new Date(ts).toLocaleDateString();
 }

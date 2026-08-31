@@ -33,7 +33,10 @@
     "transcribing": {
       "title": "다시 듣는 중…",
       "hint": "꿈을 글로 옮기는 중."
-    }
+    },
+    "micDenied": "마이크 접근이 거부되었습니다. 아래에 꿈을 직접 입력할 수도 있습니다.",
+    "typePrompt": "꿈을 한두 문장으로 입력해 주세요:",
+    "ariaHold": "꾹 눌러 꿈을 녹음하세요"
   },
   "generator": {
     "stages": {
@@ -55,7 +58,10 @@
     "copyLink": "공유 링크 복사",
     "copied": "복사됨",
     "shareCreated": "공유 링크 생성됨",
-    "transcriptLabel": "원본 설명"
+    "transcriptLabel": "원본 설명",
+    "videoUnavailable": "영상을 사용할 수 없습니다.",
+    "analysisPlaceholder": "아직 꿈이 정리되고 있습니다.",
+    "creating": "만드는 중…"
   },
   "dreams": {
     "title": "내 꿈들",
@@ -72,7 +78,8 @@
     "weeksAgo": "{n}주 전",
     "loadMore": "더 오래된 꿈 불러오기",
     "loadingMore": "불러오는 중…",
-    "noMore": "더 오래된 꿈이 없습니다."
+    "noMore": "더 오래된 꿈이 없습니다.",
+    "duration": "{n}초"
   },
   "dream": {
     "backToList": "← 내 꿈으로",
@@ -98,7 +105,9 @@
     "serverDemoMode": "이 배포 환경에서는 새로운 꿈을 생성할 수 없습니다. 로컬에서 API를 실행하거나 합성 단계를 포함한 Cloudflare Container를 배포하세요.",
     "needGmiKey": "꿈을 생성하기 전에 「계정 → API 키」에서 GMI API 키를 추가하세요.",
     "needGmiKeyCta": "API 키 설정 열기",
-    "providerInitFailed": "AI 제공자를 초기화할 수 없습니다. API 키를 확인하고 다시 시도해 주세요."
+    "providerInitFailed": "AI 제공자를 초기화할 수 없습니다. API 키를 확인하고 다시 시도해 주세요.",
+    "unknown": "문제가 발생했습니다. 다시 시도해 주세요.",
+    "dreamRefusedFilmed": "이 꿈은 영화가 되기를 거부했습니다."
   },
   "theme": {
     "switchToLight": "라이트 모드로 전환",
@@ -135,7 +144,47 @@
     "moreDreams": "다른 꿈 보기",
     "enableTitle": "새로운 꿈을 생성하고 싶으신가요?",
     "enableBody": "FFmpeg가 있는 환경에서 로컬 API를 실행하거나, 합성 단계를 호스팅하는 Cloudflare Container를 배포하세요. GMI_API_KEY 시크릿을 설정하면 파이프라인이 활성화됩니다.",
-    "enableCta": "GitHub에서 보기"
+    "enableCta": "GitHub에서 보기",
+    "items": {
+      "d1": {
+        "transcript": "나는 거꾸로 된 도서관에 있었다. 계단은 물로 만들어져 있었고, 흰 옷을 입은 여자가 내 이름을 알면서 말하지 않았다.",
+        "analysis": "도서관은 단순한 도서관이 아니다. 정리할 수 없는 것들을 진열하려는 마음의 가장이다."
+      },
+      "d2": {
+        "transcript": "할머니가 부엌에서 차를 만들고 계셨다. 그녀는 다시 어렸고, 내가 기억하는 그대로였다.",
+        "analysis": "당신 안에는 여전히 불이 켜진 방이 있다. 오늘 밤, 당신은 그 안을 걸었다."
+      }
+    }
+  },
+  "tags": {
+    "emotion": {
+      "surreal": "초현실",
+      "melancholic": "멜랑콜리",
+      "terror": "공포",
+      "love": "사랑",
+      "bliss": "환희",
+      "cosmic": "우주적",
+      "absurd": "부조리",
+      "nightmare": "악몽",
+      "pursuit": "추격",
+      "falling": "추락"
+    },
+    "dreamType": {
+      "being-chased": "쫓기는 꿈",
+      "falling": "추락",
+      "flying": "비행",
+      "arriving-too-late": "지각",
+      "teeth-falling-out": "이 빠짐",
+      "death": "죽음",
+      "water": "물",
+      "animals": "동물",
+      "unfamiliar-people": "낯선 사람",
+      "sexual": "성",
+      "school-teacher": "선생님",
+      "paralyzed": "마비",
+      "vivid-color": "선명한 색",
+      "recurring-place": "반복되는 장소"
+    }
   },
   "settings": {
     "title": "설정",

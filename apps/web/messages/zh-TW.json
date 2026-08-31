@@ -33,7 +33,10 @@
     "transcribing": {
       "title": "正在回聽……",
       "hint": "把夢變成文字。"
-    }
+    },
+    "micDenied": "無法存取麥克風。你也可以在下方輸入你的夢。",
+    "typePrompt": "用一兩句話描述你的夢：",
+    "ariaHold": "按住以記錄你的夢"
   },
   "generator": {
     "stages": {
@@ -55,7 +58,10 @@
     "copyLink": "複製分享連結",
     "copied": "已複製",
     "shareCreated": "分享連結已建立",
-    "transcriptLabel": "原始描述"
+    "transcriptLabel": "原始描述",
+    "videoUnavailable": "影片不可用。",
+    "analysisPlaceholder": "夢境還在成形。",
+    "creating": "正在建立……"
   },
   "dreams": {
     "title": "我的夢境",
@@ -72,7 +78,8 @@
     "weeksAgo": "{n} 週前",
     "loadMore": "載入更早的夢境",
     "loadingMore": "載入中……",
-    "noMore": "已到時間線最遠端。"
+    "noMore": "已到時間線最遠端。",
+    "duration": "{n}秒"
   },
   "dream": {
     "backToList": "← 返回我的夢境",
@@ -98,7 +105,9 @@
     "serverDemoMode": "此部署無法生成新夢境。請在本機執行 API，或部署帶有合成步驟的 Cloudflare 容器。",
     "needGmiKey": "生成夢境前，請先在「個人中心 → API 金鑰」中加入你的 GMI API 金鑰。",
     "needGmiKeyCta": "開啟 API 金鑰設定",
-    "providerInitFailed": "無法初始化 AI 提供方，請檢查你的 API 金鑰後重試。"
+    "providerInitFailed": "無法初始化 AI 提供方，請檢查你的 API 金鑰後重試。",
+    "unknown": "發生了一些問題，請重試。",
+    "dreamRefusedFilmed": "這個夢拒絕被拍成電影。"
   },
   "theme": {
     "switchToLight": "切換到日間模式",
@@ -135,7 +144,47 @@
     "moreDreams": "換一個夢",
     "enableTitle": "想生成新夢境？",
     "enableBody": "在本機執行帶有 FFmpeg 的 API，或部署託管合成步驟的 Cloudflare 容器。設定 GMI_API_KEY 密鑰後，流水線就會啟動。",
-    "enableCta": "在 GitHub 上查看"
+    "enableCta": "在 GitHub 上查看",
+    "items": {
+      "d1": {
+        "transcript": "我在一個上下顛倒的圖書館裡，樓梯是用水做成的，一個穿白衣的女人知道我的名字卻不肯說。",
+        "analysis": "圖書館從來不只是圖書館。是心靈假裝它有架子，能放得下那些無法歸類的東西。"
+      },
+      "d2": {
+        "transcript": "我的祖母在廚房裡泡茶。她又年輕了，和我記憶中的樣子一樣。",
+        "analysis": "你心裡有一間房，燈還亮著。今晚你走進了它。"
+      }
+    }
+  },
+  "tags": {
+    "emotion": {
+      "surreal": "超現實",
+      "melancholic": "憂鬱",
+      "terror": "恐懼",
+      "love": "愛",
+      "bliss": "極樂",
+      "cosmic": "宇宙感",
+      "absurd": "荒誕",
+      "nightmare": "噩夢",
+      "pursuit": "追逐",
+      "falling": "墜落"
+    },
+    "dreamType": {
+      "being-chased": "被追趕",
+      "falling": "墜落",
+      "flying": "飛翔",
+      "arriving-too-late": "來不及",
+      "teeth-falling-out": "掉牙齒",
+      "death": "死亡",
+      "water": "水",
+      "animals": "動物",
+      "unfamiliar-people": "陌生人",
+      "sexual": "性",
+      "school-teacher": "老師",
+      "paralyzed": "癱瘓",
+      "vivid-color": "鮮明色彩",
+      "recurring-place": "反覆出現的地點"
+    }
   },
   "settings": {
     "title": "設定",

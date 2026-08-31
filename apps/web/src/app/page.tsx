@@ -173,7 +173,7 @@ export default function HomePage() {
         setStage('error');
         return;
       }
-      alert(err?.message ?? 'Unknown error');
+      alert(err?.message ?? t('errors.unknown'));
     }
   }
 
@@ -211,7 +211,7 @@ export default function HomePage() {
           <DreamPlayer />
         )}
         {stage === 'error' && current && (
-          <ErrorPanel message={current.error || 'The dream refused to be filmed.'} onRetry={() => { reset(); setStage('idle'); }} />
+          <ErrorPanel message={current.error || t('errors.dreamRefusedFilmed')} onRetry={() => { reset(); setStage('idle'); }} />
         )}
       </section>
       <Footer />

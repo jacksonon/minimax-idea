@@ -33,7 +33,10 @@
     "transcribing": {
       "title": "Listening back…",
       "hint": "Pulling the dream into words."
-    }
+    },
+    "micDenied": "Microphone access denied. You can also type your dream below.",
+    "typePrompt": "Type your dream in a sentence or two:",
+    "ariaHold": "Hold to record your dream"
   },
   "generator": {
     "stages": {
@@ -55,7 +58,10 @@
     "copyLink": "Copy share link",
     "copied": "Copied",
     "shareCreated": "Share link created",
-    "transcriptLabel": "Original transcript"
+    "transcriptLabel": "Original transcript",
+    "videoUnavailable": "Video unavailable.",
+    "analysisPlaceholder": "The dream is still settling.",
+    "creating": "Creating…"
   },
   "dreams": {
     "title": "My dreams",
@@ -72,7 +78,8 @@
     "weeksAgo": "{n}w ago",
     "loadMore": "Load older dreams",
     "loadingMore": "Loading…",
-    "noMore": "You've reached the end of your dreams."
+    "noMore": "You've reached the end of your dreams.",
+    "duration": "{n}s"
   },
   "dream": {
     "backToList": "← Back to my dreams",
@@ -98,7 +105,9 @@
     "serverDemoMode": "This deployment can't generate new dreams. Run the API locally or deploy a Cloudflare Container with the composite step.",
     "needGmiKey": "Add your GMI API key in Account → API key before recording a dream.",
     "needGmiKeyCta": "Open API key settings",
-    "providerInitFailed": "Couldn't initialize the AI provider. Check your API key and try again."
+    "providerInitFailed": "Couldn't initialize the AI provider. Check your API key and try again.",
+    "unknown": "Something went wrong. Please try again.",
+    "dreamRefusedFilmed": "The dream refused to be filmed."
   },
   "theme": {
     "switchToLight": "Switch to light mode",
@@ -135,7 +144,47 @@
     "moreDreams": "Try another",
     "enableTitle": "Want to generate new dreams?",
     "enableBody": "Run the API locally with FFmpeg available, or deploy a Cloudflare Container that hosts the composite step. Set the GMI_API_KEY secret and the pipeline lights up.",
-    "enableCta": "View on GitHub"
+    "enableCta": "View on GitHub",
+    "items": {
+      "d1": {
+        "transcript": "I was in an upside-down library, the staircase was made of water, and a woman in white knew my name but would not say it.",
+        "analysis": "A library is never just a library. It is the mind pretending it has shelves for what it cannot file."
+      },
+      "d2": {
+        "transcript": "My grandmother was in the kitchen making tea. She was young again, the way I remember her.",
+        "analysis": "There is a room in you that still has the lights on. You walked into it tonight."
+      }
+    }
+  },
+  "tags": {
+    "emotion": {
+      "surreal": "surreal",
+      "melancholic": "melancholic",
+      "terror": "terror",
+      "love": "love",
+      "bliss": "bliss",
+      "cosmic": "cosmic",
+      "absurd": "absurd",
+      "nightmare": "nightmare",
+      "pursuit": "pursuit",
+      "falling": "falling"
+    },
+    "dreamType": {
+      "being-chased": "being chased",
+      "falling": "falling",
+      "flying": "flying",
+      "arriving-too-late": "arriving too late",
+      "teeth-falling-out": "teeth falling out",
+      "death": "death",
+      "water": "water",
+      "animals": "animals",
+      "unfamiliar-people": "unfamiliar people",
+      "sexual": "sexual",
+      "school-teacher": "school teacher",
+      "paralyzed": "paralyzed",
+      "vivid-color": "vivid color",
+      "recurring-place": "recurring place"
+    }
   },
   "settings": {
     "title": "Settings",

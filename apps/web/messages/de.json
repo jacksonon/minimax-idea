@@ -33,7 +33,10 @@
     "transcribing": {
       "title": "Höre noch einmal zu…",
       "hint": "Traum in Worte fassen."
-    }
+    },
+    "micDenied": "Mikrofonzugriff verweigert. Du kannst deinen Traum auch unten eintippen.",
+    "typePrompt": "Beschreibe deinen Traum in ein bis zwei Sätzen:",
+    "ariaHold": "Halten, um deinen Traum aufzunehmen"
   },
   "generator": {
     "stages": {
@@ -55,7 +58,10 @@
     "copyLink": "Link kopieren",
     "copied": "Kopiert",
     "shareCreated": "Link erstellt",
-    "transcriptLabel": "Originalbeschreibung"
+    "transcriptLabel": "Originalbeschreibung",
+    "videoUnavailable": "Video nicht verfügbar.",
+    "analysisPlaceholder": "Der Traum setzt sich noch.",
+    "creating": "Wird erstellt…"
   },
   "dreams": {
     "title": "Meine Träume",
@@ -72,7 +78,8 @@
     "weeksAgo": "vor {n}W",
     "loadMore": "Ältere Träume laden",
     "loadingMore": "Lädt…",
-    "noMore": "Du hast das Ende deiner Träume erreicht."
+    "noMore": "Du hast das Ende deiner Träume erreicht.",
+    "duration": "{n} s"
   },
   "dream": {
     "backToList": "← Zurück zu meinen Träumen",
@@ -98,7 +105,9 @@
     "serverDemoMode": "Dieses Deployment kann keine neuen Träume erzeugen. Führe die API lokal aus oder deploye einen Cloudflare Container mit dem Komposit-Schritt.",
     "needGmiKey": "Bevor du einen Traum aufzeichnest, füge deinen GMI-API-Schlüssel unter Konto → API-Schlüssel hinzu.",
     "needGmiKeyCta": "API-Schlüssel-Einstellungen öffnen",
-    "providerInitFailed": "KI-Anbieter konnte nicht initialisiert werden. Überprüfe deinen API-Schlüssel und versuche es erneut."
+    "providerInitFailed": "KI-Anbieter konnte nicht initialisiert werden. Überprüfe deinen API-Schlüssel und versuche es erneut.",
+    "unknown": "Etwas ist schiefgegangen. Bitte erneut versuchen.",
+    "dreamRefusedFilmed": "Der Traum weigerte sich, gefilmt zu werden."
   },
   "theme": {
     "switchToLight": "Zum hellen Modus wechseln",
@@ -135,7 +144,47 @@
     "moreDreams": "Anderen versuchen",
     "enableTitle": "Willst du neue Träume erzeugen?",
     "enableBody": "Führe die API lokal mit verfügbarem FFmpeg aus oder deploye einen Cloudflare Container, der den Komposit-Schritt hostet. Setze das GMI_API_KEY-Secret und die Pipeline startet.",
-    "enableCta": "Auf GitHub ansehen"
+    "enableCta": "Auf GitHub ansehen",
+    "items": {
+      "d1": {
+        "transcript": "Ich war in einer umgekehrten Bibliothek, die Treppe war aus Wasser, und eine Frau in Weiß kannte meinen Namen, aber sprach ihn nicht aus.",
+        "analysis": "Eine Bibliothek ist nie nur eine Bibliothek. Es ist der Verstand, der so tut, als hätte er Regale für das, was er nicht ablegen kann."
+      },
+      "d2": {
+        "transcript": "Meine Großmutter war in der Küche und machte Tee. Sie war wieder jung, genau so, wie ich sie in Erinnerung habe.",
+        "analysis": "Es gibt einen Raum in dir, in dem noch das Licht brennt. Heute Nacht bist du hineingegangen."
+      }
+    }
+  },
+  "tags": {
+    "emotion": {
+      "surreal": "surreal",
+      "melancholic": "melancholisch",
+      "terror": "Schrecken",
+      "love": "Liebe",
+      "bliss": "Glück",
+      "cosmic": "kosmisch",
+      "absurd": "absurd",
+      "nightmare": "Albtraum",
+      "pursuit": "Verfolgung",
+      "falling": "Fallen"
+    },
+    "dreamType": {
+      "being-chased": "verfolgt werden",
+      "falling": "fallen",
+      "flying": "fliegen",
+      "arriving-too-late": "zu spät kommen",
+      "teeth-falling-out": "Zähne ausfallen",
+      "death": "Tod",
+      "water": "Wasser",
+      "animals": "Tiere",
+      "unfamiliar-people": "unbekannte Menschen",
+      "sexual": "sexuell",
+      "school-teacher": "Lehrer",
+      "paralyzed": "gelähmt",
+      "vivid-color": "leuchtende Farben",
+      "recurring-place": "wiederkehrender Ort"
+    }
   },
   "settings": {
     "title": "Einstellungen",

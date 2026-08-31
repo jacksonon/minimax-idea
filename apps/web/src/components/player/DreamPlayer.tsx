@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from '@/i18n/shim';
+import { useTranslations, useTag } from '@/i18n/shim';
 import { useStore } from '@/lib/store';
 import { api } from '@/lib/api';
 import { EMOTION_TAGS } from '@dreamreel/shared';
 
 export function DreamPlayer() {
   const t = useTranslations('player');
+  const tag = useTag();
   const { current, setStage, reset } = useStore();
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -63,22 +64,22 @@ export function DreamPlayer() {
           />
         ) : (
           <div className="h-full w-full flex items-center justify-center text-muted">
-            <p>Video unavailable.</p>
+            <p>{t('videoUnavailable')}</p>
           </div>
         )}
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
         {current.emotionTag && (
-          <span className="tag">{current.emotionTag}</span>
+          <span className="tag">{tag('emotion', current.emotionTag)}</span>
         )}
         {current.dreamType && (
-          <span className="tag">{current.dreamType.replace(/-/g, ' ')}</span>
+          <span className="tag">{tag('dreamType', current.dreamType)}</span>
         )}
       </div>
 
       <blockquote className="font-serif text-2xl leading-relaxed text-ink/90 border-l-2 border-amber/40 pl-6 italic">
-        &ldquo;{current.analysisText || 'The dream is still settling.'}&rdquo;
+        &ldquo;{current.analysisText || t('analysisPlaceholder')}&rdquo;
       </blockquote>
 
       <div className="flex flex-wrap gap-3 pt-4">
@@ -94,7 +95,7 @@ export function DreamPlayer() {
           </button>
         ) : (
           <button onClick={handleShare} disabled={sharing} className="btn-ghost">
-            {sharing ? 'Creating…' : t('share')}
+            {sharing ? t('creating') : t('share')}
           </button>
         )}
       </div>

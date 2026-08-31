@@ -64,7 +64,7 @@ export function Recorder({ onSubmit }: Props) {
         playClick();
       }
     } catch (err: any) {
-      setError('Microphone access denied. You can also type your dream below.');
+      setError(t('micDenied'));
     }
   }
 
@@ -91,7 +91,7 @@ export function Recorder({ onSubmit }: Props) {
     }
     if (!text || text.trim().length < MIN_RECORDING_SECONDS) {
       // No usable transcript — try the typed fallback
-      const typed = (window.prompt('Type your dream in a sentence or two:') || '').trim();
+      const typed = (window.prompt(t('typePrompt')) || '').trim();
       text = typed;
     }
     if (!text || text.length < MIN_RECORDING_SECONDS) {
@@ -164,7 +164,7 @@ export function Recorder({ onSubmit }: Props) {
           phase === 'recording' && 'border-crimson bg-crimson/10 scale-110',
           phase === 'transcribing' && 'border-muted/50 opacity-60',
         ].filter(Boolean).join(' ')}
-        aria-label="Hold to record your dream"
+        aria-label={t('ariaHold')}
       >
         <Mic
           className={[

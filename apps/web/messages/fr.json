@@ -33,7 +33,10 @@
     "transcribing": {
       "title": "Réécoute…",
       "hint": "Transformer le rêve en mots."
-    }
+    },
+    "micDenied": "Accès au microphone refusé. Vous pouvez aussi écrire votre rêve ci-dessous.",
+    "typePrompt": "Décrivez votre rêve en une ou deux phrases :",
+    "ariaHold": "Maintenez pour enregistrer votre rêve"
   },
   "generator": {
     "stages": {
@@ -55,7 +58,10 @@
     "copyLink": "Copier le lien",
     "copied": "Copié",
     "shareCreated": "Lien créé",
-    "transcriptLabel": "Description originale"
+    "transcriptLabel": "Description originale",
+    "videoUnavailable": "Vidéo indisponible.",
+    "analysisPlaceholder": "Le rêve n'est pas encore posé.",
+    "creating": "Création…"
   },
   "dreams": {
     "title": "Mes rêves",
@@ -72,7 +78,8 @@
     "weeksAgo": "il y a {n}sem",
     "loadMore": "Charger des rêves plus anciens",
     "loadingMore": "Chargement…",
-    "noMore": "Vous avez atteint la fin de vos rêves."
+    "noMore": "Vous avez atteint la fin de vos rêves.",
+    "duration": "{n} s"
   },
   "dream": {
     "backToList": "← Retour à mes rêves",
@@ -98,7 +105,9 @@
     "serverDemoMode": "Ce déploiement ne peut pas générer de nouveaux rêves. Lancez l'API en local ou déployez un Cloudflare Container avec l'étape de composition.",
     "needGmiKey": "Avant d'enregistrer un rêve, ajoutez votre clé API GMI dans Compte → Clé API.",
     "needGmiKeyCta": "Ouvrir les réglages de clé API",
-    "providerInitFailed": "Impossible d'initialiser le fournisseur d'IA. Vérifiez votre clé API et réessayez."
+    "providerInitFailed": "Impossible d'initialiser le fournisseur d'IA. Vérifiez votre clé API et réessayez.",
+    "unknown": "Une erreur s'est produite. Veuillez réessayer.",
+    "dreamRefusedFilmed": "Le rêve a refusé d'être filmé."
   },
   "theme": {
     "switchToLight": "Passer en mode clair",
@@ -135,7 +144,47 @@
     "moreDreams": "Essayer un autre",
     "enableTitle": "Vous voulez générer de nouveaux rêves ?",
     "enableBody": "Lancez l'API en local avec FFmpeg disponible, ou déployez un Cloudflare Container qui héberge l'étape de composition. Définissez le secret GMI_API_KEY et la pipeline s'allume.",
-    "enableCta": "Voir sur GitHub"
+    "enableCta": "Voir sur GitHub",
+    "items": {
+      "d1": {
+        "transcript": "J'étais dans une bibliothèque à l'envers, l'escalier était fait d'eau, et une femme en blanc connaissait mon nom mais refusait de le dire.",
+        "analysis": "Une bibliothèque n'est jamais qu'une bibliothèque. C'est l'esprit qui fait semblant d'avoir des étagères pour ce qu'il ne peut pas classer."
+      },
+      "d2": {
+        "transcript": "Ma grand-mère était dans la cuisine en train de faire du thé. Elle était jeune à nouveau, comme dans mon souvenir.",
+        "analysis": "Il y a une pièce en toi dont la lumière est encore allumée. Tu y es entré ce soir."
+      }
+    }
+  },
+  "tags": {
+    "emotion": {
+      "surreal": "surréaliste",
+      "melancholic": "mélancolique",
+      "terror": "terreur",
+      "love": "amour",
+      "bliss": "félicité",
+      "cosmic": "cosmique",
+      "absurd": "absurde",
+      "nightmare": "cauchemar",
+      "pursuit": "poursuite",
+      "falling": "chute"
+    },
+    "dreamType": {
+      "being-chased": "être poursuivi",
+      "falling": "tomber",
+      "flying": "voler",
+      "arriving-too-late": "arriver en retard",
+      "teeth-falling-out": "perte de dents",
+      "death": "mort",
+      "water": "eau",
+      "animals": "animaux",
+      "unfamiliar-people": "inconnus",
+      "sexual": "sexuel",
+      "school-teacher": "enseignant",
+      "paralyzed": "paralysie",
+      "vivid-color": "couleur vive",
+      "recurring-place": "lieu récurrent"
+    }
   },
   "settings": {
     "title": "Réglages",
