@@ -225,9 +225,14 @@ authRoutes.get('/api/auth/me', async (c) => {
 // ----- shared cookie helpers -----
 
 export function setSessionCookie(c: any, token: string) {
+  // SameSite=None so the cookie is sent on cross-origin XHR from
+  // the web frontend (Pages) to the API Worker. Secure is implicit
+  // on https (the only context in which we serve a SameSite=None
+  // cookie anyway). Lax would block the read-back of /api/auth/me
+  // from the web app, which lives on a different origin.
   c.header(
     'Set-Cookie',
-    `${SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${Math.floor(SESSION_TTL_MS / 1000)}`,
+    `${SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=None; Secure; Max-Age=${Math.floor(SESSION_TTL_MS / 1000)}`,
   );
 }
 
@@ -236,10 +241,28 @@ export function deleteCookie(c: any) {
 }
 
 /**
- * Only allow same-origin redirects (start with single `/` and not `//`).
- * Anything else falls back to the home page to avoid open-redirect bugs.
+ * Resolve a post-login redirect. Two valid shapes:
+ *   - relative path starting with a single `/` (e.g. "/me") — sent
+ *     to the API Worker itself; renders a page or redirects further
+ *   - absolute URL whose origin is in WEB_ALLOWED_ORIGINS — used
+ *     to bounce the user back to the web frontend (which lives on
+ *     a different origin than the API Worker)
+ *
+ * Anything else falls back to '/' to avoid open-redirect bugs.
  */
+const WEB_ALLOWED_ORIGINS = new Set([
+  'https://dreamreel-web.pages.dev',
+  'http://localhost:3000',
+]);
+
 function safeRedirect(target: string): string {
-  if (!target || !target.startsWith('/') || target.startsWith('//')) return '/';
-  return target;
+  if (!target) return '/';
+  if (target.startsWith('/') && !target.startsWith('//')) return target;
+  try {
+    const u = new URL(target);
+    if (WEB_ALLOWED_ORIGINS.has(u.origin)) return u.toString();
+  } catch {
+    /* fall through */
+  }
+  return '/';
 }

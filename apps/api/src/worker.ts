@@ -32,7 +32,11 @@ import type { Bindings } from './types.js';
 const app = new Hono<{ Bindings: Bindings }>();
 
 app.use('*', async (c, next) => {
-  const origin = c.env?.ALLOWED_ORIGIN ?? 'https://dreamreel.pages.dev';
+  // c.env inside a request handler is a Cloudflare binding proxy;
+  // user-defined vars and secrets live at c.env.env (Hono on
+  // Cloudflare Workers). Use the same helper the routes use so
+  // we don't silently fall back to the wrong default.
+  const origin = getEnv(c.env, 'ALLOWED_ORIGIN') ?? 'https://dreamreel-web.pages.dev';
   return cors({ origin, credentials: true })(c, next);
 });
 

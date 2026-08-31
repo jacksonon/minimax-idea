@@ -45,7 +45,10 @@ function buildApp(): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
 
   app.use('*', async (c, next) => {
-    const origin = c.env?.ALLOWED_ORIGIN ?? 'http://localhost:3000';
+    // Same as worker.ts: env vars and secrets live under c.env.env on
+    // Cloudflare Workers. In local Node dev, c.env is process.env, so
+    // getEnv() reads from there.
+    const origin = getEnv(c.env, 'ALLOWED_ORIGIN') ?? 'http://localhost:3000';
     return cors({
       origin,
       credentials: true,

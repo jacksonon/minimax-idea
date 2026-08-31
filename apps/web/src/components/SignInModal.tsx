@@ -101,7 +101,14 @@ export function SignInModal({ open, onClose, onSignedIn, next, showDevLogin = tr
   }
 
   function startGitHub() {
-    api.githubLogin(next);
+    // After a successful GitHub round-trip the API Worker bounces
+    // us back to `next`. Default to the web home page (which is on
+    // a different origin than the Worker) so we don't end up
+    // sitting on a 404 in the API domain.
+    const webOrigin =
+      typeof window !== 'undefined' ? window.location.origin : undefined;
+    const fallback = webOrigin ? `${webOrigin}/` : '/';
+    api.githubLogin(next || fallback);
     // The browser will navigate away; nothing to clean up here.
   }
 
