@@ -6,6 +6,7 @@ import { Recorder } from '@/components/recorder/Recorder';
 import { Generator } from '@/components/generator/Generator';
 import { DreamPlayer } from '@/components/player/DreamPlayer';
 import { DemoShowcase } from '@/components/DemoShowcase';
+import { DreamBackground } from '@/components/DreamBackground';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { LocaleSwitcher } from '@/components/LocaleSwitcher';
 import { SignInModal } from '@/components/SignInModal';
@@ -197,6 +198,7 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen flex flex-col">
+      <DreamBackground />
       <Header onSignInClick={() => setSignInOpen(true)} />
       <section className="flex-1 flex items-center justify-center px-6 py-16">
         {stage === 'idle' && !capability.canGenerate && !user && (
